@@ -40,6 +40,11 @@ function Remove-StatusCakeHelperTest
         $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
         if($testCheck)
         {
+            if($testCheck.GetType().Name -eq 'Object[]')
+            {
+                Write-Error "Multiple Tests found with name [$TestName]. Please remove the test by TestID"
+                Return $null            
+            }
             $TestID = $testCheck.TestID
         }
         else 
@@ -62,6 +67,7 @@ function Remove-StatusCakeHelperTest
         $response = $jsonResponse | ConvertFrom-Json
         if($response.Success -ne "True")
         {
+            Write-Verbose $response
             Write-Error "$($response.Message)"
         }
         if(!$PassThru)

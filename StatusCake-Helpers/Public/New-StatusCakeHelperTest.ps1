@@ -57,58 +57,58 @@ function New-StatusCakeHelperTest
         [ValidateNotNullOrEmpty()] 
         $TestName,
         [Parameter(Mandatory=$true)]
-        [ValidateScript({If ($_ -match '^((http|https):\/\/)?([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$') {$true}})]        
+        [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]    
         $TestURL,
-        [ValidateScript({If ($_ -gt 0 -and $_ -lt 24000) {$true}})]        
+        [ValidateRange(0,24000)]       
         $CheckRate=300,
         [Parameter(Mandatory=$true)]        
         [ValidateSet("HTTP","TCP","PING")] 
         [String]$TestType="HTTP",
         
         #Optional parameters
-        [ValidateScript({If ($_ -match '^\d{1,}$') {$true}})]          
+        [ValidatePattern('^\d{1,}$')]       
         $ContactGroup,
         [object]$TestTags,
-        [ValidateScript({If ($_ -match '^\d{1,}$') {$true}})]               
+        [ValidatePattern('^\d{2,}$')]           
         $Port,
         [object]$NodeLocations,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]
+        [ValidateRange(0,1)]         
         $Paused,
-        [ValidateScript({If ($_ -gt 5 -and $_ -lt 100) {$true}})]  
+        [ValidateRange(5,100)] 
         $Timeout,
-        [ValidateScript({If ($_ -match '^((http|https):\/\/)?([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)') {$true}})]         
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                  
         $PingURL,
         [hashtable]$CustomHeader,
-        [ValidateScript({If ($_ -ge 0 -and $_ -le 10) {$true}})]          
+        [ValidateRange(0,10)]      
         $Confirmation,
-        [ValidateScript({If ($_ -match '^([a-zA-Z0-9]{2,}\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$') {$true}})]         
+        [ValidatePattern('^([a-zA-Z0-9]{2,}\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]             
         [string]$DNSServer,
-        [ValidateScript({If ($_ -match '^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$') {$true}})]           
+        [ValidatePattern('^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]             
         [string]$DNSIP,
         [string]$BasicUser,
-        [string]$BasePass,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [string]$BasicPass,
+        [ValidateRange(0,1)]   
         $Public,
-        [ValidateScript({If ($_ -match '^((http|https):\/\/)?([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)') {$true}})]        
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]          
         $LogoImage,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [ValidateRange(0,1)]     
         $UseJar,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [ValidateRange(0,1)]         
         $Branding,
         [string]$WebsiteHost,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [ValidateRange(0,1)]        
         $Virus,
         [string]$FindString,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [ValidateRange(0,1)]       
         $DoNotFind,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [ValidateRange(0,1)]         
         $RealBrowser,
-        [ValidateScript({If ($_ -ge 0 -and $_ -le 60) {$true}})]           
+        [ValidateRange(0,60)]                
         $TriggerRate,     
         [object]$StatusCodes,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [ValidateRange(0,1)]         
         $EnableSSLWarning,
-        [ValidateScript({If ($_ -match '^[0-1]{1}$') {$true}})]        
+        [ValidateRange(0,1)]        
         $FollowRedirect
     )
     $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
@@ -132,7 +132,9 @@ function New-StatusCakeHelperTest
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {
+        {   #Validate Range accepts $true or $false values as 0 or 1 so explictly convert to int for StatusCake API
+            If($var.value -eq $true){$var.value=1}
+            elseif($var.value -eq $false){$var.value=0}
             write-verbose "$($var.name) will be added to StatusCake Test with value $($var.value)"
             switch($var.name)
             {

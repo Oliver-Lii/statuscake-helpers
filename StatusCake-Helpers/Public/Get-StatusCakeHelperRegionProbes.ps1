@@ -16,7 +16,7 @@ function Get-StatusCakeHelperRegionProbes
 {
     Param(
         [Parameter(Mandatory=$true)]        
-        [ValidateScript({If ($_ -match '\w{2}-\w{4,9}-\d') {$true}})]
+        [ValidatePattern('\w{2}-\w{4,9}-\d')]   
         $AWSRegion,
         [ValidateSet("*","up","down")]         
         $Status = '*',
