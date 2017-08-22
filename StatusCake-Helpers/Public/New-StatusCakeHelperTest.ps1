@@ -62,7 +62,7 @@ function New-StatusCakeHelperTest
         [ValidateRange(0,24000)]       
         $CheckRate=300,
         [Parameter(Mandatory=$true)]        
-        [ValidateSet("HTTP","TCP","PING")] 
+        [ValidateSet("HTTP","TCP","PING","DNS")] 
         [String]$TestType="HTTP",
         
         #Optional parameters
@@ -81,7 +81,7 @@ function New-StatusCakeHelperTest
         [hashtable]$CustomHeader,
         [ValidateRange(0,10)]      
         $Confirmation,
-        [ValidatePattern('^([a-zA-Z0-9]{2,}\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]             
+        [ValidatePattern('([a-zA-Z0-9\-]{2,}\.[a-zA-Z\-]{2,})(\.[a-zA-Z\-]{2,})?(\.[a-zA-Z\-]{2,})?|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]             
         [string]$DNSServer,
         [ValidatePattern('^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]             
         [string]$DNSIP,
@@ -120,8 +120,49 @@ function New-StatusCakeHelperTest
         Return $result
     }
 
-    $body = @{}
+    $validateTestURL = $false
+    switch($TestType)
+    {
+        "DNS"{
+            If(!$DNSIP)
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No DNSIP supplied for DNS check";"Data" = $testName;"InsertID" = -1}
+                Return $result                
+            }
+            else
+            {
+                $validateTestURL = $true         
+            }
+        }        
+        "HTTP"{}
+        "PING"{$validateTestURL = $true}
+        "TCP"{
+            If(!$Port)
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Port supplied for TCP check";"Data" = $testName;"InsertID" = -1}
+                Return $result                
+            }
+            else
+            {
+                $validateTestURL = $true
+            }            
+        }        
+        Default{
+            $validateTestURL = $true
+        }
+    }
 
+    #Other test types require only the domain name so remove protocol if it is part of the TestURL
+    if($validateTestURL)
+    {
+        if($TestURL -match '^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$')
+        {
+            $TestURL -match '(?<DomainName>([a-zA-Z0-9\-]{2,}\.[a-zA-Z\-]{2,})(\.[a-zA-Z\-]{2,})?(\.[a-zA-Z\-]{2,})?)' | Out-Null                
+            $TestURL = $matches.DomainName
+        }
+    }      
+
+    $body = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
     $ParamsToIgnore = @("baseTestURL","Username","ApiKey")
     foreach ($key in $ParameterList.keys)
@@ -134,30 +175,40 @@ function New-StatusCakeHelperTest
         elseif($var.value -or $var.value -eq 0)
         {   #Validate Range accepts $true or $false values as 0 or 1 so explictly convert to int for StatusCake API
             If($var.value -eq $true){$var.value=1}
-            elseif($var.value -eq $false){$var.value=0}
-            write-verbose "$($var.name) will be added to StatusCake Test with value $($var.value)"
+            elseif($var.value -eq $false){$var.value=0}        
             switch($var.name)
             {
-                "TestName"{$body.Add("WebsiteName",$TestName)}
-                "TestURL"{$body.Add("WebsiteURL",$TestURL)}
-                "TestTags"{  #Test Tags need to be supplied as a comma separated list
-                    $TestTags = $TestTags -join ","
-                    $body.Add($var.name,$var.value)
-                }
-                "NodeLocations"{ #Node Location IDs need to be supplied as a comma separated list
-                    $NodeLocations = $NodeLocations -join ","
-                    $body.Add($var.name,$var.value)                                        
-                }
-                "StatusCodes"{ #Status Codes need to be supplied as a comma separated list
-                    $StatusCodes = $StatusCodes -join ","
-                    $body.Add($var.name,$var.value)                                        
-                }
+                "BasicPass"{$value=$var.value -replace ".*","*"}
                 "CustomHeader"{ #Custom Header must be supplied as JSON
-                    $CustomHeader = $CustomHeader | ConvertTo-Json
-                    $body.Add($var.name,$var.value)                       
+                    $value = $var.value | ConvertTo-Json
+                    $body.Add($var.name,$value)                                                     
+                }  
+                "NodeLocations"{ #Node Location IDs need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $body.Add($var.name,$value)                                                                    
+                }                             
+                "StatusCodes"{ #Status Codes need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $body.Add($var.name,$value)   
+                }                 
+                "TestName"{  #API name for Tests is WebsiteName
+                    $value = $var.value                     
+                    $body.Add("WebsiteName",$value)                 
                 }
-                default {$body.Add($var.name,$var.value)}
+                "TestTags"{  #Test Tags need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $body.Add($var.name,$value)   
+                }                
+                "TestURL"{  #API name for Tests is WebsiteURL
+                    $value = $var.value                    
+                    $body.Add("WebsiteURL",$value)              
+                }
+                default {
+                    $value = $var.value                    
+                    $body.Add($var.name,$value)                      
+                }
             }
+            write-verbose "[$($var.name)] will be added to StatusCake Test with value [$value]"          
         }
     }
 
