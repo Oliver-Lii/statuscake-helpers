@@ -121,43 +121,52 @@ function Set-StatusCakeHelperTest
     }
 
     $body = @{}
-
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
     $ParamsToIgnore = @("baseTestURL","Username","ApiKey")
     foreach ($key in $ParameterList.keys)
-    {     
+    {
         $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
         if($ParamsToIgnore -contains $var.Name)
         {
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {
+        {   #Validate Range accepts $true or $false values as 0 or 1 so explictly convert to int for StatusCake API
             If($var.value -eq $true){$var.value=1}
-            elseif($var.value -eq $false){$var.value=0}            
-            Write-Verbose "$($var.name) will be added to StatusCake Test with value $($var.value)"
+            elseif($var.value -eq $false){$var.value=0}        
             switch($var.name)
             {
-                "TestName"{$body.Add("WebsiteName",$TestName)}
-                "TestURL"{$body.Add("WebsiteURL",$TestURL)}
-                "TestTags"{  #Test Tags need to be supplied as a comma separated list
-                    $TestTags = $TestTags -join ","
-                    $body.Add($var.name,$var.value)
-                }
-                "NodeLocations"{ #Node Location IDs need to be supplied as a comma separated list
-                    $NodeLocations = $NodeLocations -join ","
-                    $body.Add($var.name,$var.value)                                        
-                }
-                "StatusCodes"{ #Status Codes need to be supplied as a comma separated list
-                    $StatusCodes = $StatusCodes -join ","
-                    $body.Add($var.name,$var.value)                                        
-                }
+                "BasicPass"{$value=$var.value -replace ".*","*"}
                 "CustomHeader"{ #Custom Header must be supplied as JSON
-                    $CustomHeader = $CustomHeader | ConvertTo-Json
-                    $body.Add($var.name,$var.value)                       
+                    $value = $var.value | ConvertTo-Json
+                    $body.Add($var.name,$value)                                                     
+                }  
+                "NodeLocations"{ #Node Location IDs need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $body.Add($var.name,$value)                                                                    
+                }                             
+                "StatusCodes"{ #Status Codes need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $body.Add($var.name,$value)   
+                }                 
+                "TestName"{  #API name for Tests is WebsiteName
+                    $value = $var.value                     
+                    $body.Add("WebsiteName",$value)                 
                 }
-                default {$body.Add($var.name,$var.value)}
+                "TestTags"{  #Test Tags need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $body.Add($var.name,$value)   
+                }                
+                "TestURL"{  #API name for Tests is WebsiteURL
+                    $value = $var.value                    
+                    $body.Add("WebsiteURL",$value)              
+                }
+                default {
+                    $value = $var.value                    
+                    $body.Add($var.name,$value)                      
+                }
             }
+            write-verbose "[$($var.name)] will be added to StatusCake Test with value [$value]"          
         }
     }
 
