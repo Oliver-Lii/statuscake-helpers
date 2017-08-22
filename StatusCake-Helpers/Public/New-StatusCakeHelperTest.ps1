@@ -57,7 +57,7 @@ function New-StatusCakeHelperTest
         [ValidateNotNullOrEmpty()] 
         $TestName,
         [Parameter(Mandatory=$true)]
-        [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]    
+        [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]    
         $TestURL,
         [ValidateRange(0,24000)]       
         $CheckRate=300,
@@ -76,7 +76,7 @@ function New-StatusCakeHelperTest
         $Paused,
         [ValidateRange(5,100)] 
         $Timeout,
-        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                  
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                  
         $PingURL,
         [hashtable]$CustomHeader,
         [ValidateRange(0,10)]      
@@ -89,7 +89,7 @@ function New-StatusCakeHelperTest
         [string]$BasicPass,
         [ValidateRange(0,1)]   
         $Public,
-        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]          
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]          
         $LogoImage,
         [ValidateRange(0,1)]     
         $UseJar,
