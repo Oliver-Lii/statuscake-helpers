@@ -86,7 +86,7 @@ function New-StatusCakeHelperTest
         [ValidatePattern('^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]             
         [string]$DNSIP,
         [string]$BasicUser,
-        [string]$BasicPass,
+        [securestring]$BasicPass,
         [ValidateRange(0,1)]   
         $Public,
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]          
@@ -182,6 +182,12 @@ function New-StatusCakeHelperTest
     }
 
     $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
+
+    if($statusCakeAPIParams.BasicPass)
+    {
+        $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $statusCakeAPIParams.BasicUser, $statusCakeAPIParams.BasicPass      
+        $statusCakeAPIParams.BasicPass = $Credentials.GetNetworkCredential().Password
+    }
 
     $putRequestParams = @{
         uri = $baseTestURL
