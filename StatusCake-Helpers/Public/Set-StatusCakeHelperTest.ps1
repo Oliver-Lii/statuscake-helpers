@@ -16,7 +16,7 @@
     CheckRate - The interval in seconds between checks
     TestType - The type of test to create
     Port - The port to use on a TCP test
-    NodeLocations - Test locations to use separated by commas. Test location GUIDs are required
+    NodeLocations - Test locations to use separated by commas. Test location servercodes are required
     Paused - The state of the test should be after it is created. 0 for unpaused, 1 for paused
     Timeout - Time in seconds before a test times out
     PingURL - A URL to ping if a site goes down
@@ -120,7 +120,7 @@ function Set-StatusCakeHelperTest
         Return $result
     }
 
-    $body = @{}
+    $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
     $ParamsToIgnore = @("baseTestURL","Username","ApiKey")
     foreach ($key in $ParameterList.keys)
@@ -131,44 +131,12 @@ function Set-StatusCakeHelperTest
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {   #Validate Range accepts $true or $false values as 0 or 1 so explictly convert to int for StatusCake API
-            If($var.value -eq $true){$var.value=1}
-            elseif($var.value -eq $false){$var.value=0}        
-            switch($var.name)
-            {
-                "BasicPass"{$value=$var.value -replace ".*","*"}
-                "CustomHeader"{ #Custom Header must be supplied as JSON
-                    $value = $var.value | ConvertTo-Json
-                    $body.Add($var.name,$value)                                                     
-                }  
-                "NodeLocations"{ #Node Location IDs need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $body.Add($var.name,$value)                                                                    
-                }                             
-                "StatusCodes"{ #Status Codes need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $body.Add($var.name,$value)   
-                }                 
-                "TestName"{  #API name for Tests is WebsiteName
-                    $value = $var.value                     
-                    $body.Add("WebsiteName",$value)                 
-                }
-                "TestTags"{  #Test Tags need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $body.Add($var.name,$value)   
-                }                
-                "TestURL"{  #API name for Tests is WebsiteURL
-                    $value = $var.value                    
-                    $body.Add("WebsiteURL",$value)              
-                }
-                default {
-                    $value = $var.value                    
-                    $body.Add($var.name,$value)                      
-                }
-            }
-            write-verbose "[$($var.name)] will be added to StatusCake Test with value [$value]"          
+        {   #Validate Range accepts $true or $false values as 0 or 1 so explictly convert to int for StatusCake API        
+            $psParams.Add($var.name,$var.value)                  
         }
     }
+
+    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
 
     $putRequestParams = @{
         uri = $baseTestURL
@@ -176,7 +144,7 @@ function Set-StatusCakeHelperTest
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $body 
+        body = $statusCakeAPIParams 
     }
 
     if( $pscmdlet.ShouldProcess("TestID - $($testCheck.TestID), TestURL - $($testCheck.WebsiteName)", "Update StatusCake Test") )
