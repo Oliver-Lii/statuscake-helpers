@@ -36,7 +36,7 @@ function ConvertTo-StatusCakeHelperAPIParams
             {
                 "BasicPass"{
                     $outputHashTable.Add($var.name,$var.value)
-                    $value = $var.value 
+                    $value = $var.value -replace '.?','*'
                 }
                 "CustomHeader"{ #Custom Header must be supplied as JSON                
                     $value = $var.value  | ConvertTo-Json
