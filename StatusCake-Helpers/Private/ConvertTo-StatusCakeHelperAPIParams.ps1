@@ -46,7 +46,7 @@ function ConvertTo-StatusCakeHelperAPIParams
                     $value = $var.value -join ","
                     $outputHashTable.Add($var.name,$value)                                                   
                 } 
-                "Mobile"{ #Mopbile numbers need to be supplied as a comma separated list
+                "Mobile"{ #Mobile numbers need to be supplied as a comma separated list
                     $value = $var.value -join ","
                     $outputHashTable.Add($var.name,$value)                                        
                 }                                  

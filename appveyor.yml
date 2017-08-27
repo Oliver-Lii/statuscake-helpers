@@ -1,5 +1,5 @@
 # See http://www.appveyor.com/docs/appveyor-yml for many more options
-version: 1.1.{build}
+version: 2.0.{build}
 
 
 #Publish to PowerShell Gallery with the NuGetApiKey
@@ -20,6 +20,11 @@ skip_commits:
 
 build: false
 
+#Build only on the master branch
+branches:
+  only:
+    - master
+    
 #Kick off the CI/CD pipeline
 test_script:
   - ps: . .\build.ps1
