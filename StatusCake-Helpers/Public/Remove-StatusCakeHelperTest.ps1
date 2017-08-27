@@ -68,7 +68,7 @@ function Remove-StatusCakeHelperTest
         if($response.Success -ne "True")
         {
             Write-Verbose $response
-            Write-Error "$($response.Message)"
+            Write-Error "$($response.Message) [$($response.Issues)]"
         }
         if(!$PassThru)
         {

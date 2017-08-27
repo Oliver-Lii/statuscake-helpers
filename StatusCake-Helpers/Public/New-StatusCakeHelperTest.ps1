@@ -118,52 +118,52 @@ function New-StatusCakeHelperTest
         $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
         if($testCheck)
         {
-            $result = [PSCustomObject]@{"Success" = "False";"Message" = "Test with specified name already exists";"Data" = $testCheck;"InsertID" = -1}
-            Return $result
+            Write-Error "Test with specified name already exists [$testCheck]"
+            Return $null 
         }
     }
 
-    $validateTestURL = $false
+    $convertTestURL = $false
     switch($TestType)
     {
         "DNS"{
             If(!$DNSIP)
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No DNSIP supplied for DNS check";"Data" = $testName;"InsertID" = -1}
-                Return $result                
+                Write-Error "No DNSIP supplied for DNS check [$testName]"
+                Return $null               
             }
-            else
-            {
-                $validateTestURL = $true         
-            }
+            $convertTestURL = $true          
         }        
-        "HTTP"{}
-        "PING"{$validateTestURL = $true}
+        "PING"{$convertTestURL = $true}
         "TCP"{
             If(!$Port)
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Port supplied for TCP check";"Data" = $testName;"InsertID" = -1}
-                Return $result                
+                Write-Error "No Port supplied for TCP check [$testName]"
+                Return $null                
             }
-            else
-            {
-                $validateTestURL = $true
-            }            
+            $convertTestURL = $true           
         }        
-        Default{
-            $validateTestURL = $true
-        }
+        Default{}
     }
 
-    #Other test types require only the domain name so remove protocol if it is part of the TestURL
-    if($validateTestURL)
+    #Certain test types require only the domain name so remove protocol if it is part of the TestURL
+    if($convertTestURL -and $TestURL)
     {
-        if($TestURL -match '^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$')
+        $TestURL = $TestURL | ConvertTo-StatusCakeHelperDomainName
+    }
+    
+    if($NodeLocations)
+    {
+        foreach($node in $NodeLocations)
         {
-            $TestURL -match '(?<DomainName>([a-zA-Z0-9\-]{2,}\.[a-zA-Z\-]{2,})(\.[a-zA-Z\-]{2,})?(\.[a-zA-Z\-]{2,})?)' | Out-Null                
-            $TestURL = $matches.DomainName
+            Write-Verbose "Validating node location [$node]"
+            if(!$($node | Test-StatusCakeHelperNodeLocation))
+            {
+                Write-Error "Node Location Server code invalid [$node]"
+                Return $null           
+            }
         }
-    }      
+    }    
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
@@ -202,6 +202,11 @@ function New-StatusCakeHelperTest
     {
         $jsonResponse = Invoke-WebRequest @putRequestParams
         $response = $jsonResponse | ConvertFrom-Json
+        if($response.Success -ne "True")
+        {
+            Write-Error "$($response.Message) [$($response.Issues)]"
+            Return $null
+        }         
         Return $response
     }
 

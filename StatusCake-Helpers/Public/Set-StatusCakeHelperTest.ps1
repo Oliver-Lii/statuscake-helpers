@@ -49,80 +49,299 @@ function Set-StatusCakeHelperTest
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]        
         $baseTestURL = "https://app.statuscake.com/API/Tests/Update",
+
+        [Parameter(ParameterSetName='SetByTestName',Mandatory=$true)]
+        [Parameter(ParameterSetName='SetByTestID',Mandatory=$true)]
+        [Parameter(ParameterSetName='SetNewTest',Mandatory=$true)] 
         [Parameter(Mandatory=$true)]        
         $Username,
+
+        [Parameter(ParameterSetName='SetByTestName',Mandatory=$true)]
+        [Parameter(ParameterSetName='SetByTestID',Mandatory=$true)]
+        [Parameter(ParameterSetName='SetNewTest',Mandatory=$true)] 
         [Parameter(Mandatory=$true)]        
         $ApiKey,
-        [Parameter(Mandatory=$true)]        
-        [int]$TestID,
 
-        #Optional parameters
+        [Parameter(ParameterSetName='SetByTestID',Mandatory=$true)]
+        [ValidatePattern('^\d{1,}$')]           
+        $TestID,
+
+        [Parameter(ParameterSetName='SetByTestName',Mandatory=$true)]
+        [switch]$SetByTestName,
+
+        [Parameter(ParameterSetName='SetByTestName',Mandatory=$true)]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest',Mandatory=$true)]             
         [ValidateNotNullOrEmpty()] 
         $TestName,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest',Mandatory=$true)]
         [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]       
         $TestURL,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest',Mandatory=$true)]
         [ValidateRange(0,24000)]        
         $CheckRate,     
-        [ValidateSet("HTTP","TCP","PING")] 
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest',Mandatory=$true)]
+        [ValidateSet("HTTP","TCP","PING","DNS")] 
         [String]$TestType,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidatePattern('^\d{1,}$')]          
         $ContactGroup,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [object]$TestTags,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidatePattern('^\d{2,}$')]             
         $Port,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [object]$NodeLocations,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]        
         [ValidateRange(0,1)]   
         $Paused,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(5,100)] 
         $Timeout,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]           
         $PingURL,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [hashtable]$CustomHeader,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,10)]        
         $Confirmation,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidatePattern('^([a-zA-Z0-9]{2,}\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]      
         [string]$DNSServer,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidatePattern('^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]          
         [string]$DNSIP,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [string]$BasicUser,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [securestring]$BasicPass,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]     
         $Public,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]      
         $LogoImage,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]         
         $UseJar,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]        
         $Branding,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [string]$WebsiteHost,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]      
         $Virus,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [string]$FindString,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]         
         $DoNotFind,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]         
         $RealBrowser,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,60)]           
         $TriggerRate,     
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [object]$StatusCodes,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]         
         $EnableSSLWarning,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]         
         $FollowRedirect
     )
     $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
 
-    $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestID $TestID
-    if(!$testCheck)
+    if($SetByTestName -and $TestName)
+    {   #If setting test by name check if a test or tests with that name exists
+        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests"))
+        {      
+            $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
+            if(!$testCheck)
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Test with Specified Name Exists";"Data" = $testCheck;"InsertID" = -1}
+                Write-Error "$($result.Message) [$($result.Data)]"
+                Return $null 
+            }
+            elseif($testCheck.GetType().Name -eq 'Object[]')
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "Multiple Tests with the same name";"Data" = $testCheck;"InsertID" = -1}
+                Write-Error "$($result.Message) [$($result.Data)]"
+                Return $null          
+            }            
+            $TestID = $testCheck.TestID
+        }
+    }
+    elseif($TestID)
+    {   #If setting by TestID verify that TestID already exists
+        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests"))
+        {      
+            $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestID $TestID
+            if(!$testCheck)
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Test with Specified ID Exists";"Data" = $testCheck;"InsertID" = -1}
+                Write-Error "$($result.Message) [$($result.Data)]"
+                Return $null 
+            }            
+            $TestID = $testCheck.TestID
+        }
+    }
+    else 
+    {   #Setup a test with the supplied detiails
+        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
+        {
+            $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
+            if($testCheck)
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "Test with specified name already exists";"Data" = $testCheck;"InsertID" = -1}
+                Write-Error "$($result.Message) [$($result.Data)]"
+                Return $null 
+            }
+        }        
+    }
+
+    $convertTestURL = $false
+    switch($TestType)
     {
-        $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Test with Specified ID Exists";"Data" = $testCheck;"InsertID" = -1}
-        Return $result
+        "DNS"{
+            If(!$DNSIP)
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No DNSIP supplied for DNS check";"Data" = $testName;"InsertID" = -1}
+                Write-Error "$($result.Message) [$($result.Data)]"
+                Return $null                
+            }
+            $convertTestURL = $true          
+        }        
+        "PING"{$convertTestURL = $true}
+        "TCP"{
+            If(!$Port)
+            {
+                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Port supplied for TCP check";"Data" = $testName;"InsertID" = -1}
+                Write-Error "$($result.Message) [$($result.Data)]"
+                Return $null                 
+            }
+            $convertTestURL = $true           
+        }        
+        Default{}
+    }
+
+    #Certain test types require only the domain name so remove protocol if it is part of the TestURL
+    if($convertTestURL -and $TestURL)
+    {
+        $TestURL = $TestURL | ConvertTo-StatusCakeHelperDomainName
+    }
+    
+    if($NodeLocations)
+    {
+        foreach($node in $NodeLocations)
+        {
+            Write-Verbose "Validating node location [$node]"
+            if(!$($node | Test-StatusCakeHelperNodeLocation))
+            {
+                Write-Error "Node Location Server code invalid [$node]"
+                Return $null           
+            }
+        }
     }
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseTestURL","Username","ApiKey")
+    $ParamsToIgnore = @("baseTestURL","Username","ApiKey","SetByTestName")
     foreach ($key in $ParameterList.keys)
     {
         $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
@@ -131,10 +350,10 @@ function Set-StatusCakeHelperTest
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {   #Validate Range accepts $true or $false values as 0 or 1 so explictly convert to int for StatusCake API        
+        {        
             $psParams.Add($var.name,$var.value)                  
         }
-    }
+    }     
 
     $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
 
@@ -153,13 +372,14 @@ function Set-StatusCakeHelperTest
         body = $statusCakeAPIParams 
     }
 
-    if( $pscmdlet.ShouldProcess("TestID - $($testCheck.TestID), TestURL - $($testCheck.WebsiteName)", "Update StatusCake Test") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake Test") )
     {
         $jsonResponse = Invoke-WebRequest @putRequestParams
         $response = $jsonResponse | ConvertFrom-Json
         if($response.Success -ne "True")
         {
-            Write-Error "$($response.Message)"
+            Write-Error "$($response.Message) [$($response.Issues)]"
+            Return $null
         }        
         Return $response
     }
