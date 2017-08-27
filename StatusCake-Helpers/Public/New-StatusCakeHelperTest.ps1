@@ -129,7 +129,7 @@ function New-StatusCakeHelperTest
         "DNS"{
             If(!$DNSIP)
             {
-                Write-Error "No DNSIP supplied for DNS check [$testName]"
+                Write-Error "No DNSIP supplied for DNS test type"
                 Return $null               
             }
             $convertTestURL = $true          
@@ -138,7 +138,7 @@ function New-StatusCakeHelperTest
         "TCP"{
             If(!$Port)
             {
-                Write-Error "No Port supplied for TCP check [$testName]"
+                Write-Error "No Port supplied for TCP test type"
                 Return $null                
             }
             $convertTestURL = $true           

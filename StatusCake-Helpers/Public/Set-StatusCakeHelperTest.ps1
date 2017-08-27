@@ -254,14 +254,13 @@ function Set-StatusCakeHelperTest
             $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
             if(!$testCheck)
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Test with Specified Name Exists";"Data" = $testCheck;"InsertID" = -1}
-                Write-Error "$($result.Message) [$($result.Data)]"
+                Write-Error "No Test with Specified Name Exists [$TestName]"
                 Return $null 
             }
             elseif($testCheck.GetType().Name -eq 'Object[]')
             {
                 $result = [PSCustomObject]@{"Success" = "False";"Message" = "Multiple Tests with the same name";"Data" = $testCheck;"InsertID" = -1}
-                Write-Error "$($result.Message) [$($result.Data)]"
+                Write-Error "Multiple Tests with the same name [$TestName]"
                 Return $null          
             }            
             $TestID = $testCheck.TestID
@@ -274,8 +273,7 @@ function Set-StatusCakeHelperTest
             $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestID $TestID
             if(!$testCheck)
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Test with Specified ID Exists";"Data" = $testCheck;"InsertID" = -1}
-                Write-Error "$($result.Message) [$($result.Data)]"
+                Write-Error "No Test with Specified ID Exists [$TestID]"
                 Return $null 
             }            
             $TestID = $testCheck.TestID
@@ -288,8 +286,7 @@ function Set-StatusCakeHelperTest
             $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
             if($testCheck)
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "Test with specified name already exists";"Data" = $testCheck;"InsertID" = -1}
-                Write-Error "$($result.Message) [$($result.Data)]"
+                Write-Error "Test with specified name already exists [$TestName]"
                 Return $null 
             }
         }        
@@ -301,8 +298,7 @@ function Set-StatusCakeHelperTest
         "DNS"{
             If(!$DNSIP)
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No DNSIP supplied for DNS check";"Data" = $testName;"InsertID" = -1}
-                Write-Error "$($result.Message) [$($result.Data)]"
+                Write-Error "No DNSIP supplied for DNS test type"
                 Return $null                
             }
             $convertTestURL = $true          
@@ -311,8 +307,7 @@ function Set-StatusCakeHelperTest
         "TCP"{
             If(!$Port)
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "No Port supplied for TCP check";"Data" = $testName;"InsertID" = -1}
-                Write-Error "$($result.Message) [$($result.Data)]"
+                Write-Error "No Port supplied for TCP test type"
                 Return $null                 
             }
             $convertTestURL = $true           
