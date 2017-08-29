@@ -118,7 +118,7 @@ function New-StatusCakeHelperTest
         $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
         if($testCheck)
         {
-            Write-Error "Test with specified name already exists [$testCheck]"
+            Write-Error "Test with specified name already exists [$TestName] [$($testCheck.TestID)]"
             Return $null 
         }
     }

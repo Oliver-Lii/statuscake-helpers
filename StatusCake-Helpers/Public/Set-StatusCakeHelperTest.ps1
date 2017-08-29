@@ -259,8 +259,7 @@ function Set-StatusCakeHelperTest
             }
             elseif($testCheck.GetType().Name -eq 'Object[]')
             {
-                $result = [PSCustomObject]@{"Success" = "False";"Message" = "Multiple Tests with the same name";"Data" = $testCheck;"InsertID" = -1}
-                Write-Error "Multiple Tests with the same name [$TestName]"
+                Write-Error "Multiple Tests with the same name [$TestName] [$($testCheck.TestID)]"
                 Return $null          
             }            
             $TestID = $testCheck.TestID
@@ -286,7 +285,7 @@ function Set-StatusCakeHelperTest
             $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
             if($testCheck)
             {
-                Write-Error "Test with specified name already exists [$TestName]"
+                Write-Error "Test with specified name already exists [$TestName] [$($testCheck.TestID)]"
                 Return $null 
             }
         }        
