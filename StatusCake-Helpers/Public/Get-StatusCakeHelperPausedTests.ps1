@@ -14,7 +14,7 @@
     IncludeNotTested - If set tests that have never been tested will be included
     ExcludeTested - If set tests that have been tested will be excluded
 .OUTPUTS    
-    Returns all the StatusCake Tests as an object
+    Returns an object with the StatusCake Detailed Test data
 .FUNCTIONALITY
     Retrieves all the tests from StatusCake that are paused and have been tested longer than
     the supplied parameters. Defaults to returning tests that have been paused more than a day.
@@ -90,18 +90,18 @@ function Get-StatusCakeHelperPausedTests
         If($testLastTestTimeSpan.TotalDays -ge $Days -and $hours -eq 0)
         {
             Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] paused for [$([math]::Round($testLastTestTimeSpan.totaldays,2))] days"
-            $matchingTests += $sctest
+            $matchingTests += $detailedTestData
             continue
         }
         elseif($testLastTestTimeSpan.Totalhours -ge $Hours -and $minutes -eq 0)
         {
             Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] paused for [$([int]$($testLastTestTimeSpan.totalhours))] hours"                
-            $matchingTests += $sctest                
+            $matchingTests += $detailedTestData                
         }
         elseif($testLastTestTimeSpan.Totalminutes -ge $Minutes)
         {
             Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] paused for [$([int]$($testLastTestTimeSpan.totalminutes))] minutes"                 
-            $matchingTests += $sctest                
+            $matchingTests += $detailedTestData                
         }  
     }
     Return $matchingTests
