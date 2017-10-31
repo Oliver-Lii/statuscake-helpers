@@ -34,6 +34,14 @@ function ConvertTo-StatusCakeHelperAPIParams
             }
             switch($var.name)
             {
+                "Alert_At"{ #Alert_At need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $outputHashTable.Add($var.name,$value)                                                   
+                }
+                "Contact_Groups"{ #Contact Groups need to be supplied as a comma separated list
+                    $value = $var.value -join ","
+                    $outputHashTable.Add($var.name,$value)
+                }                                
                 "BasicPass"{
                     $outputHashTable.Add($var.name,$var.value)
                     $value = $var.value -replace '.?','*'
