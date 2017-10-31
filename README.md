@@ -74,6 +74,146 @@ New-StatusCakeHelperTest -Username "Username" -ApiKey "APIKEY" -TestName "Exampl
 ```
 ![new-statuscakehelpertest](https://user-images.githubusercontent.com/30263630/29495757-4adfce26-85bd-11e7-8a68-1f8253a91068.PNG)
 
+## Add-StatusCakeHelperTestNodeLocations
+This cmdlet add a Test Node location to a Status Cake Test. The cmdlet checks to see if a test node location is valid by verifying it against the list of server codes retrieved from the StatusCake API before adding it to the test.
+
+```
+Add-StatusCakeHelperTestNodeLocations -Username "Username" -ApiKey "APIKEY" -TestID "123456" -NodeLocations @("EU1","EU2")
+```
+
+## Add-StatusCakeHelperTestStatusCodes
+This cmdlet add a HTTP Status code to a Status Cake Test. The cmdlet checks to see if a HTTP Status Code is valid before adding it to the test.
+
+```
+Add-StatusCakeHelperTestStatusCodes -Username "Username" -ApiKey "APIKEY" -TestID "123456" -StatusCodes @("206","207")
+```
+
+## Add-StatusCakeHelperTestTags
+This cmdlet adds an additional tag to a Status Cake Test.
+
+```
+Add-StatusCakeHelperTestTags -Username "Username" -ApiKey "APIKEY" -TestID "123456" -TestTags @("Tag1","Tag2")
+```
+
+## Remove-StatusCakeHelperTestNodeLocations
+This cmdlet removes a Test Node location from a Status Cake Test. The cmdlet checks to see if a test node location is valid by verifying it against the list of server codes retrieved from the StatusCake API before removing it from the test.
+
+```
+Add-StatusCakeHelperTestNodeLocations -Username "Username" -ApiKey "APIKEY" -TestID "123456" -NodeLocations @("EU1","EU2")
+```
+
+## Remove-StatusCakeHelperTestStatusCodes
+This cmdlet removes a HTTP Status code from a Status Cake Test. The cmdlet checks to see if a HTTP Status Code is valid before removing it from the test.
+
+```
+Remove-StatusCakeHelperTestStatusCodes -Username "Username" -ApiKey "APIKEY" -TestID "123456" -StatusCodes @("206","207")
+```
+
+## Remove-StatusCakeHelperTestTags
+This cmdlet removes a tag from a Status Cake Test.
+
+```
+Remove-StatusCakeHelperTestTags -Username "Username" -ApiKey "APIKEY" -TestID "123456" -TestTags @("Tag1","Tag2")
+```
+
+## Get-StatusCakeHelperAllContactGroups
+This cmdlet retrieves all contact groups.
+
+```
+Get-StatusCakeHelperAllContactGroups -Username "Username" -ApiKey "APIKEY"
+```
+
+## Get-StatusCakeHelperContactGroup
+This cmdlet retrieves a specific contact group.
+
+```
+Get-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -ContactID "123456"
+```
+
+## New-StatusCakeHelperContactGroup
+This cmdlet creates a new contact group. If a mobile number is supplied this is validated to confirm that it meets E.164 number formatting.
+
+```
+New-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -GroupName "Example" -email @(test@example.com) -mobile "+14155552671"
+```
+
+## Remove-StatusCakeHelperContactGroup
+This cmdlet removes a contact group. If the contact group is in use by any tests then the -force switch must be supplied to remove the contact group.
+
+```
+Remove-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -ContactID "123456"
+```
+
+## Get-StatusCakeHelperPausedTests
+This cmdlet retrieves all tests paused longer than the specified time. If no additional parameters specified it returns all tests paused longer than 1 day. Granularity of time can specified down to the minute.
+
+```
+Get-StatusCakeHelperPausedTests -Username "Username" -ApiKey "APIKEY"
+```
+
+## Get-StatusCakeHelperPeriodOfData
+This cmdlet retrieves a list of periods of data for a specified test. A period of data is two time stamps in which status has remained the same - such as a period of downtime or uptime.
+
+```
+Get-StatusCakeHelperPeriodOfData -Username "Username" -ApiKey "APIKEY" -TestID "123456"
+```
+
+## Get-StatusCakeHelperSentAlerts
+This cmdlet retrieves a list of alerts that have been sent. A test ID can be supplied to limit alerts from a single test. Use the "Since" parameter to include results only since that time.
+
+```
+Get-StatusCakeHelperSentAlerts -Username "Username" -ApiKey "APIKEY" -TestID 123456 -since "2017-08-19 13:29:49"
+```
+
+# SSL Tests
+
+## Get-StatusCakeHelperAllSSLTests
+This cmdlet retrieves all SSL Tests
+
+```
+Get-StatusCakeHelperAllSSLTests -Username "Username" -ApiKey "APIKEY"
+```
+
+## Get-StatusCakeHelperSSLTest
+This cmdlet retrieves a specific StatusCake SSL Test by id or domain
+
+```
+Get-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -id 89571
+```
+![new-statuscakehelpertest](https://user-images.githubusercontent.com/30263630/32247953-fb53194c-be7b-11e7-99df-490f892de6c1.png)
+
+## New-StatusCakeHelperSSLTest
+This cmdlet creates a new SSL Test. The cmdlet tests to see if the domain to be monitored already being checked before creating the SSL Test. A SSL test is created by default to have all reminders enabled at 60, 30 and 7 days intervals. Mandatory parameters are illustrated in the example below:
+
+```
+New-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -Domain "https://www.example.com" -checkrate 3600
+```
+
+## Set-StatusCakeHelperSSLTest
+This cmdlet sets the configuration of a specific SSL Test. If a id or a domain with setByDomain flag set is not supplied then a new test will be created
+
+```
+Set-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -id 89571 -checkrate 3600 -Alert_At @("14","90","120") 
+```
+A SSL Test can be updated by domain if there are no duplicates as follows:
+```
+Set-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -Domain "https://www.example.com" -checkrate 3600 -Alert_At @("14","90","120") -SetByDomain
+```
+A new SSL Test can be created via the cmdlet with the following parameters:
+```
+Set-StatusCakeHelperSSLTest @StatusCakeAuth -domain https://www.google.com -CheckRate "3600" -contact_groups "0" -alert_expiry 0 -alert_reminder 0 -alert_broken 0 -Alert_At @("14","90","120")
+```
+
+## Remove-StatusCakeHelperSSLTest
+This cmdlet removes a SSL Test via either id or domain of the SSL Test
+
+```
+Remove-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -id 89571
+```
+To remove by domain specify the domain parameter
+```
+Remove-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -Domain "https://www.example.com"
+```
 
 # Authors
 - Oliver Li
