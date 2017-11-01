@@ -10,37 +10,41 @@
     ApiKey - APIKey to access the StatusCake API
     TestID - The Test ID to modify the details for
 
-    <optional parameters>
+    <optional parameters when updating a test, required when creating a new test>
     TestName - Name of the Test to be displayed in StatusCake
     TestURL - Test location, either an IP (for TCP and Ping) or a fully qualified URL for other TestTypes
     CheckRate - The interval in seconds between checks
     TestType - The type of test to create
-    Port - The port to use on a TCP test
+
+    <optional parameters>
+    BasicPass - If BasicUser is set then this should be the password for the BasicUser for a HTTP check    
+    BasicUser - A Basic Auth User account to use to login for a HTTP check
+    Branding - Set to 0 to use branding (default) or 1 to disable public reporting branding) 
+    Confirmation - Number of confirmation servers to use must be between 0 and 10
+    ContactGroup - A contact group ID assoicated with account to use.
+    CustomHeader - Custom HTTP header for the test, must be supplied as as hashtable 
+    DNSIP - DNS Tests only. IP to compare against WebsiteURL value.
+    DNSServer - DNS Tests only. Hostname or IP of DNS server to use.   
+    DoNotFind - If the above string should be found to trigger a alert. 1 = will trigger if FindString found     
+    EnableSSLWarning - HTTP Tests only. If enabled, tests will send warnings if the SSL certificate is about to expire.
+    FinalEndpoint - Use to specify the expected Final URL in the testing process
+    FindString - A string that should either be found or not found.    
+    FollowRedirect - HTTP Tests only. If enabled, our tests will follow redirects and logo the status of the final page.
+    LogoImage - A URL to a image to use for public reporting
     NodeLocations - Test locations to use separated by commas. Test location servercodes are required
     Paused - The state of the test should be after it is created. 0 for unpaused, 1 for paused
-    Timeout - Time in seconds before a test times out
-    PingURL - A URL to ping if a site goes down
-    CustomHeader - Custom HTTP header for the test, must be supplied as JSON
-    Confirmation - Number of confirmation servers to use must be between 0 and 10
-    DNSServer - DNS Tests only. Hostname or IP of DNS server to use.
-    DNSIP - DNS Tests only. IP to compare against WebsiteURL value.
-    BasicUser - A Basic Auth User account to use to login for a HTTP check
-    BasicPass - If BasicUser is set then this should be the password for the BasicUser for a HTTP check
+    PingURL - A URL to ping if a site goes down    
+    Port - The port to use on a TCP test
+    PostRaw - Use to populate the RAW POST data field on the test
     Public - Set 1 to enable public reporting, 0 to disable
-    LogoImage - A URL to a image to use for public reporting
-    UseJar - Set to 1 to enable the Cookie Jar. Required for some redirects.
-    Branding - Set to 0 to use branding (default) or 1 to disable public reporting branding)
-    WebsiteHost - Used internally by StatusCake
-    Virus - Enable virus checking or not. 1 to enable
-    FindString - A string that should either be found or not found.
-    DoNotFind - If the above string should be found to trigger a alert. 1 = will trigger if FindString found
-    ContactGroup - A contact group ID assoicated with account to use.
     RealBrowser - Use 1 to TURN OFF real browser testing
+    StatusCodes - Comma Separated List of StatusCodes to Trigger Error on (on Update will replace, so send full list each time)
+    TestTags - Tags should be seperated by a comma - no spacing between tags (this,is,a set,of,tags)    
+    Timeout - Time in seconds before a test times out
     TriggerRate - How many minutes to wait before sending an alert
-    TestTags - Tags should be seperated by a comma - no spacing between tags (this,is,a set,of,tags)
-    StatusCodes - Comma Seperated List of StatusCodes to Trigger Error on (on Update will replace, so send full list each time)
-    EnableSSLWarning - HTTP Tests only. If enabled, tests will send warnings if the SSL certificate is about to expire. Paid users only
-    FollowRedirect - HTTP Tests only. If enabled, our tests will follow redirects and logo the status of the final page.
+    UseJar - Set to 1 to enable the Cookie Jar. Required for some redirects.
+    Virus - Enable virus checking or not. 0 to disable and 1 to enable
+    WebsiteHost - Used internally by StatusCake. Company which hosts the site being tested.
 .FUNCTIONALITY
 
    
@@ -100,65 +104,7 @@ function Set-StatusCakeHelperTest
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
-        [ValidatePattern('^\d{1,}$')]          
-        $ContactGroup,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [object]$TestTags,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidatePattern('^\d{2,}$')]             
-        $Port,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [object]$NodeLocations,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]        
-        [ValidateRange(0,1)]   
-        $Paused,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidateRange(5,100)] 
-        $Timeout,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]           
-        $PingURL,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [hashtable]$CustomHeader,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidateRange(0,10)]        
-        $Confirmation,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidatePattern('^([a-zA-Z0-9]{2,}\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]      
-        [string]$DNSServer,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidatePattern('^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]          
-        [string]$DNSIP,
+        [securestring]$BasicPass,
 
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
@@ -168,48 +114,38 @@ function Set-StatusCakeHelperTest
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
-        [securestring]$BasicPass,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidateRange(0,1)]     
-        $Public,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]      
-        $LogoImage,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidateRange(0,1)]         
-        $UseJar,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]        
         $Branding,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateRange(0,10)]        
+        $Confirmation,        
 
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
-        [string]$WebsiteHost,
+        [ValidatePattern('^\d{1,}$')]          
+        $ContactGroup,
 
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
-        [ValidateRange(0,1)]      
-        $Virus,
+        [hashtable]$CustomHeader,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidatePattern('^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]          
+        [string]$DNSIP,
 
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
-        [string]$FindString,
-
+        [ValidatePattern('^([a-zA-Z0-9]{2,}\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]      
+        [string]$DNSServer, 
+        
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
@@ -220,30 +156,109 @@ function Set-StatusCakeHelperTest
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]         
-        $RealBrowser,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidateRange(0,60)]           
-        $TriggerRate,     
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [object]$StatusCodes,
-
-        [Parameter(ParameterSetName='SetByTestName')]
-        [Parameter(ParameterSetName='SetByTestID')]
-        [Parameter(ParameterSetName='SetNewTest')]
-        [ValidateRange(0,1)]         
         $EnableSSLWarning,
 
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]      
+        $FinalEndpoint,        
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [string]$FindString,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
         [ValidateRange(0,1)]         
-        $FollowRedirect
+        $FollowRedirect,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]      
+        $LogoImage,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [object]$NodeLocations,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]        
+        [ValidateRange(0,1)]   
+        $Paused,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]           
+        $PingURL,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidatePattern('^\d{2,}$')]             
+        $Port,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]        
+        [string]$PostRaw,        
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateRange(0,1)]     
+        $Public,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateRange(0,1)]         
+        $RealBrowser,
+        
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [object]$StatusCodes,        
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [object]$TestTags,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateRange(5,100)] 
+        $Timeout,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateRange(0,60)]           
+        $TriggerRate,  
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateRange(0,1)]         
+        $UseJar,
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateRange(0,1)]      
+        $Virus,        
+
+        [Parameter(ParameterSetName='SetByTestName')]
+        [Parameter(ParameterSetName='SetByTestID')]
+        [Parameter(ParameterSetName='SetNewTest')]
+        [string]$WebsiteHost
     )
     $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
 
