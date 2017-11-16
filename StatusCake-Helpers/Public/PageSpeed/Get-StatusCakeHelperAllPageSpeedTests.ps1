@@ -34,6 +34,6 @@ function Get-StatusCakeHelperAllPageSpeedTests
 
     $jsonResponse = Invoke-WebRequest @requestParams
     $response = $jsonResponse | ConvertFrom-Json
-    Return $response
+    Return $response.data
 }
 

@@ -1,9 +1,9 @@
 
 <#
 .Synopsis
-   Gets a StatusCake PageSpeed Test
+   Gets the history of a StatusCake PageSpeed Test
 .EXAMPLE
-   Get-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -id 123456
+   Get-StatusCakeHelperPageSpeedTestHistory -Username "Username" -ApiKey "APIKEY" -id 123456
 .INPUTS
     basePageSpeedTestURL - Base URL endpoint of the statuscake auth API
     Username - Username associated with the API key
@@ -46,7 +46,7 @@ function Get-StatusCakeHelperPageSpeedTestHistory
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
         {
             $matchingTest = Get-StatusCakeHelperAllPageSpeedTests -Username $username -apikey $ApiKey
-            $matchingTest = $matchingTest | Where-Object {$_.data.title -eq $name}            
+            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}            
             if(!$matchingTest)
             {
                 Write-Error "No PageSpeed Check with specified name exists [$name]"
@@ -55,7 +55,7 @@ function Get-StatusCakeHelperPageSpeedTestHistory
 
             #If multiple matches for the same name return the data for all matching tests
             $pageSpeedTestData=@()
-            foreach($match in $matchingTest.data)
+            foreach($match in $matchingTest)
             {
                 $pageSpeedTestData+=Get-StatusCakeHelperPageSpeedTestHistory -Username $username -apikey $ApiKey -id $match.id
             }
@@ -101,7 +101,7 @@ function Get-StatusCakeHelperPageSpeedTestHistory
             Write-Error "$($response.Message) [$($response.Issues)]"
         }         
 
-        Return $response     
+        Return $response.data
     }
 
 }

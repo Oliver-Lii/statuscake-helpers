@@ -3,7 +3,7 @@
 .Synopsis
    Create a StatusCake PageSpeed Test
 .EXAMPLE
-   New-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -title "https://www.example.com" -checkrate 3600
+   New-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -website_url "https://www.example.com" -checkrate 3600 -location_iso UK
 .INPUTS
     basePageSpeedTestURL - Base URL endpoint of the statuscake ContactGroup API
     Username - Username associated with the API key
@@ -11,7 +11,7 @@
     
     Name - Name for this test
     Website_Url - URL that should be checked
-    Location_iso - 	2-letter ISO code of the location
+    Location_iso - 	2-letter ISO code of the location. Valid values AU, CA, DE, IN, NL, SG, UK, US
     Private_Name - Must select PRIVATE in location_iso. Name of private server [NOT YET IMPLEMENTED]
     Checkrate - Checkrate in minutes
     Contact_Groups - IDs of selected Contact Groups
@@ -71,7 +71,7 @@ function New-StatusCakeHelperPageSpeedTest
         $PageSpeedTest = Get-StatusCakeHelperPageSpeedTest -Username $username -apikey $ApiKey -name $name
         if($PageSpeedTest)
         {
-            Write-Error "PageSpeed Check with specified title already exists [$title] [$($PageSpeedTest.id)]"
+            Write-Error "PageSpeed Check with specified name already exists [$name] [$($PageSpeedTest.id)]"
             Return $null 
         }
     }    
@@ -113,7 +113,7 @@ function New-StatusCakeHelperPageSpeedTest
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }         
-        Return $response
+        Return $response.data
     }
 
 }
