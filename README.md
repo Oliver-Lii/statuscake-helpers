@@ -79,12 +79,56 @@ This cmdlet retrieves all the page speed tests
 ```
 Get-StatusCakeHelperAllPageSpeedTests -Username "Username" -ApiKey "APIKEY"
 ```
+![image](https://user-images.githubusercontent.com/30263630/32909663-0aadd942-caff-11e7-9b72-3a24ae6e426a.png)
 
 ### Get-StatusCakeHelperPageSpeedTest
 This cmdlet retrieves a specific page speed test by name or id
 
 ```
 Get-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -id 123456
+```
+![image](https://user-images.githubusercontent.com/30263630/32909708-2290d6f4-caff-11e7-8470-42d591ed146e.png)
+
+
+### Get-StatusCakeHelperPageSpeedTestHistory
+This cmdlet retrieves the history of a page speed test by name or id
+
+```
+Get-StatusCakeHelperPageSpeedTestHistory -Username "Username" -ApiKey "APIKEY" -id 123456
+```
+![image](https://user-images.githubusercontent.com/30263630/32909743-3b697f6e-caff-11e7-868a-6ea7c48cfe76.png)
+
+### New-StatusCakeHelperPageSpeedTest
+This cmdlet creates a new page speed test. The following are the minimum required parameters to create a test.
+
+```
+New-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -Name "Example website" -website_url "https://www.example.com" -checkrate 30 -location_iso UK
+```
+
+### Remove-StatusCakeHelperPageSpeedTest
+This cmdlet retrieves the history of a page speed test by name or id
+
+```
+Remove-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -ID 123456
+```
+To remove by name specify the name parameter
+```
+Remove-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -Name "Example Website"
+```
+
+### Set-StatusCakeHelperPageSpeedTest
+This cmdlet sets the configuration of a specific PageSpeed Test. If a id or a name with setByName flag set is not supplied then a new test will be created
+
+```
+Set-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -ID 123456
+```
+A PageSpeed Test can be updated by name if there are no duplicates as follows:
+```
+Set-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -ID 123456 -SetByName -name "Example website" -website_url "https://www.example.com" -location_iso UK -checkrate 60 -Verbose 
+```
+A new PageSpeed Test can be created via the cmdlet with the following parameters:
+```
+Set-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -ID 123456 -Name "Example website" -website_url "https://www.example.com" -checkrate 30 -location_iso UK
 ```
 
 # Period Data

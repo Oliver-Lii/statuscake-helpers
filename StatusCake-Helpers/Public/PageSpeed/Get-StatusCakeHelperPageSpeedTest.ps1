@@ -41,7 +41,7 @@ function Get-StatusCakeHelperPageSpeedTest
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
         {
             $matchingTest = Get-StatusCakeHelperAllPageSpeedTests -Username $username -apikey $ApiKey
-            $matchingTest = $matchingTest | Where-Object {$_.data.title -eq $name}            
+            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}            
             if(!$matchingTest)
             {
                 Return $null 
@@ -49,7 +49,7 @@ function Get-StatusCakeHelperPageSpeedTest
             #Retrieving PageSpeed tests without an ID number returns data with different field names
             #Recursively call the function itself to ensure data is returned in the same format
             $pageSpeedTestData=@()
-            foreach($match in $matchingTest.data)
+            foreach($match in $matchingTest)
             {
                 $pageSpeedTestData+=Get-StatusCakeHelperPageSpeedTest -Username $username -apikey $ApiKey -id $match.id
             }
@@ -95,7 +95,7 @@ function Get-StatusCakeHelperPageSpeedTest
             Write-Error "$($response.Message) [$($response.Issues)]"
         }         
 
-        Return $response     
+        Return $response.data   
     }
 
 }

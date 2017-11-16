@@ -29,17 +29,17 @@ function Remove-StatusCakeHelperSSLTest
         [Parameter(ParameterSetName = "ID")]             
         [int]$id,
 
-        [Parameter(ParameterSetName = "Domain")]
+        [Parameter(ParameterSetName = "title")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                 
-        [string]$domain,        
+        [string]$title,        
 
         [switch]$PassThru        
     )
     $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
  
-    if($domain)
+    if($title)
     {
-        $sslTest = Get-StatusCakeHelperSSLTest -Username $username -apikey $ApiKey -domain $domain
+        $sslTest = Get-StatusCakeHelperSSLTest -Username $username -apikey $ApiKey -title $title
         if($sslTest)
         {
             if($sslTest.GetType().Name -eq 'Object[]')

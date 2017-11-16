@@ -55,9 +55,6 @@ function Remove-StatusCakeHelperPageSpeedTest
         }
     }
 
-
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
     $webRequestParams = @{
         uri = "$basePageSpeedTestURL$id"
         Headers = $authenticationHeader
