@@ -3,7 +3,7 @@
 .Synopsis
    Create a StatusCake test check
 .EXAMPLE
-   New-StatusCakeHelperTest -Username "Username" -ApiKey "APIKEY" -TestName "Example" -TestURL "http://www.example.com" 
+   New-StatusCakeHelperTest -Username "Username" -ApiKey "APIKEY" -TestName "Example" -TestURL "http://www.example.com" -TestType HTTP -CheckRate 300
 .INPUTS
     baseTestURL - Base URL endpoint of the statuscake test API
     Username - Username associated with the API key

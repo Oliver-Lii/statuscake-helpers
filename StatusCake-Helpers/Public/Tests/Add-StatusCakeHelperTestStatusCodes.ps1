@@ -1,7 +1,7 @@
 
 <#
 .Synopsis
-   Add additional HTTP StatusCodes to alert on to a StatusCake test
+   Add additional HTTP status codes to alert on to a StatusCake test
 .EXAMPLE
    Add-StatusCakeHelperTestStatusCodes -Username "Username" -ApiKey "APIKEY" -TestID "123456" -StatusCodes @("206","207")
 .INPUTS

@@ -3,7 +3,7 @@
 .Synopsis
    Remove tag(s) from a StatusCake test
 .EXAMPLE
-   Remove-StatusCakeHelperTestNodeLocation -Username "Username" -ApiKey "APIKEY" -TestID "123456" -TestTags @("Tag1","Tag2")
+   Remove-StatusCakeHelperTestTags -Username "Username" -ApiKey "APIKEY" -TestID "123456" -TestTags @("Tag1","Tag2")
 .INPUTS
     baseTestURL - Base URL endpoint of the statuscake test API
     Username - Username associated with the API key

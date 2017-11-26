@@ -1,23 +1,23 @@
 
 <#
 .Synopsis
-   Gets all the StatusCake Tests that the user has permission for
+   Retrieves all the StatusCake Tests that have been paused more than the specified time unit
 .EXAMPLE
-   Get-StatusCakeHelperPausedTests
+   Get-StatusCakeHelperPausedTests -Username "Username" -ApiKey "APIKEY"
 .INPUTS
     baseTestURL - Base URL endpoint of the statuscake auth API
     Username - Username associated with the API key
     ApiKey - APIKey to access the StatusCake API
-    Days - Number of days that the test has been paused longer
-    Hours - Number of hours that the test has been paused longer
-    Minutes - Number of minutes that the test has been paused longer
+    Days - Specify the number of day(s) (24h period) that the test(s) has been paused
+    Hours - Specify the number of hour(s) that the test(s) has been paused
+    Minutes - Specify the number of minute(s) that the test(s) has been paused
     IncludeNotTested - If set tests that have never been tested will be included
     ExcludeTested - If set tests that have been tested will be excluded
 .OUTPUTS    
     Returns an object with the StatusCake Detailed Test data
 .FUNCTIONALITY
     Retrieves all the tests from StatusCake that are paused and have been tested longer than
-    the supplied parameters. Defaults to returning tests that have been paused more than a day.
+    the supplied parameters. Defaults to returning tests that have been paused more than 24 hours.
    
 #>
 function Get-StatusCakeHelperPausedTests

@@ -3,7 +3,7 @@
 .Synopsis
    Gets all the StatusCake Tests that the user has permission for
 .EXAMPLE
-   Get-StatusCakeHelperAllTests
+   Get-StatusCakeHelperAllTests -Username "Username" -ApiKey "APIKEY"
 .INPUTS
     baseTestURL - Base URL endpoint of the statuscake auth API
     Username - Username associated with the API key

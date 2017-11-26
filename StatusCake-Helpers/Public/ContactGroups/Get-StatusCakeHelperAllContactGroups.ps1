@@ -3,7 +3,7 @@
 .Synopsis
    Gets all the StatusCake Contact Groups
 .EXAMPLE
-   Get-StatusCakeHelperAllContactGroups
+   Get-StatusCakeHelperAllContactGroups -Username "Username" -ApiKey "APIKEY"
 .INPUTS
     baseContactGroupURL - Base URL endpoint of the statuscake auth API
     Username - Username associated with the API key
