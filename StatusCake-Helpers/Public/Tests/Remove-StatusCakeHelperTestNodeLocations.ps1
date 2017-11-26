@@ -113,8 +113,8 @@ function Remove-StatusCakeHelperTestNodeLocations
     $RemovedNodeLocations = $differentNodeLocations | Where-Object {$_.SideIndicator -eq "=="} | Select-Object -ExpandProperty InputObject
     $NodeLocationsNotPresent = $differentNodeLocations | Where-Object {$_.SideIndicator -eq "=>"} | Select-Object -ExpandProperty InputObject
 
-    Write-Verbose "Removing Following Tags from Test [$RemovedNodeLocations]"
-    Write-Verbose "Following Tags not attached to Test [$NodeLocationsNotPresent]"
+    Write-Verbose "Removing following node locations from Test [$RemovedNodeLocations]"
+    Write-Verbose "Following node locations not used by Test [$NodeLocationsNotPresent]"
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters

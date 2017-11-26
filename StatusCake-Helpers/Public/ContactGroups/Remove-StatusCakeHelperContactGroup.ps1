@@ -4,7 +4,7 @@
 .Synopsis
    Removes the specified StatusCake ContactGroup
 .EXAMPLE
-   Remove-StatusCakeHelperContactGroup
+   Remove-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -contactID 123456
 .INPUTS
     baseContactGroupURL - Base URL endpoint of the statuscake ContactGroup API
     Username - Username associated with the API key

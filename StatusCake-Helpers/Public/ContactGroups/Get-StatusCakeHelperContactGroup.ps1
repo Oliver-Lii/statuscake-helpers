@@ -1,9 +1,9 @@
 
 <#
 .Synopsis
-   Retrieves a StatusCake Test with a specific name or Test ID
+   Retrieves a StatusCake Contact Group with a specific name or Test ID
 .EXAMPLE
-   Get-StatusCakeHelperTest
+   Get-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -ContactID 123456
 .INPUTS
     baseTestURL - Base URL endpoint of the statuscake auth API
     Username - Username associated with the API key

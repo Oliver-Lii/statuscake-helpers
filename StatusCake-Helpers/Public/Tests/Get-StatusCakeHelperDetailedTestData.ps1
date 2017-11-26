@@ -3,7 +3,7 @@
 .Synopsis
    Retrieves the detailed StatusCake Test data
 .EXAMPLE
-   Get-StatusCakeHelperDetailedTestData
+   Get-StatusCakeHelperDetailedTestData -Username "Username" -ApiKey "APIKEY" -TestID 123456
 .INPUTS
     baseTestURL - Base URL endpoint of the statuscake auth API
     Username - Username associated with the API key

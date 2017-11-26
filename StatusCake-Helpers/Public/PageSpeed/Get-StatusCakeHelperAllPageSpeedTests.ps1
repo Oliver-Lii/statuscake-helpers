@@ -3,7 +3,7 @@
 .Synopsis
    Gets all StatusCake PageSpeed Tests
 .EXAMPLE
-   Get-StatusCakeHelperAllPageSpeedTests
+   Get-StatusCakeHelperAllPageSpeedTests -Username "Username" -ApiKey "APIKEY"
 .INPUTS
     basePageSpeedTestURL - Base URL endpoint of the statuscake auth API
     Username - Username associated with the API key

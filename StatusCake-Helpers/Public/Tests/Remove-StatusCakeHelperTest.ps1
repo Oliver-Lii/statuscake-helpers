@@ -4,7 +4,7 @@
 .Synopsis
    Removes the specified StatusCake Test
 .EXAMPLE
-   Remove-StatusCakeHelperTest
+   Remove-StatusCakeHelperTest -Username "Username" -ApiKey "APIKEY" -TestID 123456
 .INPUTS
     baseTestURL - Base URL endpoint of the statuscake Test API
     Username - Username associated with the API key

@@ -1,7 +1,7 @@
 
 <#
 .Synopsis
-   Remove HTTP Status Codes from a StatusCake test
+   Remove HTTP status codes from a StatusCake test
 .EXAMPLE
    Remove-StatusCakeHelperTestStatusCodes -Username "Username" -ApiKey "APIKEY" -TestID "123456" -StatusCodes @("401","404")
 .INPUTS
@@ -113,8 +113,8 @@ function Remove-StatusCakeHelperTestStatusCodes
     $RemovedStatusCodes = $differentStatusCodes | Where-Object {$_.SideIndicator -eq "=="} | Select-Object -ExpandProperty InputObject
     $StatusCodesNotPresent = $differentStatusCodes | Where-Object {$_.SideIndicator -eq "=>"} | Select-Object -ExpandProperty InputObject
 
-    Write-Verbose "Removing Following Tags from Test [$RemovedStatusCodes]"
-    Write-Verbose "Following Tags not attached to Test [$StatusCodesNotPresent]"
+    Write-Verbose "Removing following status code(s) from Test [$RemovedStatusCodes]"
+    Write-Verbose "Following status code(s) not used by Test [$StatusCodesNotPresent]"
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters

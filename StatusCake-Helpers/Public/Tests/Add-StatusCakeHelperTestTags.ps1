@@ -1,7 +1,7 @@
 
 <#
 .Synopsis
-   Add test tags to a StatusCake test
+   Add tags to a StatusCake test
 .EXAMPLE
    Add-StatusCakeHelperTestTags -Username "Username" -ApiKey "APIKEY" -TestID "123456" -TestTags @("Tag1","Tag2")
 .INPUTS

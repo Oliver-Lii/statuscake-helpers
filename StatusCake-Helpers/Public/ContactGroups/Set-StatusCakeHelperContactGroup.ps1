@@ -1,7 +1,7 @@
 
 <#
 .Synopsis
-   Set a StatusCake ContactGroup
+   Sets the configuration of a StatusCake ContactGroup
 .EXAMPLE
    Set-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -GroupName "Example" -email @(test@example.com)
 .INPUTS
