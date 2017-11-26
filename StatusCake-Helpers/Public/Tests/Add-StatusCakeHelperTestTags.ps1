@@ -92,8 +92,12 @@ function Add-StatusCakeHelperTestTags
         $detailedTestData = Get-StatusCakeHelperDetailedTestData @statusCakeFunctionAuth -TestID $TestID
     }
 
-    $detailedTestData.Tags += $TestTags
-    $TestTags = $detailedTestData.Tags | Select-Object -Unique
+    #Tags property does not exist unless Test already has Tags
+    if($detailedTestData.Tags)
+    {
+        $detailedTestData.Tags += $TestTags
+        $TestTags = $detailedTestData.Tags | Select-Object -Unique        
+    }
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
