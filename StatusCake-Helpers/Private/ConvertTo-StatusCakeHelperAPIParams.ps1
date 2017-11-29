@@ -32,58 +32,48 @@ function ConvertTo-StatusCakeHelperAPIParams
                 $value=0
                 $var.value = $value
             }
-            switch($var.name)
+
+            switch($var.value.GetType().Name)
             {
-                "Alert_At"{ #Alert_At need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $outputHashTable.Add($var.name,$value)                                                   
+                'Object[]'{ #Arrays need to be converted to comma separated lists
+                    $value = $var.value -join ","  
                 }
-                "Contact_Groups"{ #Contact Groups need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $outputHashTable.Add($var.name,$value)
-                }                                
-                "BasicPass"{
-                    $outputHashTable.Add($var.name,$var.value)
-                    $value = $var.value -replace '.?','*'
+                'DateTime'{ #Dates need to be converted to Unix Epoch time
+                    $date = Get-Date -Date "01/01/1970"
+                    $value = $var.value
+                    $value = [Math]::Round($((New-TimeSpan -Start $date -End $value).TotalSeconds)) 
                 }
-                "CustomHeader"{ #Custom Header must be supplied as JSON                
+                'Hashtable'{ # Hash table should be converted to JSON (CustomHeader)
                     $value = $var.value  | ConvertTo-Json
-                    $outputHashTable.Add($var.name,$value)                                                                             
-                }
-                "Email"{ #Email addresses need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $outputHashTable.Add($var.name,$value)                                                   
-                } 
-                "Mobile"{ #Mobile numbers need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $outputHashTable.Add($var.name,$value)                                        
-                }                                  
-                "NodeLocations"{ #Node Location IDs need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $outputHashTable.Add($var.name,$value)                                        
-                }
-                "StatusCodes"{ #Status Codes need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $outputHashTable.Add($var.name,$value)                                                   
-                }                                   
-                "TestName"{
-                    $value = $var.value                     
-                    $outputHashTable.Add("WebsiteName",$value)
-                }
-                "TestURL"{
-                    $value = $var.value                       
-                    $outputHashTable.Add("WebsiteURL",$value)                  
-                }
-                "TestTags"{  #Test Tags need to be supplied as a comma separated list
-                    $value = $var.value -join ","
-                    $outputHashTable.Add($var.name,$value)                    
                 }
                 default {
-                    $value = $var.value                     
+                    $value = $var.value   
+                }
+            }
+
+            switch($var.name)
+            {                              
+                "BasicPass"{ # Prevent write-verbose from displaying password
+                    $outputHashTable.Add($var.name,$value) 
+                    $value = $value -replace '.?','*'
+                }
+                "End_date"{ # Api parameter is end_unix
+                    $outputHashTable.Add("end_unix",$value)                                                   
+                }                                                                                
+                "Start_date"{ # Api parameter is start_unix                 
+                    $outputHashTable.Add("start_unix",$value)                                                   
+                }                                                   
+                "TestName"{                   
+                    $outputHashTable.Add("WebsiteName",$value)
+                }
+                "TestURL"{                      
+                    $outputHashTable.Add("WebsiteURL",$value)                  
+                }
+                default {                    
                     $outputHashTable.Add($var.name,$value)
                 }
             }
-            write-verbose "[$($var.name)] will be added to StatusCake Test with value [$value]"            
+            Write-Verbose "[$($var.name)] [$($var.value.GetType().Name)] will be added with value [$value]"                             
         }
     }
     Return $outputHashTable    
