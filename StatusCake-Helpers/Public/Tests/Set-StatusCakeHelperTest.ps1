@@ -126,8 +126,8 @@ function Set-StatusCakeHelperTest
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
-        [ValidatePattern('^\d{1,}$')]          
-        $ContactGroup,
+        [ValidateScript({$_ -match '^[\d]+$'})]
+        [object]$ContactGroup,
 
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
