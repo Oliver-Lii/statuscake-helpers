@@ -18,7 +18,7 @@
     BasicUser - A Basic Auth User account to use to login for a HTTP check
     Branding - Set to 0 to use branding (default) or 1 to disable public reporting branding) 
     Confirmation - Number of confirmation servers to use must be between 0 and 10
-    ContactGroup - A contact group ID assoicated with account to use.
+    ContactGroup - An array of contact group IDs to be assigned to the check
     CustomHeader - Custom HTTP header for the test, must be supplied as as hashtable 
     DNSIP - DNS Tests only. IP to compare against WebsiteURL value.
     DNSServer - DNS Tests only. Hostname or IP of DNS server to use.   
@@ -86,8 +86,8 @@ function New-StatusCakeHelperTest
         [ValidateRange(0,10)]      
         $Confirmation,
 
-        [ValidatePattern('^\d{1,}$')]       
-        $ContactGroup,
+        [ValidateScript({$_ -match '^[\d]+$'})] 
+        [object]$ContactGroup,
 
         [hashtable]$CustomHeader,
 
