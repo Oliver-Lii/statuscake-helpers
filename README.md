@@ -96,5 +96,10 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Remove-StatusCakeHelperTestTags
 *  Set-StatusCakeHelperTest
 
+## Tests
+
+This module comes with [Pester](https://github.com/pester/Pester/) tests for unit testing. The tests cover the StatusCake features available under the [Community plan](https://www.statuscake.com/pricing/).
+
+
 # Authors
 - Oliver Li
