@@ -59,6 +59,13 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Remove-StatusCakeHelperContactGroup
 *  Set-StatusCakeHelperContactGroup
 
+[MaintenanceWindows](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/MaintenanceWindows "StatusCake Maintenance Windows")
+*  Get-StatusCakeHelperAllMaintenanceWindows
+*  Get-StatusCakeHelperMaintenanceWindow
+*  New-StatusCakeHelperMaintenanceWindow
+*  Remove-StatusCakeHelperMaintenanceWindows
+*  Update-StatusCakeHelperMaintenanceWindows
+
 [PageSpeed](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PageSpeed "StatusCake PageSpeed Tests")
 *  Get-StatusCakeHelperAllPageSpeedTests
 *  Get-StatusCakeHelperPageSpeedTest
