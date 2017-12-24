@@ -40,6 +40,7 @@
     Timeout - Time in seconds before a test times out
     TriggerRate - How many minutes to wait before sending an alert
     UseJar - Set to 1 to enable the Cookie Jar. Required for some redirects.
+    UserAgent - Use to populate the test with a custom user agent
     Virus - Enable virus checking or not. 0 to disable and 1 to enable
     WebsiteHost - Used internally by StatusCake. Company which hosts the site being tested.
 
@@ -145,6 +146,8 @@ function New-StatusCakeHelperTest
         
         [ValidateRange(0,1)]     
         $UseJar,
+
+        [string]$UserAgent,
 
         [ValidateRange(0,1)]        
         $Virus,
