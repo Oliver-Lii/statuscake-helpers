@@ -14,7 +14,7 @@ Install-Module StatusCake-Helpers -Repository PSGallery
 
 ## Example
 
- The following illustrates how to create two contacts and uptime test, SSL and Page Speed Tests
+ The following illustrates how to create uptime, SSL, and Page Speed Tests along with daily and weekly maintenance windows and two contacts
 
 ```powershell
 # Setup the StatusCake credentials
@@ -42,6 +42,29 @@ $pageSpeedTest = New-StatusCakeHelperPageSpeedTest @StatusCakeAuth -name $pageSp
 
 #Set the page speed test using the name of the test to alert team 2 when the page takes more than 5000ms to load
 $result = Set-StatusCakeHelperPageSpeedTest @StatusCakeAuth -name $pageSpeedCheckName -SetByName -contact_groups @($team2Contact.InsertID) -alert_slower 5000
+
+#Create a date object to start today at 20:00 and finish in an hour
+$startMWDailyTime = Get-Date "20:00"
+$endMWDailyTime = $startMWDailyTime.AddHours(1)
+
+#Setup a date object to start next Saturday at 20:00 and finish in four hours time
+$startMWWeeklyTime = $startMWDailyTime
+while ($startMWWeeklyTime.DayOfWeek -ne "Saturday") 
+{
+    $startMWWeeklyTime = $startMWWeeklyTime.AddDays(1)
+}
+$endMWWeeklyTime = $startMWWeeklyTime.AddHours(4)
+
+$mwParams = @{
+    timezone = "Europe/London"
+    raw_tests = @($uptimeTest.InsertID)
+}
+
+#Create the daily reoccurring maintenance window
+$result = New-StatusCakeHelperMaintenanceWindow @StatusCakeAuth -name "Example Daily MW" -start_date $startMWDailyTime -end_date $endMWDailyTime @mwParams -recur_every 1
+
+#Create the weekly reoccurring maintenance window
+$result = New-StatusCakeHelperMaintenanceWindow @StatusCakeAuth -name "Example Weekly MW" -start_date $startMWWeeklyTime -end_date $endMWWeeklyTime @mwParams -recur_every 7
 
 ```
 
