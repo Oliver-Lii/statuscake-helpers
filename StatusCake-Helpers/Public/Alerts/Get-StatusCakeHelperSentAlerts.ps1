@@ -19,7 +19,7 @@
 #>
 function Get-StatusCakeHelperSentAlerts
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(                     
         $baseAlertURL = "https://app.statuscake.com/API/Alerts/",
          
@@ -40,48 +40,55 @@ function Get-StatusCakeHelperSentAlerts
 
     if($TestName)
     {
-        $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
-        if($testCheck.GetType().Name -eq 'Object[]')
-        {
-            Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve sent alerts via TestID"
-            Return $null            
-        }
-        $TestID = $testCheck.TestID
-        else 
-        {
-            Write-Error "Unable to find Test with name [$TestName]"
-            Return $null
+        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
+        {        
+            $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
+            if($testCheck.GetType().Name -eq 'Object[]')
+            {
+                Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve sent alerts via TestID"
+                Return $null            
+            }
+            $TestID = $testCheck.TestID
+            else 
+            {
+                Write-Error "Unable to find Test with name [$TestName]"
+                Return $null
+            }
         }
     }
 
-    $uri = $baseAlertURL
-    if($TestID)
+    $psParams = @{}
+    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
+    $ParamsToIgnore = @("baseAlertURL","Username","ApiKey","TestName")
+    foreach ($key in $ParameterList.keys)
     {
-        $uri = "$uri`?TestID=$TestID"
+        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
+        if($ParamsToIgnore -contains $var.Name)
+        {
+            continue
+        }
+        elseif($var.value -or $var.value -eq 0)
+        {   
+            $psParams.Add($var.name,$var.value)                  
+        }
     }
 
-    if($Since)
-    {   #Calculate Unix timestamp
-        $date1 = Get-Date -Date "01/01/1970"
-        $unixTimestamp = (New-TimeSpan -Start $date1 -End $Since).TotalSeconds    
-        if($TestID)
-        {
-            $uri = "$uri&Since=$unixTimestamp"
-        }
-        else
-        {         
-            $uri = "$uri`?Since=$unixTimestamp"
-        }
-    }
+    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
 
     $requestParams = @{
-        uri = $uri
+        uri = $baseAlertURL
         Headers = $authenticationHeader
         UseBasicParsing = $true
+        method = "Get"
+        ContentType = "application/x-www-form-urlencoded"
+        body = $statusCakeAPIParams 
     }
 
-    $jsonResponse = Invoke-WebRequest @requestParams
-    $response = $jsonResponse | ConvertFrom-Json
-    Return $response
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Sent Alerts") )
+    {
+        $jsonResponse = Invoke-WebRequest @requestParams
+        $response = $jsonResponse | ConvertFrom-Json
+        Return $response
+    }
 }
 
