@@ -97,6 +97,9 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Remove-StatusCakeHelperPageSpeedTest
 *  Set-StatusCakeHelperPageSpeedTest
 
+[PerformanceData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PerformanceData "StatusCake Performance Data")
+*  Get-StatusCakeHelperPerformanceData
+
 [PeriodData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PeriodData "StatusCake Period of Data")
 *  Get-StatusCakeHelperPeriodOfData
 
