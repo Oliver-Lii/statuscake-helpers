@@ -10,6 +10,7 @@
     ApiKey - APIKey to access the StatusCake API
     TestID - ID of the Test to retrieve the period of data for
     TestName - Name of the Test to retrieve the period of data for
+    Additional - Flag to set to return information about the downtime. NOTE: This will slow down the query considerably.
 .OUTPUTS    
     Returns an object with the details the periods of data
 .FUNCTIONALITY
@@ -19,7 +20,7 @@
 #>
 function Get-StatusCakeHelperPeriodOfData
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(                     
         $basePeriodURL = "https://app.statuscake.com/API/Tests/Periods/",
          
@@ -34,7 +35,11 @@ function Get-StatusCakeHelperPeriodOfData
 
         [Parameter(ParameterSetName = "Test Name")]              
         [ValidateNotNullOrEmpty()]            
-        [string]$TestName
+        [string]$TestName,
+
+        [Parameter(ParameterSetName = "Test Name")]
+        [Parameter(ParameterSetName = "Test ID")]            
+        [switch]$Additional 
     )
     $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
 
@@ -54,23 +59,48 @@ function Get-StatusCakeHelperPeriodOfData
         }
     }
 
-    $uri = "$basePeriodURL`?TestID=$TestID"
+    #Additional parameter needs to be set to 1 to prevent additional field from being returned in response
+    if($Additional){[string]$Additional = 0}
+    else{[string]$Additional = 1}
+
+    $psParams = @{}
+    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
+    $ParamsToIgnore = @("basePeriodURL","Username","ApiKey","TestName")
+    foreach ($key in $ParameterList.keys)
+    {
+        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
+        if($ParamsToIgnore -contains $var.Name)
+        {
+            continue
+        }
+        elseif($var.value -or $var.value -eq 0)
+        {   
+            $psParams.Add($var.name,$var.value)                  
+        }
+    }
+
+    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
 
     $requestParams = @{
-        uri = $uri
+        uri = $basePeriodURL
         Headers = $authenticationHeader
         UseBasicParsing = $true
+        method = "Get"
+        ContentType = "application/x-www-form-urlencoded"
+        body = $statusCakeAPIParams 
     }
 
-    $jsonResponse = Invoke-WebRequest @requestParams
-    $response = $jsonResponse | ConvertFrom-Json
-
-    if(!$response)
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Period of Data") )
     {
-        Write-Warning "No checks have been carried out for the specified test [$TestID]"
-        Return $null        
-    }
+        $jsonResponse = Invoke-WebRequest @requestParams
+        $response = $jsonResponse | ConvertFrom-Json
 
+        if(!$response)
+        {
+            Write-Warning "No checks have been carried out for the specified test [$TestID]"
+            Return $null        
+        }
+    }
     Return $response
 }
 
