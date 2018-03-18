@@ -21,10 +21,12 @@ function Get-StatusCakeHelperContactGroup
     [CmdletBinding(PositionalBinding=$false)]    
     Param(
         $baseTestURL = "https://app.statuscake.com/API/ContactGroups/",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]
-        $ApiKey,
+        
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+
         [Parameter(ParameterSetName = "Group Name")]
         [ValidateNotNullOrEmpty()]            
         [string]$GroupName,
@@ -32,7 +34,7 @@ function Get-StatusCakeHelperContactGroup
         [ValidateNotNullOrEmpty()]            
         [int]$ContactID        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
         uri = $baseTestURL

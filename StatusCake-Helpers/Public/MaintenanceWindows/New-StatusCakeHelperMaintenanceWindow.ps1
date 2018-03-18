@@ -28,10 +28,11 @@ function New-StatusCakeHelperMaintenanceWindow
         [Parameter(ParameterSetName='SetByTestTags')]
         [Parameter(ParameterSetName='SetByTestIDs')]         
         $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/Update",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
@@ -68,11 +69,12 @@ function New-StatusCakeHelperMaintenanceWindow
         [ValidateRange(0,1)] 
         $follow_dst       
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}      
 
     if($pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
     {      
-        $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -Username $username -apikey $ApiKey -name $name -state "PND"
+        $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -name $name -state "PND"
         if($maintenanceWindow)
         {
             if($maintenanceWindow.GetType().Name -eq 'Object[]')

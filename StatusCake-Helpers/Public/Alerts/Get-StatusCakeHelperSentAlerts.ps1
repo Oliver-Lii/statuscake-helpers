@@ -23,11 +23,11 @@ function Get-StatusCakeHelperSentAlerts
     Param(                     
         $baseAlertURL = "https://app.statuscake.com/API/Alerts/",
          
-        [Parameter(Mandatory=$true)]        
-        [string]$Username,
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(Mandatory=$true)]
-        [string]$ApiKey,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
                     
         [int]$TestID,     
               
@@ -36,13 +36,14 @@ function Get-StatusCakeHelperSentAlerts
                    
         [datetime]$Since
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
 
     if($TestName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
         {        
-            $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
+            $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
             if($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve sent alerts via TestID"

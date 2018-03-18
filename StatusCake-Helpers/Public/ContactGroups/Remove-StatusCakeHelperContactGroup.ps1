@@ -22,10 +22,12 @@ function Remove-StatusCakeHelperContactGroup
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         $baseContactGroupURL = "https://app.statuscake.com/API/ContactGroups/Update/?ContactID=",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+
         [Parameter(ParameterSetName = "ContactID")]
         [ValidateNotNullOrEmpty()]
         [int]$ContactID,
@@ -35,13 +37,14 @@ function Remove-StatusCakeHelperContactGroup
         [switch]$Force,        
         [switch]$PassThru
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
-    
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
+
     if($GroupName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Contact Groups") )
         {        
-            $ContactGroupCheck = Get-StatusCakeHelperContactGroup -Username $username -apikey $ApiKey -GroupName $GroupName
+            $ContactGroupCheck = Get-StatusCakeHelperContactGroup @statusCakeFunctionAuth -GroupName $GroupName
             if($ContactGroupCheck)
             {
                 if($ContactGroupCheck.GetType().Name -eq 'Object[]')
@@ -61,7 +64,7 @@ function Remove-StatusCakeHelperContactGroup
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
     { 
-        $StatusCakeTests = Get-StatusCakeHelperAllTests -Username $username -apikey $ApiKey
+        $StatusCakeTests = Get-StatusCakeHelperAllTests @statusCakeFunctionAuth
         $StatusCakeTestsWithContact = $StatusCakeTests | Where-Object {$_.ContactGroup -Contains $ContactID}
         if($StatusCakeTestsWithContact -and !$Force)
         {

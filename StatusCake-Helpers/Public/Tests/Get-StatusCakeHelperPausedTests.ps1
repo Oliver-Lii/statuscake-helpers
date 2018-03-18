@@ -29,17 +29,17 @@ function Get-StatusCakeHelperPausedTests
         [Parameter(ParameterSetName='Minutes')]                         
         $baseTestURL = "https://app.statuscake.com/API/Tests/",
 
-        [Parameter(ParameterSetName='Days',Mandatory=$true)]
-        [Parameter(ParameterSetName='Hours',Mandatory=$true)]
-        [Parameter(ParameterSetName='Minutes',Mandatory=$true)]
-        [Parameter(Mandatory=$true)]    
-        $Username,
+        [Parameter(ParameterSetName='Days')]
+        [Parameter(ParameterSetName='Hours')]
+        [Parameter(ParameterSetName='Minutes')]
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
       
-        [Parameter(ParameterSetName='Days',Mandatory=$true)]
-        [Parameter(ParameterSetName='Hours',Mandatory=$true)]
-        [Parameter(ParameterSetName='Minutes',Mandatory=$true)]        
-        [Parameter(Mandatory=$true)]          
-        $ApiKey,
+        [Parameter(ParameterSetName='Days')]
+        [Parameter(ParameterSetName='Hours')]
+        [Parameter(ParameterSetName='Minutes')]        
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='Days')]     
         [int]$Days=1,

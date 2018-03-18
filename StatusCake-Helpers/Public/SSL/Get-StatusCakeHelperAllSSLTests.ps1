@@ -19,12 +19,13 @@ function Get-StatusCakeHelperAllSSLTests
     [CmdletBinding(PositionalBinding=$false)]    
     Param(
         $baseSSLTestURL = "https://app.statuscake.com/API/SSL/",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
         uri = $baseSSLTestURL

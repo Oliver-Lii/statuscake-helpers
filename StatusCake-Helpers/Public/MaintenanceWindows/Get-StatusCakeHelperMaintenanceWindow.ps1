@@ -24,15 +24,15 @@ function Get-StatusCakeHelperMaintenanceWindow
         [Parameter(ParameterSetName = "ID")]         
         $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/",
 
-        [Parameter(ParameterSetName = "Name",Mandatory=$true)]
-        [Parameter(ParameterSetName = "ID",Mandatory=$true)]          
-        [Parameter(Mandatory=$true)]        
-        $Username,
+        [Parameter(ParameterSetName = "Name")]
+        [Parameter(ParameterSetName = "ID")]          
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(ParameterSetName = "Name",Mandatory=$true)]
-        [Parameter(ParameterSetName = "ID",Mandatory=$true)]          
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+        [Parameter(ParameterSetName = "Name")]
+        [Parameter(ParameterSetName = "ID")]          
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "Name")]
         [Parameter(ParameterSetName = "ID")]        
@@ -47,7 +47,7 @@ function Get-StatusCakeHelperMaintenanceWindow
         [ValidateNotNullOrEmpty()]            
         [int]$id      
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters

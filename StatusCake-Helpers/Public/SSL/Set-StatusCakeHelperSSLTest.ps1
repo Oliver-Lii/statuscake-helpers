@@ -30,15 +30,17 @@ function Set-StatusCakeHelperSSLTest
         [Parameter(ParameterSetName='NewSSLTest')]          
         $baseSSLTestURL = "https://app.statuscake.com/API/SSL/Update",
 
-        [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByDomain',Mandatory=$true)]        
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)] 
-        $Username,
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByDomain')]        
+        [Parameter(ParameterSetName='NewSSLTest')] 
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByDomain',Mandatory=$true)]        
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)] 
-        $ApiKey,
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByDomain')]        
+        [Parameter(ParameterSetName='NewSSLTest')] 
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
         $id,
@@ -88,7 +90,8 @@ function Set-StatusCakeHelperSSLTest
         $alert_broken
 
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}     
  
     if($Alert_At -and $Alert_At.count -ne 3)
     {
@@ -100,7 +103,7 @@ function Set-StatusCakeHelperSSLTest
     {   #If setting test by domain verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests"))
         {      
-            $sslTest = Get-StatusCakeHelperSSLTest -Username $username -apikey $ApiKey -Domain $Domain
+            $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -Domain $Domain
             if(!$sslTest)
             {
                 Write-Error "No SSL test with Specified Domain Exists [$Domain]"
@@ -118,7 +121,7 @@ function Set-StatusCakeHelperSSLTest
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests"))
         {      
-            $sslTest = Get-StatusCakeHelperSSLTest -Username $username -apikey $ApiKey -id $id
+            $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -id $id
             if(!$sslTest)
             {
                 Write-Error "No SSL test with Specified ID Exists [$id]"
@@ -131,7 +134,7 @@ function Set-StatusCakeHelperSSLTest
     {   #Setup a test with the supplied detiails
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests") )
         {
-            $sslTest = Get-StatusCakeHelperSSLTest -Username $username -apikey $ApiKey -Domain $Domain
+            $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -Domain $Domain
             if($sslTest)
             {
                 Write-Error "SSL test with specified name already exists [$Domain] [$($sslTest.id)]"

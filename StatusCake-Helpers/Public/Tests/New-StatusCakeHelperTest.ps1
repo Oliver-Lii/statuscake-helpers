@@ -54,11 +54,11 @@ function New-StatusCakeHelperTest
     Param(
         $baseTestURL = "https://app.statuscake.com/API/Tests/Update",
 
-        [Parameter(Mandatory=$true)]        
-        $Username,
+        [ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()] 
@@ -154,11 +154,12 @@ function New-StatusCakeHelperTest
 
         [string]$WebsiteHost        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
     {
-        $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
+        $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
         if($testCheck)
         {
             Write-Error "Test with specified name already exists [$TestName] [$($testCheck.TestID)]"

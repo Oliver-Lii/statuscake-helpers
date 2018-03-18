@@ -20,11 +20,11 @@ function Remove-StatusCakeHelperPageSpeedTest
     Param(
         $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/Update/?id=",
 
-        [Parameter(Mandatory=$true)]        
-        $Username,        
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,      
 
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "ID")]             
         [int]$id,
@@ -34,7 +34,7 @@ function Remove-StatusCakeHelperPageSpeedTest
 
         [switch]$PassThru        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
  
     if($name)
     {

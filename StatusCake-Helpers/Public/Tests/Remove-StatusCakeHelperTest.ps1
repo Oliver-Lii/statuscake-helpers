@@ -21,10 +21,12 @@ function Remove-StatusCakeHelperTest
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         $baseTestURL = "https://app.statuscake.com/API/Tests/Details/?TestID=",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+
         [Parameter(ParameterSetName = "Test ID")]
         [ValidateNotNullOrEmpty()]
         [int]$TestID,
@@ -33,11 +35,13 @@ function Remove-StatusCakeHelperTest
         [string]$TestName,        
         [switch]$PassThru
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
     
     if($TestName)
     {
-        $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
+        $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
         if($testCheck)
         {
             if($testCheck.GetType().Name -eq 'Object[]')

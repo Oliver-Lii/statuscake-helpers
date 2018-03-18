@@ -25,15 +25,15 @@ function Add-StatusCakeHelperTestStatusCodes
         [Parameter(ParameterSetName='AddByTestID')]      
         $baseTestURL = "https://app.statuscake.com/API/Tests/Update",
 
-        [Parameter(ParameterSetName='AddByTestName',Mandatory=$true)]
-        [Parameter(ParameterSetName='AddByTestID',Mandatory=$true)]
-        [Parameter(Mandatory=$true)]        
-        $Username,
+        [Parameter(ParameterSetName='AddByTestName')]
+        [Parameter(ParameterSetName='AddByTestID')]
+        [ValidateNotNullOrEmpty()]        
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(ParameterSetName='AddByTestName',Mandatory=$true)]
-        [Parameter(ParameterSetName='AddByTestID',Mandatory=$true)]
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+        [Parameter(ParameterSetName='AddByTestName')]
+        [Parameter(ParameterSetName='AddByTestID')]
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='AddByTestID',Mandatory=$true)]
         [ValidatePattern('^\d{1,}$')]           
@@ -52,8 +52,9 @@ function Add-StatusCakeHelperTestStatusCodes
         [ValidateNotNullOrEmpty()]         
         [object]$StatusCodes
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$username;"Apikey"=$apikey}
+
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($AddByTestName -and $TestName)
     {   #If setting test by name check if a test or tests with that name exists

@@ -21,10 +21,12 @@ function Get-StatusCakeHelperTest
     [CmdletBinding(PositionalBinding=$false)]    
     Param(
         $baseTestURL = "https://app.statuscake.com/API/Tests/",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+
         [Parameter(ParameterSetName = "Test Name")]
         [ValidateNotNullOrEmpty()]            
         [string]$TestName,
@@ -32,7 +34,7 @@ function Get-StatusCakeHelperTest
         [ValidateNotNullOrEmpty()]            
         [int]$TestID        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
         uri = $baseTestURL

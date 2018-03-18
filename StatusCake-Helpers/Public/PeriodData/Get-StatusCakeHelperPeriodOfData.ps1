@@ -24,11 +24,11 @@ function Get-StatusCakeHelperPeriodOfData
     Param(                     
         $basePeriodURL = "https://app.statuscake.com/API/Tests/Periods/",
          
-        [Parameter(Mandatory=$true)]        
-        [string]$Username,
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(Mandatory=$true)]
-        [string]$ApiKey,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "Test ID")]        
         [int]$TestID,
@@ -41,11 +41,12 @@ function Get-StatusCakeHelperPeriodOfData
         [Parameter(ParameterSetName = "Test ID")]            
         [switch]$Additional 
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
 
     if($TestName)
     {
-        $testCheck = Get-StatusCakeHelperTest -Username $username -apikey $ApiKey -TestName $TestName
+        $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
         if($testCheck.GetType().Name -eq 'Object[]')
         {
             Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve the periods of data via TestID"

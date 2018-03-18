@@ -20,11 +20,11 @@ function Remove-StatusCakeHelperSSLTest
     Param(
         $baseSSLTestURL = "https://app.statuscake.com/API/SSL/Update",
 
-        [Parameter(Mandatory=$true)]        
-        $Username,        
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,       
 
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "ID")]             
         [int]$id,
@@ -35,11 +35,12 @@ function Remove-StatusCakeHelperSSLTest
 
         [switch]$PassThru        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
  
     if($title)
     {
-        $sslTest = Get-StatusCakeHelperSSLTest -Username $username -apikey $ApiKey -title $title
+        $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -title $title
         if($sslTest)
         {
             if($sslTest.GetType().Name -eq 'Object[]')

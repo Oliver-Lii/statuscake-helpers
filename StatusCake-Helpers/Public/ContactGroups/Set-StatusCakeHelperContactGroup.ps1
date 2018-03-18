@@ -28,11 +28,11 @@ function Set-StatusCakeHelperContactGroup
     Param(     
         $baseContactGroupURL = "https://app.statuscake.com/API/ContactGroups/Update",
 
-        [Parameter(Mandatory=$true)]           
-        [string]$Username,
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(Mandatory=$true)]
-        [string]$ApiKey,       
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,       
 
         [Parameter(ParameterSetName='SetByContactID')]        
         [int]$ContactID,
@@ -73,13 +73,14 @@ function Set-StatusCakeHelperContactGroup
         [Parameter(ParameterSetName='SetByContactID')]         
         [object]$Mobile      
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
 
     if($SetByGroupName -and $GroupName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake ContactGroups"))
         {            
-            $contactGroupCheck = Get-StatusCakeHelperContactGroup -Username $username -apikey $ApiKey -GroupName $GroupName
+            $contactGroupCheck = Get-StatusCakeHelperContactGroup @statusCakeFunctionAuth -GroupName $GroupName
             if(!$contactGroupCheck)
             {
                 Write-Error "Unable to find Contact Group with specified name [$GroupName]"

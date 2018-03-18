@@ -23,11 +23,11 @@ function Remove-StatusCakeHelperMaintenanceWindow
     Param(
         $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/Update?id=",
 
-        [Parameter(Mandatory=$true)]        
-        $Username,        
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,       
 
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "ID")]             
         [int]$id,
@@ -46,11 +46,12 @@ function Remove-StatusCakeHelperMaintenanceWindow
 
         [switch]$PassThru        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
  
     if($name)
     {
-        $MaintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -Username $username -apikey $ApiKey -name $name -state $state
+        $MaintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -name $name -state $state
         if($MaintenanceWindow)
         {
             if($MaintenanceWindow.GetType().Name -eq 'Object[]')

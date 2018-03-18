@@ -25,15 +25,15 @@ function Remove-StatusCakeHelperTestTags
         [Parameter(ParameterSetName='RemoveByTestID')]      
         $baseTestURL = "https://app.statuscake.com/API/Tests/Update",
 
-        [Parameter(ParameterSetName='RemoveByTestName',Mandatory=$true)]
-        [Parameter(ParameterSetName='RemoveByTestID',Mandatory=$true)]
-        [Parameter(Mandatory=$true)]        
-        $Username,
+        [Parameter(ParameterSetName='RemoveByTestName')]
+        [Parameter(ParameterSetName='RemoveByTestID')]
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(ParameterSetName='RemoveByTestName',Mandatory=$true)]
-        [Parameter(ParameterSetName='RemoveByTestID',Mandatory=$true)]
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+        [Parameter(ParameterSetName='RemoveByTestName')]
+        [Parameter(ParameterSetName='RemoveByTestID')]
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='RemoveByTestID',Mandatory=$true)]
         [ValidatePattern('^\d{1,}$')]           
@@ -53,8 +53,8 @@ function Remove-StatusCakeHelperTestTags
         [object]$TestTags
 
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$username;"Apikey"=$apikey}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($RemoveByTestName -and $TestName)
     {   #If setting test by name check if a test or tests with that name exists
