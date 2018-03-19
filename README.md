@@ -135,7 +135,7 @@ Below is a list of the available functions and features of the StatusCake API th
 
 ## Tests
 
-This module comes with [Pester](https://github.com/pester/Pester/) tests for unit testing. The tests cover the StatusCake features available under the [Community plan](https://www.statuscake.com/pricing/).
+This module comes with [Pester](https://github.com/pester/Pester/) tests for unit testing. The tests cover the StatusCake features available under the [Business plan](https://www.statuscake.com/pricing/).
 
 
 # Authors

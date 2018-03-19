@@ -37,7 +37,7 @@ Describe "StatusCake Tests" {
 
     It "New-StatusCakeHelperTest creates a test"{
         $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test StatusCake Test" -TestURL "https://www.example.com" -checkRate 300 -testType HTTP
-        $scTest.Success| Should Be "True"
+        $scTest.Success | Should Be "True"
     }
 
     It "Set-StatusCakeHelperTest pauses a test"{
@@ -95,7 +95,7 @@ Describe "StatusCake Contact Groups" {
 
     It "New-StatusCakeHelperContactGroup creates a contact group"{
         $script:SCContactGroup = New-StatusCakeHelperContactGroup -GroupName "Pester Test Contact Group" -Mobile "+12345678910"
-        $SCContactGroup.Success| Should Be "True"
+        $SCContactGroup.Success | Should Be "True"
     }
 
     It "Set-StatusCakeHelperContactGroup adds a email address"{
@@ -114,3 +114,94 @@ Describe "StatusCake Contact Groups" {
     }    
    
 } 
+
+Describe "StatusCake Page Speed Tests" {
+    
+    It "New-StatusCakeHelperPageSpeedTest creates a page speed test"{
+        $script:SCPageSpeedTest = New-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check" -website_url "https://www.example.com" -location_iso UK -checkrate 1440
+        $SCPageSpeedTest.Success | Should Be "True"
+    }
+
+    It "Get-StatusCakeHelperPageSpeedTest retrieves all Page Speed Tests"{
+        Get-StatusCakeHelperAllPageSpeedTests | Should Be $true
+    }
+
+    It "Set-StatusCakeHelperPageSpeedTest updates the checkrate"{
+        $result = Set-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.new_id -checkrate 60
+        $result.Success | Should Be "True"
+    }
+
+    It "Get-StatusCakeHelperPageSpeedTest retrieves a Page Speed test by name"{
+        $result = Get-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check"
+        $result | Should Be $true
+    }
+    
+    It "Get-StatusCakeHelperPageSpeedTestHistory retrieves the history of a page speed check"{
+        $result = Get-StatusCakeHelperPageSpeedTestHistory -id $SCPageSpeedTest.new_id
+        $result | Should Be $true
+    }     
+
+    It "Remove-StatusCakeHelperPageSpeedTest removes a test"{
+        $result = Remove-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.new_id -PassThru
+        $result.Success | Should Be "True"
+    }    
+   
+}
+
+Describe "StatusCake SSL Tests" {
+    
+    It "New-StatusCakeHelperSSLTest creates a SSL Test"{
+        $script:SCSSLTest = New-StatusCakeHelperSSLTest -domain "https://www.example.com" -checkrate 2073600
+        $SCSSLTest.Success | Should Be "True"
+    }
+
+    It "Get-StatusCakeHelperAllSSLTests retrieves all SSL Tests"{
+        Get-StatusCakeHelperAllSSLTests | Should Be $true
+    }
+
+    It "Set-StatusCakeHelperSSLTest updates the checkrate"{
+        $result = Set-StatusCakeHelperSSLTest -id $SCSSLTest.Message -checkrate 86400
+        $result.Success | Should Be "True"
+    }
+
+    It "Get-StatusCakeHelperSSLTest retrieves a SSL test by domain"{
+        $result = Get-StatusCakeHelperSSLTest -domain "https://www.example.com"
+        $result | Should Be $true
+    }   
+
+    It "Remove-StatusCakeHelperSSLTest removes a SSL test"{
+        $result = Remove-StatusCakeHelperSSLTest -id $SCSSLTest.Message -PassThru
+        $result.Success | Should Be "True"
+    }    
+   
+}
+
+Describe "StatusCake Maintenance Windows" {
+    
+    It "New-StatusCakeHelperMaintenanceWindow creates a maintenance window"{
+        $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test SC Test for MW" -TestURL "https://www.example.com" -checkRate 24000 -testType HTTP        
+        $script:SCMWTest = New-StatusCakeHelperMaintenanceWindow -name "Pester Test Maintenance Window" -timezone UTC -start_date $(Get-Date).AddHours(1) -end_date $(Get-Date).AddDays(1) -raw_tests @($SCTest.InsertID) 
+        $SCMWTest.Success | Should Be "True"
+    }
+
+    It "Get-StatusCakeHelperAllMaintenanceWindows retrieves all maintenance windows"{
+        Get-StatusCakeHelperAllMaintenanceWindows | Should Be $true
+    }
+
+    It "Update-StatusCakeHelperMaintenanceWindow updates the maintenance window"{
+        $result = Update-StatusCakeHelperMaintenanceWindow -id $SCMWTest.data.new_id -recur_every 30
+        $result.Success | Should Be "True"
+    }
+
+    It "Get-StatusCakeHelperMaintenanceWindow retrieves a maintenance window by name"{
+        $result = Get-StatusCakeHelperMaintenanceWindow -name "Pester Test Maintenance Window"
+        $result | Should Be $true
+    }   
+
+    It "Remove-StatusCakeHelperMaintenanceWindow removes a maintenance window"{
+        Remove-StatusCakeHelperTest -TestName "Pester Test SC Test for MW"
+        $result = Remove-StatusCakeHelperMaintenanceWindow -id $SCMWTest.data.new_id -Series $true -PassThru
+        $result.Success | Should Be "True"
+    }    
+   
+}
