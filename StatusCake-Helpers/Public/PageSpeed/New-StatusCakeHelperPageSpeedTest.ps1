@@ -27,10 +27,11 @@ function New-StatusCakeHelperPageSpeedTest
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(
         $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/Update",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(Mandatory=$true)] 
         [ValidateNotNullOrEmpty()]                 
@@ -63,7 +64,7 @@ function New-StatusCakeHelperPageSpeedTest
         [ValidateNotNullOrEmpty()]                 
         [string]$private_name        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
  
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Test") )

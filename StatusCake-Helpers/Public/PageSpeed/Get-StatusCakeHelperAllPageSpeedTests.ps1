@@ -19,12 +19,13 @@ function Get-StatusCakeHelperAllPageSpeedTests
     [CmdletBinding(PositionalBinding=$false)]    
     Param(
         $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
         uri = $basePageSpeedTestURL

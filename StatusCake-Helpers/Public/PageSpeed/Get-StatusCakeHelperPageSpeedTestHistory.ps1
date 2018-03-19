@@ -21,10 +21,11 @@ function Get-StatusCakeHelperPageSpeedTestHistory
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(
         $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/History/",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "name")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
@@ -39,7 +40,7 @@ function Get-StatusCakeHelperPageSpeedTestHistory
         [ValidateRange(0,14)]            
         [int]$days        
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     if($name)
     {

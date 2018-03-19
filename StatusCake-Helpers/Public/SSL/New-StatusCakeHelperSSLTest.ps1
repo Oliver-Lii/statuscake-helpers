@@ -25,10 +25,11 @@ function New-StatusCakeHelperSSLTest
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(
         $baseSSLTestURL = "https://app.statuscake.com/API/SSL/Update",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(Mandatory=$true)] 
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                  
@@ -55,7 +56,8 @@ function New-StatusCakeHelperSSLTest
         $alert_broken=1
 
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
  
     if($Alert_At.count -ne 3)
     {
@@ -65,7 +67,7 @@ function New-StatusCakeHelperSSLTest
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Checks") )
     {
-        $sslTest = Get-StatusCakeHelperSSLTest -Username $username -apikey $ApiKey -domain $domain
+        $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -domain $domain
         if($sslTest)
         {
             Write-Error "SSL Check with specified domain already exists [$domain] [$($sslTest.id)]"

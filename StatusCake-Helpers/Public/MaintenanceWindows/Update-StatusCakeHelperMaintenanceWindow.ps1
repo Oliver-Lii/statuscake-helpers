@@ -30,13 +30,15 @@ function Update-StatusCakeHelperMaintenanceWindow
         [Parameter(ParameterSetName='SetByName')]        
         $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/Update",
 
-        [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByName',Mandatory=$true)]         
-        $Username,
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByName')]         
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByName',Mandatory=$true)]
-        $ApiKey,
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByName')]
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='SetByName',Mandatory=$true)]
         [switch]$SetByName,
@@ -82,13 +84,14 @@ function Update-StatusCakeHelperMaintenanceWindow
         $follow_dst
 
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}      
  
     if($SetByName -and $name)
     {   #If setting test by name verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {      
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -Username $username -apikey $ApiKey -name $name -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -name $name -state "PND"
             if(!$maintenanceWindow)
             {
                 Write-Error "No pending Maintenance Window with specified name exists [$name]"
@@ -106,7 +109,7 @@ function Update-StatusCakeHelperMaintenanceWindow
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {      
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -Username $username -apikey $ApiKey -id $id -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -id $id -state "PND"
             if(!$maintenanceWindow)
             {
                 Write-Error "No pending Maintenance Window with specified ID exists [$id]"

@@ -33,15 +33,17 @@ function Set-StatusCakeHelperPageSpeedTest
         [Parameter(ParameterSetName='NewPageSpeedTest')]          
         $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/Update/",
 
-        [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByName',Mandatory=$true)]        
-        [Parameter(ParameterSetName='NewPageSpeedTest',Mandatory=$true)] 
-        $Username,
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByName')]        
+        [Parameter(ParameterSetName='NewPageSpeedTest')] 
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByName',Mandatory=$true)]        
-        [Parameter(ParameterSetName='NewPageSpeedTest',Mandatory=$true)] 
-        $ApiKey,
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByName')]        
+        [Parameter(ParameterSetName='NewPageSpeedTest')] 
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
         $id,
@@ -103,7 +105,7 @@ function Set-StatusCakeHelperPageSpeedTest
         [string]$private_name
 
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
  
     if($Alert_At -and $Alert_At.count -ne 3)
     {

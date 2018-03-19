@@ -26,10 +26,12 @@ function New-StatusCakeHelperContactGroup
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(
         $baseContactGroupURL = "https://app.statuscake.com/API/ContactGroups/Update",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()] 
         $GroupName,
@@ -46,11 +48,12 @@ function New-StatusCakeHelperContactGroup
         [string]$Pushover,
         [object]$Mobile
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake ContactGroups") )
     {
-        $ContactGroupCheck = Get-StatusCakeHelperContactGroup -Username $username -apikey $ApiKey -GroupName $GroupName
+        $ContactGroupCheck = Get-StatusCakeHelperContactGroup @statusCakeFunctionAuth -GroupName $GroupName
         if($ContactGroupCheck)
         {
             Write-Error "ContactGroup with specified name already exists [$ContactGroupCheck]"

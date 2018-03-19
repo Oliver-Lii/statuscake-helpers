@@ -21,15 +21,16 @@ function Get-StatusCakeHelperAllMaintenanceWindows
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
     Param(
         $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/",
-        [Parameter(Mandatory=$true)]        
-        $Username,
-        [Parameter(Mandatory=$true)]        
-        $ApiKey,
+
+		[ValidateNotNullOrEmpty()]
+        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]        
+        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [ValidateSet("ALL","PND","ACT","END","CNC")]
         [string]$state="ALL"   
     )
-    $authenticationHeader = @{"Username"="$username";"API"="$ApiKey"}
+    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters

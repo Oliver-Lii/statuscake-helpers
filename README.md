@@ -19,29 +19,28 @@ Install-Module StatusCake-Helpers -Repository PSGallery
 ```powershell
 # Setup the StatusCake credentials
 # The API credentials must come from the primary account which hosts the tests and not a subaccount which was given access
-$StatusCakeAuth = @{
-    Username = "username"
-    ApiKey = "apikey"
-}
+$scAPIKey = ConvertTo-SecureString "apikey" -AsPlainText -Force
+$scCredentials = New-Object System.Management.Automation.PSCredential ("username", $scAPIKey)
+Set-StatusCakeHelperAPIAuth -Credentials $scCredentials
 
 $URL = "https://www.example.com"
 $team1Emails = @("alerts@example.com","alerts1@example.com")
 
-$team1Contact= New-StatusCakeHelperContactGroup @StatusCakeAuth -GroupName "Team 1 monitoring" -email $team1Emails -mobile "+14155552671"
-$team2Contact= New-StatusCakeHelperContactGroup @StatusCakeAuth -GroupName "Team 2 monitoring" -email "alerts2@example.com"
+$team1Contact= New-StatusCakeHelperContactGroup -GroupName "Team 1 monitoring" -email $team1Emails -mobile "+14155552671"
+$team2Contact= New-StatusCakeHelperContactGroup -GroupName "Team 2 monitoring" -email "alerts2@example.com"
 
 #Create uptime test to check the site every 5 minutes
-$uptimeTest = New-StatusCakeHelperTest @StatusCakeAuth -TestName "Example" -TestURL $URL -CheckRate 300 -TestType HTTP -ContactGroup $team1Contact.InsertID
+$uptimeTest = New-StatusCakeHelperTest -TestName "Example" -TestURL $URL -CheckRate 300 -TestType HTTP -ContactGroup $team1Contact.InsertID
 
 #Create SSL test to check SSL certificate every day
-$sslTest = New-StatusCakeHelperSSLTest @StatusCakeAuth -Domain $URL -checkrate 2073600 -contact_groups @($team1Contact.InsertID,$team2Contact.InsertID)
+$sslTest = New-StatusCakeHelperSSLTest -Domain $URL -checkrate 2073600 -contact_groups @($team1Contact.InsertID,$team2Contact.InsertID)
 
 #Create Page Speed Test to monitor page speed every 30 minutes from the UK
 $pageSpeedCheckName = "Example site UK speed check"
-$pageSpeedTest = New-StatusCakeHelperPageSpeedTest @StatusCakeAuth -name $pageSpeedCheckName -website_url $URL -checkrate 30 -location_iso UK
+$pageSpeedTest = New-StatusCakeHelperPageSpeedTest -name $pageSpeedCheckName -website_url $URL -checkrate 30 -location_iso UK
 
 #Set the page speed test using the name of the test to alert team 2 when the page takes more than 5000ms to load
-$result = Set-StatusCakeHelperPageSpeedTest @StatusCakeAuth -name $pageSpeedCheckName -SetByName -contact_groups @($team2Contact.InsertID) -alert_slower 5000
+$result = Set-StatusCakeHelperPageSpeedTest -name $pageSpeedCheckName -SetByName -contact_groups @($team2Contact.InsertID) -alert_slower 5000
 
 #Create a date object to start today at 20:00 and finish in an hour
 $startMWDailyTime = Get-Date "20:00"
@@ -61,10 +60,10 @@ $mwParams = @{
 }
 
 #Create the daily reoccurring maintenance window
-$result = New-StatusCakeHelperMaintenanceWindow @StatusCakeAuth -name "Example Daily MW" -start_date $startMWDailyTime -end_date $endMWDailyTime @mwParams -recur_every 1
+$result = New-StatusCakeHelperMaintenanceWindow -name "Example Daily MW" -start_date $startMWDailyTime -end_date $endMWDailyTime @mwParams -recur_every 1
 
 #Create the weekly reoccurring maintenance window
-$result = New-StatusCakeHelperMaintenanceWindow @StatusCakeAuth -name "Example Weekly MW" -start_date $startMWWeeklyTime -end_date $endMWWeeklyTime @mwParams -recur_every 7
+$result = New-StatusCakeHelperMaintenanceWindow -name "Example Weekly MW" -start_date $startMWWeeklyTime -end_date $endMWWeeklyTime @mwParams -recur_every 7
 
 ```
 
@@ -74,6 +73,11 @@ Below is a list of the available functions and features of the StatusCake API th
 
 [Alerts](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/Alerts "StatusCake Alerts")
 *  Get-StatusCakeHelperSentAlerts
+
+[Authentication](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/Authentication "StatusCake API Authentication")
+*  Remove-StatusCakeHelperAPIAuth
+*  Set-StatusCakeHelperAPIAuth
+*  Test-StatusCakeHelperAPIAuthSet
 
 [ContactGroups](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/ContactGroups "StatusCake Contact Groups")
 *  Get-StatusCakeHelperAllContactGroups
