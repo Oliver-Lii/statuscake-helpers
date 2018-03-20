@@ -114,7 +114,7 @@ function New-StatusCakeHelperPageSpeedTest
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }         
-        Return $response.data
+        Return $response
     }
 
 }
