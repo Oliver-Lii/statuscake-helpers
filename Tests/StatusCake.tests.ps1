@@ -14,7 +14,7 @@ if(Test-Path $DefaultsFile)
     }
     $scAPIKey = ConvertTo-SecureString $StatusCakeAuth.ApiKey -AsPlainText -Force
     $scCredentials = New-Object System.Management.Automation.PSCredential ($StatusCakeAuth.Username, $scAPIKey)
-    Set-StatusCakeHelperAPIAuth -Credentials $scCredentials
+    Set-StatusCakeHelperAPIAuth -Credentials $scCredentials | Out-Null
 }
 else
 {
@@ -127,7 +127,7 @@ Describe "StatusCake Page Speed Tests" {
     }
 
     It "Set-StatusCakeHelperPageSpeedTest updates the checkrate"{
-        $result = Set-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.new_id -checkrate 60
+        $result = Set-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.data.new_id -checkrate 60
         $result.Success | Should Be "True"
     }
 
@@ -137,12 +137,12 @@ Describe "StatusCake Page Speed Tests" {
     }
     
     It "Get-StatusCakeHelperPageSpeedTestHistory retrieves the history of a page speed check"{
-        $result = Get-StatusCakeHelperPageSpeedTestHistory -id $SCPageSpeedTest.new_id
+        $result = Get-StatusCakeHelperPageSpeedTestHistory -id $SCPageSpeedTest.data.new_id
         $result | Should Be $true
     }     
 
     It "Remove-StatusCakeHelperPageSpeedTest removes a test"{
-        $result = Remove-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.new_id -PassThru
+        $result = Remove-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.data.new_id -PassThru
         $result.Success | Should Be "True"
     }    
    
