@@ -23,20 +23,15 @@ function ConvertTo-StatusCakeHelperAPIParams
     foreach ($var in $InputHashTable.GetEnumerator())
     {
         if($var.value -or $var.value -eq 0)
-        {   #Validate Range accepts $true or $false values as 0 or 1 so explictly convert to int
-            If($var.value -eq $true){
-                $value=1
-                $var.value = $value   
-            }
-            elseif($var.value -eq $false){
-                $value=0
-                $var.value = $value
-            }
-
+        {
             switch($var.value.GetType().Name)
             {
-                'Object[]'{ #Arrays need to be converted to comma separated lists
-                    $value = $var.value -join ","  
+                'Boolean'{ # Boolean should be converted to integers
+                    $value = 0
+                    If($var.value -eq $true){
+                        $value=1  
+                    }
+                    $var.value = $value
                 }
                 'DateTime'{ #Dates need to be converted to Unix Epoch time
                     $date = Get-Date -Date "01/01/1970"
@@ -46,6 +41,16 @@ function ConvertTo-StatusCakeHelperAPIParams
                 'Hashtable'{ # Hash table should be converted to JSON (CustomHeader)
                     $value = $var.value  | ConvertTo-Json
                 }
+                'Object[]'{ #Arrays need to be converted to comma separated lists
+                    $value = $var.value -join ","  
+                }
+                'String'{ # API is case sensitive for True/False strings
+                    $value = $var.value
+                    if($value -ceq "True" -or $value -ceq "False") 
+                    {
+                        $value = $value.ToLower()
+                    }
+                }                                                
                 default {
                     $value = $var.value   
                 }
