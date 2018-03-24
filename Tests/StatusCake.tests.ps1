@@ -70,6 +70,10 @@ Describe "StatusCake Tests" {
         $result.Success | Should Be "True"
     }
 
+    It "Get-StatusCakeHelperAllTests retrieves tests filtered by a tag"{
+        Get-StatusCakeHelperAllTests -tags @("Pester Test") | Should Be $true
+    }
+
     It "Remove-StatusCakeHelperTestStatusCodes removes a status code from a test"{
         $result = Remove-StatusCakeHelperTestStatusCodes -TestID $SCTest.InsertID -StatusCodes 401
         $result.Success | Should Be "True"
