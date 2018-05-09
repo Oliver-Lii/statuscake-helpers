@@ -197,6 +197,11 @@ Describe "StatusCake Maintenance Windows" {
         $result.Success | Should Be "True"
     }
 
+    It "Clear-StatusCakeHelperMaintenanceWindow clears a test associated with a maintenance window"{
+        $result = Clear-StatusCakeHelperMaintenanceWindow -id $SCMWTest.data.new_id -raw_tests
+        $result.Success | Should Be "True"
+    }    
+
     It "Get-StatusCakeHelperMaintenanceWindow retrieves a maintenance window by name"{
         $result = Get-StatusCakeHelperMaintenanceWindow -name "Pester Test Maintenance Window"
         $result | Should Be $true

@@ -35,6 +35,13 @@ A pending maintenance window can be updated by name if there are no duplicates a
 Update-StatusCakeHelperMaintenanceWindow @StatusCakeAuth -name "Example 1 Day Maintenance Window" -SetByName -recur_every 7
 ```
 
+### Clear-StatusCakeHelperMaintenanceWindow
+This cmdlet clears the tests and/or tags associated with a pending StatusCake Maintenance Window
+
+```powershell
+Clear-StatusCakeHelperMaintenanceWindow @StatusCakeAuth -id 123456 -raw_tests
+```
+
 ### Remove-StatusCakeHelperMaintenanceWindow
 This cmdlet removes a maintenance window via either id or name of the maintenance window. By default a single window will be cancelled if the series parameter is not supplied.
 
