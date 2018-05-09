@@ -87,6 +87,7 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Set-StatusCakeHelperContactGroup
 
 [MaintenanceWindows](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/MaintenanceWindows "StatusCake Maintenance Windows")
+*  Clear-StatusCakeHelperMaintenanceWindow
 *  Get-StatusCakeHelperAllMaintenanceWindows
 *  Get-StatusCakeHelperMaintenanceWindow
 *  New-StatusCakeHelperMaintenanceWindow
