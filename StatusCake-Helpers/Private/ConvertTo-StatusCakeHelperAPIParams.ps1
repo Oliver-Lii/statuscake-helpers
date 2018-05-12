@@ -73,7 +73,7 @@ function ConvertTo-StatusCakeHelperAPIParams
                 }
                 "TestURL"{                      
                     $outputHashTable.Add("WebsiteURL",$value)                  
-                }
+                }                
                 default {                    
                     $outputHashTable.Add($var.name,$value)
                 }

@@ -34,6 +34,13 @@ This cmdlet creates a new page speed test. The following are the minimum require
 New-StatusCakeHelperPageSpeedTest @StatusCakeAuth -Name "Example website" -website_url "https://www.example.com" -checkrate 30 -location_iso UK
 ```
 
+### Copy-StatusCakeHelperPageSpeedTest
+This cmdlet copies a page speed test. Supply the website_url parameter to override the source website URL
+
+```powershell
+Copy-StatusCakeHelperPageSpeedTest -Name "Example Website" -NewName "Example Website - Copy"
+```
+
 ### Remove-StatusCakeHelperPageSpeedTest
 This cmdlet retrieves the history of a page speed test by name or id
 
