@@ -59,6 +59,13 @@ New-StatusCakeHelperTest @StatusCakeAuth -TestName "Example" -TestURL "https://w
 ```
 ![new-statuscakehelpertest](https://user-images.githubusercontent.com/30263630/29495757-4adfce26-85bd-11e7-8a68-1f8253a91068.PNG)
 
+### Copy-StatusCakeHelperTest
+The cmdlet copies a Status Cake Test. The cmdlet checks to see if a test with the same name already exists before a copy is created. Supply the TestURL or Paused parameter to override the original values in the source test. Not all values can be copied as some values are not returned when retrieving a test. E.g. BasicUser and BasicPass are not returned when retrieving detailed data on a test.
+
+```powershell
+Copy-StatusCakeHelperTest @StatusCakeAuth -TestName "Example" -NewTestName "Example - Copy" 
+```
+
 ### Add-StatusCakeHelperTestNodeLocations
 This cmdlet add a Test Node location to a Status Cake Test. The cmdlet checks to see if a test node location is valid by verifying it against the list of server codes retrieved from the StatusCake API before adding it to the test.
 

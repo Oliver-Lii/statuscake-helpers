@@ -26,6 +26,13 @@ New-StatusCakeHelperContactGroup @StatusCakeAuth -GroupName "Example" -email @("
 ```
 ![image](https://user-images.githubusercontent.com/30263630/32748186-61bda10c-c8b3-11e7-9dc3-e88d01548db0.png)
 
+### Copy-StatusCakeHelperContactGroup
+The cmdlet copies a Status Cake ContactGroup. The cmdlet checks to see if a test with the same name already exists before a copy is created.
+
+```powershell
+Copy-StatusCakeHelperContactGroup @StatusCakeAuth -GroupName "Example" -NewGroupName "Example - Copy" 
+```
+
 ### Remove-StatusCakeHelperContactGroup
 This cmdlet removes a contact group. If the contact group is in use by any tests then the -force switch must be supplied to remove the contact group.
 

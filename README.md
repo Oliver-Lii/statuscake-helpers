@@ -80,6 +80,7 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Test-StatusCakeHelperAPIAuthSet
 
 [ContactGroups](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/ContactGroups "StatusCake Contact Groups")
+*  Copy-StatusCakeHelperContactGroup
 *  Get-StatusCakeHelperAllContactGroups
 *  Get-StatusCakeHelperContactGroup
 *  New-StatusCakeHelperContactGroup
@@ -95,6 +96,7 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Update-StatusCakeHelperMaintenanceWindows
 
 [PageSpeed](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PageSpeed "StatusCake PageSpeed Tests")
+*  Copy-StatusCakeHelperPageSpeedTest
 *  Get-StatusCakeHelperAllPageSpeedTests
 *  Get-StatusCakeHelperPageSpeedTest
 *  Get-StatusCakeHelperPageSpeedTestHistory
@@ -113,6 +115,7 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Get-StatusCakeHelperRegionProbes
 
 [SSL](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/SSL "StatusCake SSL Tests") 
+*  Copy-StatusCakeHelperSSLTest
 *  Get-StatusCakeHelperAllSSLTests
 *  Get-StatusCakeHelperSSLTest
 *  New-StatusCakeHelperSSLTest
@@ -123,6 +126,7 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Add-StatusCakeHelperTestNodeLocations
 *  Add-StatusCakeHelperTestStatusCodes
 *  Add-StatusCakeHelperTestTags
+*  Copy-StatusCakeHelperTest
 *  Get-StatusCakeHelperAllTests
 *  Get-StatusCakeHelperDetailedTestData
 *  Get-StatusCakeHelperPausedTests

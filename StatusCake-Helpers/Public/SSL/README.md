@@ -24,6 +24,13 @@ This cmdlet creates a new SSL Test. The cmdlet tests to see if the domain to be 
 New-StatusCakeHelperSSLTest @StatusCakeAuth -Domain "https://www.example.com" -checkrate 3600
 ```
 
+### Copy-StatusCakeHelperSSLTest
+This cmdlet copies a SSL Test. The cmdlet tests to see if the domain to be monitored already being checked before creating the SSL Test. The check rate is not returned when retrieving the details of a SSL test and defaults to checking once a day.
+
+```powershell
+Copy-StatusCakeHelperSSLTest @StatusCakeAuth -Domain "https://www.example.org" -NewDomain "https://www.example.com"
+```
+
 ### Set-StatusCakeHelperSSLTest
 This cmdlet sets the configuration of a specific SSL Test. If a id or a domain with setByDomain flag set is not supplied then a new test will be created
 
