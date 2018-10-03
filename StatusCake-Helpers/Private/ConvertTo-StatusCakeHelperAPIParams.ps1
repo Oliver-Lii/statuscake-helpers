@@ -62,6 +62,10 @@ function ConvertTo-StatusCakeHelperAPIParams
                     $outputHashTable.Add($var.name,$value) 
                     $value = $value -replace '.?','*'
                 }
+                "Tests_or_Tags"{ # Test or tags are separated by "|"
+                    $value = $var.value -join "|"
+                    $outputHashTable.Add($var.name,$value) 
+                }                
                 "End_date"{ # Api parameter is end_unix
                     $outputHashTable.Add("end_unix",$value)                                                   
                 }                                                                                

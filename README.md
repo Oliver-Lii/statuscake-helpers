@@ -114,6 +114,13 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Get-StatusCakeHelperProbes
 *  Get-StatusCakeHelperRegionProbes
 
+[PublicReporting](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PublicReporting "StatusCake Public Reporting Pages")
+*  Copy-StatusCakeHelperPublicReportingPage
+*  Get-StatusCakeHelperPublicReportingPage
+*  New-StatusCakeHelperPublicReportingPage
+*  Remove-StatusCakeHelperPublicReportingPage
+*  Set-StatusCakeHelperPublicReportingPage
+
 [SSL](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/SSL "StatusCake SSL Tests") 
 *  Copy-StatusCakeHelperSSLTest
 *  Get-StatusCakeHelperAllSSLTests

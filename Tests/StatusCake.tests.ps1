@@ -254,3 +254,36 @@ Describe "StatusCake Maintenance Windows" {
     }    
    
 }
+
+Describe "StatusCake Public Reporting Pages" {
+    
+    It "New-StatusCakeHelperPublicReportingPage creates a public reporting page"{ 
+        $script:SCPRPage = New-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page" -display_orbs $false
+        $SCPRPage.Success | Should Be "True"
+    }
+
+    It "Get-StatusCakeHelperAllPublicReportingPages retrieves all public reporting pages"{
+        Get-StatusCakeHelperPublicReportingPage | Should Be $true
+    }
+
+    It "Get-StatusCakeHelperPublicReportingPage retrieves a public reporting page by title"{
+        Get-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page" | Should Be $true
+    }
+
+    It "Set-StatusCakeHelperPublicReportingPage updates a public reporting page"{
+        $result = Set-StatusCakeHelperPublicReportingPage -id $SCPRPage.data.new_id -display_orbs $true
+        $result.Success | Should Be "True"
+    }
+
+    It "Copy-StatusCakeHelperPublicReportingPage copies a Public Reporting Page"{
+        $result = Copy-StatusCakeHelperPublicReportingPage -id $SCPRPage.data.new_id -newtitle "Pester Test Public Reporting Page (Copy)"
+        $result.Success | Should Be "True"
+    }  
+
+    It "Remove-StatusCakeHelperPublicReportingPage removes a public reporting page"{
+        Remove-StatusCakeHelperPublicReportingPage -Title "Pester Test Public Reporting Page (Copy)"
+        $result = Remove-StatusCakeHelperPublicReportingPage -id $SCPRPage.data.new_id -PassThru
+        $result.Success | Should Be "True"
+    }    
+   
+}
