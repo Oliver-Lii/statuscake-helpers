@@ -107,7 +107,18 @@ This cmdlet removes a tag from a Status Cake Test.
 ```powershell
 Remove-StatusCakeHelperTestTags @StatusCakeAuth -TestID "123456" -TestTags @("Tag1","Tag2")
 ```
+### Suspend-StatusCakeHelperTest
+This cmdlet pauses a Status Cake Test.
 
+```powershell
+Suspend-StatusCakeHelperTest @StatusCakeAuth -TestID "123456"
+```
+### Resume-StatusCakeHelperTest
+This cmdlet resumes a Status Cake Test.
+
+```powershell
+Resume-StatusCakeHelperTest @StatusCakeAuth -TestID "123456"
+```
 
 # Authors
 - Oliver Li

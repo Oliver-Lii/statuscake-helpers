@@ -143,7 +143,9 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Remove-StatusCakeHelperTestNodeLocations
 *  Remove-StatusCakeHelperTestStatusCodes
 *  Remove-StatusCakeHelperTestTags
+*  Resume-StatusCakeHelperTest
 *  Set-StatusCakeHelperTest
+*  Suspend-StatusCakeHelperTest
 
 ## Tests
 
