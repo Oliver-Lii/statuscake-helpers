@@ -19,8 +19,9 @@ Install-Module StatusCake-Helpers -Repository PSGallery
 ```powershell
 # Setup the StatusCake credentials
 # The API credentials must come from the primary account which hosts the tests and not a subaccount which was given access
-$scAPIKey = ConvertTo-SecureString "apikey" -AsPlainText -Force
-$scCredentials = New-Object System.Management.Automation.PSCredential ("username", $scAPIKey)
+$scUser = Read-Host "Enter the StatusCake Username"
+$scAPIKey = Read-Host "Enter the StatusCake API key" -AsSecureString
+$scCredentials = New-Object System.Management.Automation.PSCredential ($scUser, $scAPIKey)
 Set-StatusCakeHelperAPIAuth -Credentials $scCredentials
 
 $URL = "https://www.example.com"

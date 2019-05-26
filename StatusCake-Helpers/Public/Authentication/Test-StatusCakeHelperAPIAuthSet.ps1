@@ -4,7 +4,7 @@
    Tests whether StatusCake API Credentials have been configured
 .EXAMPLE
    Test-StatusCakeHelperAPIAuthSet
-.OUTPUTS    
+.OUTPUTS
    Returns a boolean value
 .FUNCTIONALITY
    Returns a boolean value depending on whether StatusCake API Credentials have been set
@@ -12,12 +12,6 @@
 #>
 function Test-StatusCakeHelperAPIAuthSet
 {
-    If($Global:StatusCakeAPICredentials)
-    {
-        Return $true
-    }
-    else 
-    {
-        Return $false    
-    }
+   $moduleName = (Get-Command $MyInvocation.MyCommand.Name).Source
+   Return (Test-Path "$env:userprofile\$moduleName\$moduleName-Credentials.xml" -PathType Leaf)
 }
