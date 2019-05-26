@@ -13,15 +13,16 @@ Remove-StatusCakeHelperAPIAuth
 This cmdlet sets the StatusCake API Authentication credentials for use by the other cmdlets
 
 ```powershell
-$scAPIKey = ConvertTo-SecureString "apikey" -AsPlainText -Force
-$scCredentials = New-Object System.Management.Automation.PSCredential ("username", $scAPIKey)
+$scUser = Read-Host "Enter the StatusCake Username"
+$scAPIKey = Read-Host "Enter the StatusCake API key" -AsSecureString
+$scCredentials = New-Object System.Management.Automation.PSCredential ($scUser, $scAPIKey)
 Set-StatusCakeHelperAPIAuth -Credentials $scCredentials
 ```
 ### Test-StatusCakeHelperAPIAuth
 This cmdlet tests for the presence of StatusCake API Authentication credentials
 
 ```powershell
-Test-StatusCakeHelperAPIAuth
+Test-StatusCakeHelperAPIAuthSet
 ```
 
 # Authors

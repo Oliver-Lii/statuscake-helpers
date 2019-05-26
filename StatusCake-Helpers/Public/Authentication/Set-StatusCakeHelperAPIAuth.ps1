@@ -11,23 +11,29 @@
 #>
 function Set-StatusCakeHelperAPIAuth
 {
-    [CmdletBinding(PositionalBinding=$false)]    
-    Param(                            
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    [OutputType([System.Boolean])]
+    Param(
         [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $Credentials
     )
 
-    Try 
+    Try
     {
-        New-Variable -Name StatusCakeAPICredentials -Value $Credentials -Scope Global -Force -ErrorAction Stop
+        $moduleName = (Get-Command $MyInvocation.MyCommand.Name).Source
+        If(! (Test-Path "$env:userprofile\$moduleName\"))
+        {
+            New-Item "$env:userprofile\$moduleName" -ItemType Directory | Out-Null
+        }
+        $Credentials | Export-CliXml -Path "$env:userprofile\$moduleName\$moduleName-Credentials.xml"
     }
-    Catch 
+    Catch
     {
         Write-Error $_
         Return $false
     }
 
-    Return $true    
+    Return $true
 }
 

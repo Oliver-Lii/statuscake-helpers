@@ -1,32 +1,12 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ModuleRoot = "$here\..\statuscake-helpers"
-$DefaultsFile = "$here\statuscake-helpers.Pester.Defaults.json"
 
-if(Test-Path $DefaultsFile)
+if(! (Test-StatusCakeHelperAPIAuthSet))
 {
-    $defaults=@{}
-    (Get-Content $DefaultsFile | Out-String | ConvertFrom-Json).psobject.properties | ForEach-Object{$defaults."$($_.Name)" = $_.Value}
-
-    # Prompt for credentials
-    $StatusCakeAuth = @{
-        Username = if($defaults.Username){$defaults.Username}else{Read-Host "Username"}  
-        ApiKey = if($defaults.ApiKey){$defaults.Apikey}else{Read-Host "ApiKey"}
-    }
-    $scAPIKey = ConvertTo-SecureString $StatusCakeAuth.ApiKey -AsPlainText -Force
-    $scCredentials = New-Object System.Management.Automation.PSCredential ($StatusCakeAuth.Username, $scAPIKey)
-    Set-StatusCakeHelperAPIAuth -Credentials $scCredentials | Out-Null
-}
-else
-{
-    Write-Error "$DefaultsFile does not exist. Created example file. Please populate with your values";
-
-    # Write example file
-    @{
-        Username = 'UsernameOfPrimaryStatusCakeAccount';
-        ApiKey = "APIKeyOfPrimaryStatusCakeAccount";
-
-    } | ConvertTo-Json | Set-Content $DefaultsFile
-    return;
+    $scUser = Read-Host "Enter the StatusCake Username"
+    $scAPIKey = Read-Host "Enter the StatusCake API key" -AsSecureString
+    $scCredentials = New-Object System.Management.Automation.PSCredential ($scUser, $scAPIKey)
+    Set-StatusCakeHelperAPIAuth -Credentials $scCredentials
 }
 
 Describe "StatusCake Tests" {

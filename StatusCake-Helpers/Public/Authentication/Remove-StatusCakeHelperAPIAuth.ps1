@@ -4,20 +4,23 @@
    Removes the StatusCake Authentication Username and API Key
 .EXAMPLE
    Remove-StatusCakeHelperAPIAuth
-.OUTPUTS    
+.OUTPUTS
    Returns a Boolean value on the authentication removal operation
 .FUNCTIONALITY
    Removes the StatusCake Authentication Username and API Key
-   
+
 #>
 function Remove-StatusCakeHelperAPIAuth
 {
-
-    Try 
+   [CmdletBinding(SupportsShouldProcess=$true)]
+   [OutputType([System.Boolean])]
+   Param()
+    Try
     {
-        Remove-Variable -Name StatusCakeAPICredentials -Scope Global -ErrorAction Stop
+         $moduleName = (Get-Command $MyInvocation.MyCommand.Name).Source
+         Remove-Item "$env:userprofile\$moduleName\$moduleName-Credentials.xml" -Force
     }
-    Catch 
+    Catch
     {
         Write-Error $_
         Return $false
