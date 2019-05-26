@@ -22,77 +22,83 @@
 #>
 function Set-StatusCakeHelperSSLTest
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         #[Parameter(ParameterSetName='SetByDomain',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
-        [Parameter(ParameterSetName='NewSSLTest')]          
+        [Parameter(ParameterSetName='NewSSLTest')]
         $baseSSLTestURL = "https://app.statuscake.com/API/SSL/Update",
 
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]        
-        [Parameter(ParameterSetName='NewSSLTest')] 
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest')]
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]        
-        [Parameter(ParameterSetName='NewSSLTest')] 
-        [ValidateNotNullOrEmpty()]        
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest')]
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
         $id,
 
         [Parameter(ParameterSetName='SetByDomain',Mandatory=$true)]
-        [switch]$SetByDomain,        
+        [switch]$SetByDomain,
 
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByDomain')]          
-        [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                  
+        [Parameter(ParameterSetName='SetByDomain')]
+        [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         $domain,
 
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]          
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]    
-        [ValidateScript({$_ -match '^[\d]+$'})] 
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
+        [ValidateScript({$_ -match '^[\d]+$'})]
         [object]$contact_groups,
 
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]          
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]   
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
         $checkrate,
 
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]          
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]   
-        [ValidateScript({$_ -match '^[\d]+$'})]        
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
+        [ValidateScript({$_ -match '^[\d]+$'})]
         [object]$alert_at,
-        
+
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]          
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]           
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [ValidateRange(0,1)]
         $alert_expiry,
-      
+
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]          
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]           
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [ValidateRange(0,1)]
         $alert_reminder,
 
         [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]          
-        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]   
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [ValidateRange(0,1)]
-        $alert_broken
+        $alert_broken,
+
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByDomain')]
+        [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
+        [ValidateRange(0,1)]
+        $alert_mixed
 
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}     
- 
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
+
     if($Alert_At -and $Alert_At.count -ne 3)
     {
         Write-Error "Only three values must be specified for Alert_At parameter"
@@ -102,7 +108,7 @@ function Set-StatusCakeHelperSSLTest
     if($SetByDomain -and $Domain)
     {   #If setting test by domain verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests"))
-        {      
+        {
             $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -Domain $Domain
             if(!$sslTest)
             {
@@ -112,21 +118,21 @@ function Set-StatusCakeHelperSSLTest
             elseif($sslTest.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple SSL tests with the same name [$Domain] [$($sslTest.id)]"
-                Return $null          
-            }            
+                Return $null
+            }
             $id = $sslTest.id
         }
     }
     elseif($id)
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests"))
-        {      
+        {
             $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -id $id
             if(!$sslTest)
             {
                 Write-Error "No SSL test with Specified ID Exists [$id]"
-                Return $null 
-            }            
+                Return $null
+            }
             $id = $sslTest.id
         }
     }
@@ -138,9 +144,9 @@ function Set-StatusCakeHelperSSLTest
             if($sslTest)
             {
                 Write-Error "SSL test with specified name already exists [$Domain] [$($sslTest.id)]"
-                Return $null 
+                Return $null
             }
-        }        
+        }
     }
 
     $psParams = @{}
@@ -155,7 +161,7 @@ function Set-StatusCakeHelperSSLTest
         }
         elseif($var.value -or $var.value -eq 0)
         {   #Contact_Groups can be empty string but must be supplied
-            $psParams.Add($var.name,$var.value)                  
+            $psParams.Add($var.name,$var.value)
         }
     }
 
@@ -178,7 +184,7 @@ function Set-StatusCakeHelperSSLTest
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
-        }         
+        }
         Return $response
     }
 

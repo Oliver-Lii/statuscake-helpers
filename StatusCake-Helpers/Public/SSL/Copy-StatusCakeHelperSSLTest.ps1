@@ -17,7 +17,7 @@
 #>
 function Copy-StatusCakeHelperSSLTest
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         [Parameter(ParameterSetName='CopyByName')]
         [Parameter(ParameterSetName='CopyById')]
@@ -26,14 +26,14 @@ function Copy-StatusCakeHelperSSLTest
 
         [Parameter(ParameterSetName='CopyByName')]
         [Parameter(ParameterSetName='CopyById')]
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
-        [ValidatePattern('^\d{1,}$')]           
+        [ValidatePattern('^\d{1,}$')]
         $id,
 
-        [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]       
+        [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]
         [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]
         $Domain,
 
@@ -47,35 +47,35 @@ function Copy-StatusCakeHelperSSLTest
         [ValidateSet("300","600","1800","3600","86400","2073600")]
         $checkrate="86400"
     )
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($Name)
     {   #If copying by name check if resource with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Tests"))
-        {      
+        {
             $exists = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -Name $Name
             if(!$exists)
             {
                 Write-Error "No SSL Test with Specified Name Exists [$Name]"
-                Return $null 
+                Return $null
             }
             elseif($exists.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple SSL Tests with the same name [$Name] [$($exists.ID)]"
-                Return $null          
-            }            
+                Return $null
+            }
         }
     }
     elseif($ID)
     {   #If copying by ID verify that a resource with the Id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Tests"))
-        {      
+        {
             $exists = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -id $ID
             if(!$exists)
             {
                 Write-Error "No SSL Test with Specified ID Exists [$ID]"
-                Return $null 
-            }            
+                Return $null
+            }
         }
     }
 
@@ -88,21 +88,19 @@ function Copy-StatusCakeHelperSSLTest
 
     foreach ($key in $paramsToUse)
     {
-        $value = $exists.$key
+        $value = $exists | Select-Object -ExpandProperty $key
         if($value -or $value -eq 0)
-        {   
-            $psParams.Add($key,$value)                  
+        {
+            $psParams.Add($key,$value)
         }
     }
 
-    # Check rate is not returned when retrieving SSL tests
-    $psParams.Add("checkrate",$checkrate)
     # Convert the string back to array expected by cmdlet
     $psParams.alert_at = @($psParams.alert_at -split ",")
     $psParams.Domain = $NewDomain
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake SSL Test"))
-    { 
+    {
         $result = New-StatusCakeHelperSSLTest @statusCakeFunctionAuth @psParams
     }
     Return $result
