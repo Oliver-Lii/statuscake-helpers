@@ -7,7 +7,7 @@
 .OUTPUTS
    Returns a Boolean value on the authentication removal operation
 .FUNCTIONALITY
-   Removes the StatusCake Authentication Username and API Key
+   Removes the StatusCake Authentication Username and API Key credential file used by the module
 
 #>
 function Remove-StatusCakeHelperAPIAuth

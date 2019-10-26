@@ -7,7 +7,7 @@
 .OUTPUTS
    Returns a boolean value
 .FUNCTIONALITY
-   Returns a boolean value depending on whether StatusCake API Credentials have been set
+   Returns a boolean value depending on whether StatusCake API Credentials file for the module exists
    
 #>
 function Test-StatusCakeHelperAPIAuthSet

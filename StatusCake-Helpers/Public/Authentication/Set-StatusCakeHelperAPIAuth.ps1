@@ -1,13 +1,15 @@
 <#
 .Synopsis
    Sets the StatusCake API Username and API Key
+.PARAMETER Credentials
+   Credentials object containing the username and API Key
 .EXAMPLE
    Set-StatusCakeHelperAPIAuth -Credentials <Credential>
 .INPUTS
    Credentials - Credentials object containing the username and API Key
 .FUNCTIONALITY
-    Sets the StatusCake API Username and API Key
-   
+    Sets the StatusCake API Username and API Key used by the module
+
 #>
 function Set-StatusCakeHelperAPIAuth
 {
