@@ -2,49 +2,55 @@
 <#
 .Synopsis
    Create a StatusCake ContactGroup
+.PARAMETER baseContactGroupURL
+    Base URL endpoint of the statuscake Contact Group API
+.PARAMETER Username
+    Username associated with the API key
+.PARAMETER ApiKey
+    APIKey to access the StatusCake API
+.PARAMETER GroupName
+    Name of the Contact Group to be created
+.PARAMETER DesktopAlert
+    Set to 1 To Enable Desktop Alerts
+.PARAMETER Email
+    Array of email addresses to sent alerts to.
+.PARAMETER Boxcar
+    Boxcar API Key
+.PARAMETER Pushover
+    Pushover Account Key
+.PARAMETER PingURL
+    URL To Send a POST alert
+.PARAMETER Mobile
+    Array of mobile number in International Format E.164 notation
 .EXAMPLE
    New-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -GroupName "Example" -email @(test@example.com)
-.INPUTS
-    baseContactGroupURL - Base URL endpoint of the statuscake ContactGroup API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    GroupName - Name of the ContactGroup to be displayed in StatusCake
-
-    <optional parameters>
-    DesktopAlert - Set to 1 To Enable Desktop Alerts
-    Email - Array containing emails addresses to alert.
-    Boxcar - A Boxcar API Key
-    Pushover - A Pushover Account Key
-    PingURL - A URL To Send a POST alert.
-    Mobile - Array containing list of International Format Cell Numbers
-
 .FUNCTIONALITY
    Creates a new StatusCake ContactGroup using the supplied parameters.
 #>
 function New-StatusCakeHelperContactGroup
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         $baseContactGroupURL = "https://app.statuscake.com/API/ContactGroups/Update",
 
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()] 
+        [ValidateNotNullOrEmpty()]
         $GroupName,
- 
+
         #Optional parameters
-        [ValidateRange(0,1)]         
+        [ValidateRange(0,1)]
         $DesktopAlert,
         [object]$Email,
-        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                  
-        $PingURL,       
-        [ValidateNotNullOrEmpty()]            
+        [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
+        $PingURL,
+        [ValidateNotNullOrEmpty()]
         [string]$Boxcar,
-        [ValidateNotNullOrEmpty()]         
+        [ValidateNotNullOrEmpty()]
         [string]$Pushover,
         [object]$Mobile
     )
@@ -80,12 +86,12 @@ function New-StatusCakeHelperContactGroup
         {
             Write-Verbose "Validating mobile number [$mobileNumber]"
             if(!$($mobileNumber | Test-StatusCakeHelperMobileNumber))
-            {          
+            {
                 Write-Error "Mobile number is not in E.164 format [$mobileNumber]"
-                Return $null 
+                Return $null
             }
         }
-    }    
+    }
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
@@ -98,8 +104,8 @@ function New-StatusCakeHelperContactGroup
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {      
-            $psParams.Add($var.name,$var.value)                  
+        {
+            $psParams.Add($var.name,$var.value)
         }
     }
 
@@ -122,7 +128,7 @@ function New-StatusCakeHelperContactGroup
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
-        }         
+        }
         Return $response
     }
 

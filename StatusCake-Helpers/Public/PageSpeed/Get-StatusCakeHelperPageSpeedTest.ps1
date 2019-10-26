@@ -2,29 +2,33 @@
 <#
 .Synopsis
    Gets a StatusCake PageSpeed Test
+.PARAMETER basePageSpeedTestURL
+    Base URL endpoint of the statuscake PageSpeed Test API
+.PARAMETER Username
+    Username associated with the API key
+.PARAMETER ApiKey
+    APIKey to access the StatusCake API
+.PARAMETER Name
+    Name of the PageSpeed test
+.PARAMETER Id
+    ID of the PageSpeed Test
 .EXAMPLE
    Get-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -id 123456
-.INPUTS
-    basePageSpeedTestURL - Base URL endpoint of the statuscake auth API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    Name - Name of the test to retrieve
-    ID - Test ID to retrieve    
-.OUTPUTS    
+.OUTPUTS
     Returns a StatusCake PageSpeed Tests as an object
 .FUNCTIONALITY
     Retrieves a specific StatusCake PageSpeed Test
-   
+
 #>
 function Get-StatusCakeHelperPageSpeedTest
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/",
 
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "name")]
@@ -32,8 +36,8 @@ function Get-StatusCakeHelperPageSpeedTest
         [string]$name,
 
         [Parameter(ParameterSetName = "ID")]
-        [ValidateNotNullOrEmpty()]            
-        [int]$id      
+        [ValidateNotNullOrEmpty()]
+        [int]$id
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
@@ -42,10 +46,10 @@ function Get-StatusCakeHelperPageSpeedTest
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
         {
             $matchingTest = Get-StatusCakeHelperAllPageSpeedTests -Username $username -apikey $ApiKey
-            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}            
+            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}
             if(!$matchingTest)
             {
-                Return $null 
+                Return $null
             }
             #Retrieving PageSpeed tests without an ID number returns data with different field names
             #Recursively call the function itself to ensure data is returned in the same format
@@ -55,7 +59,7 @@ function Get-StatusCakeHelperPageSpeedTest
                 $pageSpeedTestData+=Get-StatusCakeHelperPageSpeedTest -Username $username -apikey $ApiKey -id $match.id
             }
             Return $pageSpeedTestData
-        }  
+        }
 
     }
 
@@ -71,7 +75,7 @@ function Get-StatusCakeHelperPageSpeedTest
         }
         elseif($var.value -or $var.value -eq 0)
         {
-            $psParams.Add($var.name,$var.value)                  
+            $psParams.Add($var.name,$var.value)
         }
     }
 
@@ -83,7 +87,7 @@ function Get-StatusCakeHelperPageSpeedTest
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
@@ -94,9 +98,9 @@ function Get-StatusCakeHelperPageSpeedTest
         {
             Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
-        }         
+        }
 
-        Return $response.data   
+        Return $response.data
     }
 
 }

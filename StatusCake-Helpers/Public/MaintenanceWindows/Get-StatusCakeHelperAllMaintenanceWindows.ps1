@@ -2,33 +2,35 @@
 <#
 .Synopsis
    Gets all StatusCake Maintenance Windows in specific state
+.PARAMETER baseMaintenanceWindowURL
+    Base URL endpoint of the statuscake Maintenance Window API
+.PARAMETER Username
+    Username associated with the API key
+.PARAMETER ApiKey
+    APIKey to access the StatusCake API
+.PARAMETER State
+    Filter results based on state
 .EXAMPLE
    Get-StatusCakeHelperAllMaintenanceWindows -Username "Username" -ApiKey "APIKEY"
-.INPUTS
-    baseMaintenanceWindowURL - Base URL endpoint of the statuscake auth API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-
-    State - Filter tests based on state. 
-.OUTPUTS    
+.OUTPUTS
     Returns all the StatusCake Maintenance Windows as an object
 .FUNCTIONALITY
     Retrieves all Maintenance Windows in a specific state from StatusCake
-   
+
 #>
 function Get-StatusCakeHelperAllMaintenanceWindows
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/",
 
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [ValidateSet("ALL","PND","ACT","END","CNC")]
-        [string]$state="ALL"   
+        [string]$state="ALL"
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
@@ -44,7 +46,7 @@ function Get-StatusCakeHelperAllMaintenanceWindows
         }
         elseif($var.value -or $var.value -eq 0)
         {
-            $psParams.Add($var.name,$var.value)                  
+            $psParams.Add($var.name,$var.value)
         }
     }
 
@@ -56,7 +58,7 @@ function Get-StatusCakeHelperAllMaintenanceWindows
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Window") )
@@ -67,13 +69,13 @@ function Get-StatusCakeHelperAllMaintenanceWindows
         {
             Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
-        }         
-    
+        }
+
         if($response)
         {
             Return $response.data
         }
-    
+
         Return $null
     }
 }

@@ -2,15 +2,18 @@
 <#
 .Synopsis
    Copies the settings of a StatusCake ContactGroup
+.PARAMETER Username
+   Username associated with the API key
+.PARAMETER ApiKey
+   APIKey to access the StatusCake API
+.PARAMETER GroupName
+   Name of the Contact Group to be copied
+.PARAMETER ContactID
+   ID of the Contact Group to be copied
+.PARAMETER NewGroupName
+   Name of the Contact Group copy
 .EXAMPLE
    Copy-StatusCakeHelperContactGroup -GroupName "Example" -NewGroupName "Example - Copy"
-.INPUTS
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-
-    GroupName - Name of the Contact Group to be copied
-    ContactID - ID of the Contact Group to be copied
-    NewGroupName - Name of the Contact Group copy
 .FUNCTIONALITY
    Creates a copy of a contact group
 #>

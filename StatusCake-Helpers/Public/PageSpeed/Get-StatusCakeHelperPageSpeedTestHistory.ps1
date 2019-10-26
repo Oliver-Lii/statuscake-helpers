@@ -2,29 +2,33 @@
 <#
 .Synopsis
    Gets the history of a StatusCake PageSpeed Test
+.PARAMETER basePageSpeedTestURL
+    Base URL endpoint of the statuscake PageSpeed Test API
+.PARAMETER Username
+    Username associated with the API key
+.PARAMETER ApiKey
+    APIKey to access the StatusCake API
+.PARAMETER Name
+    Name of the PageSpeed test
+.PARAMETER Id
+    ID of the PageSpeed Test
 .EXAMPLE
    Get-StatusCakeHelperPageSpeedTestHistory -Username "Username" -ApiKey "APIKEY" -id 123456
-.INPUTS
-    basePageSpeedTestURL - Base URL endpoint of the statuscake auth API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    Name - Name of the test to retrieve
-    ID - Test ID to retrieve    
-.OUTPUTS    
+.OUTPUTS
     Returns a StatusCake PageSpeed Tests History as an object
 .FUNCTIONALITY
     Retrieves the history for a StatusCake PageSpeed Test
-   
+
 #>
 function Get-StatusCakeHelperPageSpeedTestHistory
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/History/",
 
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "name")]
@@ -32,13 +36,13 @@ function Get-StatusCakeHelperPageSpeedTestHistory
         [string]$name,
 
         [Parameter(ParameterSetName = "ID")]
-        [ValidateNotNullOrEmpty()]            
+        [ValidateNotNullOrEmpty()]
         [int]$id,
 
         [Parameter(ParameterSetName = "name")]
         [Parameter(ParameterSetName = "ID")]
-        [ValidateRange(0,14)]            
-        [int]$days        
+        [ValidateRange(0,14)]
+        [int]$days
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
@@ -47,11 +51,11 @@ function Get-StatusCakeHelperPageSpeedTestHistory
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
         {
             $matchingTest = Get-StatusCakeHelperAllPageSpeedTests -Username $username -apikey $ApiKey
-            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}            
+            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}
             if(!$matchingTest)
             {
                 Write-Error "No PageSpeed Check with specified name exists [$name]"
-                Return $null 
+                Return $null
             }
 
             #If multiple matches for the same name return the data for all matching tests
@@ -61,7 +65,7 @@ function Get-StatusCakeHelperPageSpeedTestHistory
                 $pageSpeedTestData+=Get-StatusCakeHelperPageSpeedTestHistory -Username $username -apikey $ApiKey -id $match.id
             }
             Return $pageSpeedTestData
-        }  
+        }
 
     }
 
@@ -77,7 +81,7 @@ function Get-StatusCakeHelperPageSpeedTestHistory
         }
         elseif($var.value -or $var.value -eq 0)
         {
-            $psParams.Add($var.name,$var.value)                  
+            $psParams.Add($var.name,$var.value)
         }
     }
 
@@ -89,18 +93,18 @@ function Get-StatusCakeHelperPageSpeedTestHistory
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams     
+        $jsonResponse = Invoke-WebRequest @webRequestParams
         $response = $jsonResponse | ConvertFrom-Json
         if($response.Success -ne "True")
         {
             Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
-        }         
+        }
 
         Return $response.data
     }

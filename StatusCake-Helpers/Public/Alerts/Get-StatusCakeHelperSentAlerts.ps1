@@ -2,55 +2,60 @@
 <#
 .Synopsis
    Retrieves alerts that have been sent in relation to tests setup on the account
+.PARAMETER baseAlertURL
+   Base URL endpoint of the statuscake alert API
+.PARAMETER Username
+   Username associated with the API key
+.PARAMETER ApiKey
+   APIKey to access the StatusCake API
+.PARAMETER TestID
+   ID of the Test to retrieve the sent alerts for
+.PARAMETER TestName
+   Name of the Test to retrieve the sent alerts for
+.PARAMETER Since
+   Supply to include results only since the specified date
+.OUTPUTS
+    Returns an object with the details on the Alerts Sent
 .EXAMPLE
    Get-StatusCakeHelperSentAlerts -TestID 123456 -since "2017-08-19 13:29:49"
-.INPUTS
-    baseAlertURL - Base URL endpoint of the statuscake alert API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    TestID - ID of the Test to retrieve the sent alerts for
-    TestName - Name of the Test to retrieve the sent alerts for
-    Since - Supply to include results only since the specified date
-.OUTPUTS    
-    Returns an object with the details on the Alerts Sent
 .FUNCTIONALITY
     Retrieves alerts that have been sent in regards to tests setup on the account
-   
+
 #>
 function Get-StatusCakeHelperSentAlerts
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
-    Param(                     
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    Param(
         $baseAlertURL = "https://app.statuscake.com/API/Alerts/",
-         
+
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
-                    
-        [int]$TestID,     
-              
-        [ValidateNotNullOrEmpty()]            
+
+        [int]$TestID,
+
+        [ValidateNotNullOrEmpty()]
         [string]$TestName,
-                   
+
         [datetime]$Since
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($TestName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
-        {        
+        {
             $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
             if($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve sent alerts via TestID"
-                Return $null            
+                Return $null
             }
             $TestID = $testCheck.TestID
-            else 
+            else
             {
                 Write-Error "Unable to find Test with name [$TestName]"
                 Return $null
@@ -69,8 +74,8 @@ function Get-StatusCakeHelperSentAlerts
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {   
-            $psParams.Add($var.name,$var.value)                  
+        {
+            $psParams.Add($var.name,$var.value)
         }
     }
 
