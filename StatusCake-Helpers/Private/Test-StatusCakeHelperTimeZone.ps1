@@ -6,15 +6,16 @@
    Test-StatusCakeHelperTimeZone
 .INPUTS
     StatusCode - String containing the TimeZone
-.OUTPUTS    
+.OUTPUTS
     Returns true if Time Zone is valid
 .FUNCTIONALITY
    Tests to confirm that a supplied TimeZone is valid
-   
+
 #>
 function Test-StatusCakeHelperTimeZone
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false)]
+    [OutputType([System.Boolean])]
     Param(
         [Parameter(Mandatory=$True,
         ValueFromPipeline=$True)]
@@ -22,7 +23,7 @@ function Test-StatusCakeHelperTimeZone
         [string] $TimeZoneFile="$PSScriptRoot\Files\TimeZones.json"
     )
     $timeZoneList = Get-Content $TimeZoneFile | ConvertFrom-Json
-    
+
     if($timeZoneList -contains $TimeZone)
     {
         Return $true

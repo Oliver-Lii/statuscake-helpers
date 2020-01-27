@@ -6,15 +6,16 @@
    Test-StatusCakeHelperEmailAddress "test@example.com"
 .INPUTS
     Email - String containing email address
-.OUTPUTS    
+.OUTPUTS
     Returns true if email address is valid
 .FUNCTIONALITY
    Tests to confirm that a supplied email address is valid
-   
+
 #>
 function Test-StatusCakeHelperEmailAddress
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false)]
+    [OutputType([System.Boolean])]
     Param(
         [Parameter(Mandatory=$True,
         ValueFromPipeline=$True)]

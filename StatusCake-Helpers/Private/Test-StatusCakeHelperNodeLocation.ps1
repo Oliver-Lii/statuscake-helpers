@@ -6,15 +6,16 @@
    Test-StatusCakeHelperNodeLocation [string]
 .INPUTS
     NodeLocations - String containing the node location server code
-.OUTPUTS    
+.OUTPUTS
     Returns true if node location server code is valid
 .FUNCTIONALITY
    Tests to confirm that a supplied node location server code is valid
-   
+
 #>
 function Test-StatusCakeHelperNodeLocation
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false)]
+    [OutputType([System.Boolean])]
     Param(
         [Parameter(Mandatory=$True,
         ValueFromPipeline=$True)]

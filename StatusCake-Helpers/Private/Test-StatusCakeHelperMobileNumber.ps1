@@ -6,15 +6,16 @@
    Test-StatusCakeHelperMobileNo "test@example.com"
 .INPUTS
     MobileNumber - String containing mobile number
-.OUTPUTS    
+.OUTPUTS
     Returns true if mobile number is valid
 .FUNCTIONALITY
    Tests to confirm that a supplied mobile number meets the E.164 number formatting
-   
+
 #>
 function Test-StatusCakeHelperMobileNumber
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false)]
+    [OutputType([System.Boolean])]
     Param(
         [Parameter(Mandatory=$True,
         ValueFromPipeline=$True)]

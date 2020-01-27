@@ -6,15 +6,16 @@
    Test-StatusCakeHelperStatusCode [string]
 .INPUTS
     StatusCode - String containing the HTTP StatusCode
-.OUTPUTS    
+.OUTPUTS
     Returns true if HTTP Status Code code is valid
 .FUNCTIONALITY
    Tests to confirm that a supplied HTTP Status Code is valid
-   
+
 #>
 function Test-StatusCakeHelperStatusCode
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false)]
+    [OutputType([System.Boolean])]
     Param(
         [Parameter(Mandatory=$True,
         ValueFromPipeline=$True)]
