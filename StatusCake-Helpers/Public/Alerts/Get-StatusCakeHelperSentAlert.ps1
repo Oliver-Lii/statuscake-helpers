@@ -2,12 +2,8 @@
 <#
 .Synopsis
    Retrieves alerts that have been sent in relation to tests setup on the account
-.PARAMETER baseAlertURL
-   Base URL endpoint of the statuscake alert API
-.PARAMETER Username
-   Username associated with the API key
-.PARAMETER ApiKey
-   APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER TestID
    ID of the Test to retrieve the sent alerts for
 .PARAMETER TestName
@@ -22,17 +18,12 @@
     Retrieves alerts that have been sent in regards to tests setup on the account
 
 #>
-function Get-StatusCakeHelperSentAlerts
+function Get-StatusCakeHelperSentAlert
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $baseAlertURL = "https://app.statuscake.com/API/Alerts/",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [int]$TestID,
 
@@ -41,14 +32,12 @@ function Get-StatusCakeHelperSentAlerts
 
         [datetime]$Since
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($TestName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
         {
-            $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
+            $testCheck = Get-StatusCakeHelperTest -APICredential $APICredential -TestName $TestName
             if($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve sent alerts via TestID"
@@ -63,37 +52,24 @@ function Get-StatusCakeHelperSentAlerts
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseAlertURL","Username","ApiKey","TestName")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
-
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
+    $exclude=@("TestName")
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude $exclude
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
-        uri = $baseAlertURL
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/Alerts/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Sent Alerts") )
     {
-        $jsonResponse = Invoke-WebRequest @requestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         Return $response
     }
 }
