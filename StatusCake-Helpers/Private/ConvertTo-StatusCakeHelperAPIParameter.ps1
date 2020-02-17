@@ -70,29 +70,6 @@ function ConvertTo-StatusCakeHelperAPIParameter
             }
         }
 
-        <#switch($var.name)
-        {
-            "Tests_or_Tags"{ # Test or tags are separated by "|"
-                $value = $var.value -join "|"
-                $outputHashTable.Add($var.name,$value)
-            }
-            "End_date"{ # Api parameter is end_unix
-                $outputHashTable.Add("end_unix",$value)
-            }
-            "Start_date"{ # Api parameter is start_unix
-                $outputHashTable.Add("start_unix",$value)
-            }
-            "TestName"{
-                $outputHashTable.Add("WebsiteName",$value)
-            }
-            "TestURL"{
-                $outputHashTable.Add("WebsiteURL",$value)
-            }
-            default {
-                $outputHashTable.Add($var.name,$value)
-            }
-        }#>
-
         Write-Verbose "[$($var.name)] [$($var.value.GetType().Name)] will be added with value [$($outputHashTable[$name])]"
     }
     Return $outputHashTable

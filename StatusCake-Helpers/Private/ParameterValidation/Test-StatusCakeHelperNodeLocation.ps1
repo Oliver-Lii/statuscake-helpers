@@ -22,7 +22,7 @@ function Test-StatusCakeHelperNodeLocation
         [string] $NodeLocation
     )
 
-    $StatusCakeServerCodes = (Get-StatusCakeHelperProbes).servercode
+    $StatusCakeServerCodes = (Get-StatusCakeHelperProbe).servercode
 
     if($StatusCakeServerCodes -contains $NodeLocation)
     {

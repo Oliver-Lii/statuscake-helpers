@@ -38,8 +38,8 @@ Function Get-StatusCakeHelperAPIParameter
     # Avoiding sending any common parameters
     $Exclude += [System.Management.Automation.PSCmdlet]::CommonParameters
     $Exclude += [System.Management.Automation.PSCmdlet]::OptionalCommonParameters
-    # apiCredential is sent as part of the request header
-    $Exclude += "apiCredential"
+    # APICredential is sent as part of the request header
+    $Exclude += "APICredential"
 
     #Remove excluded variables
     $workingHash = $InputHashTable.GetEnumerator() | Where-Object {$_.Key -notin $Exclude}
