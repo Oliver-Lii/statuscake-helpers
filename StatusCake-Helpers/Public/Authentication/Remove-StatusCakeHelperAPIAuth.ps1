@@ -14,17 +14,31 @@ function Remove-StatusCakeHelperAPIAuth
 {
    [CmdletBinding(SupportsShouldProcess=$true)]
    [OutputType([System.Boolean])]
-   Param()
-    Try
-    {
+   Param(
+      [Switch]$Session
+   )
+
+   If($Session)
+   {
+      if($PSDefaultParameterValues.ContainsKey("Get-StatusCakeHelperAPIAuth:Credential"))
+      {
+         $PSDefaultParameterValues.Remove("Get-StatusCakeHelperAPIAuth:Credential")
+      }
+   }
+   else
+   {
+      Try
+      {
          $moduleName = (Get-Command $MyInvocation.MyCommand.Name).Source
-         Remove-Item "$env:userprofile\$moduleName\$moduleName-Credentials.xml" -Force
-    }
-    Catch
-    {
-        Write-Error $_
-        Return $false
-    }
+         Remove-Item "$env:userprofile\.$moduleName\$moduleName-Credentials.xml" -Force
+      }
+      Catch
+      {
+         Write-Error $_
+         Return $false
+      }
+   }
+
 
     Return $true
 }

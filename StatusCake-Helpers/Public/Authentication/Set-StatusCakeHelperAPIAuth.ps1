@@ -1,14 +1,16 @@
 <#
 .Synopsis
    Sets the StatusCake API Username and API Key
-.PARAMETER Credentials
-   Credentials object containing the username and API Key
+.PARAMETER Credential
+   Credential object containing the username and API Key
+.PARAMETER Session
+   Switch to avoid writing credentials to disk
 .EXAMPLE
-   Set-StatusCakeHelperAPIAuth -Credentials <Credential>
+   Set-StatusCakeHelperAPIAuth -Credential <Credential>
 .INPUTS
-   Credentials - Credentials object containing the username and API Key
+   Credential - Credential object containing the username and API Key
 .FUNCTIONALITY
-    Sets the StatusCake API Username and API Key used by the module
+    Sets the StatusCake API Username and API Key used by the module.
 
 #>
 function Set-StatusCakeHelperAPIAuth
@@ -18,22 +20,31 @@ function Set-StatusCakeHelperAPIAuth
     Param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [System.Management.Automation.PSCredential] $Credentials
+        [System.Management.Automation.PSCredential] $Credential,
+
+        [Switch]$Session
     )
 
-    Try
+    if($Session)
     {
-        $moduleName = (Get-Command $MyInvocation.MyCommand.Name).Source
-        If(! (Test-Path "$env:userprofile\$moduleName\"))
-        {
-            New-Item "$env:userprofile\$moduleName" -ItemType Directory | Out-Null
-        }
-        $Credentials | Export-CliXml -Path "$env:userprofile\$moduleName\$moduleName-Credentials.xml"
+        $PSDefaultParameterValues.Add("Get-StatusCakeHelperAPIAuth:Credential",$Credential)
     }
-    Catch
+    else
     {
-        Write-Error $_
-        Return $false
+        Try
+        {
+            $moduleName = (Get-Command $MyInvocation.MyCommand.Name).Source
+            If(! (Test-Path "$env:userprofile\.$moduleName\"))
+            {
+                New-Item "$env:userprofile\.$moduleName" -ItemType Directory | Out-Null
+            }
+            $Credential | Export-CliXml -Path "$env:userprofile\.$moduleName\$moduleName-Credentials.xml"
+        }
+        Catch
+        {
+            Write-Error $_
+            Return $false
+        }
     }
 
     Return $true

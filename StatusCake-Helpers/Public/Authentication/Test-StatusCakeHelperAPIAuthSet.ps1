@@ -8,10 +8,10 @@
    Returns a boolean value
 .FUNCTIONALITY
    Returns a boolean value depending on whether StatusCake API Credentials file for the module exists
-   
+
 #>
 function Test-StatusCakeHelperAPIAuthSet
 {
    $moduleName = (Get-Command $MyInvocation.MyCommand.Name).Source
-   Return (Test-Path "$env:userprofile\$moduleName\$moduleName-Credentials.xml" -PathType Leaf)
+   Return (Test-Path "$env:userprofile\.$moduleName\$moduleName-Credentials.xml" -PathType Leaf)
 }
