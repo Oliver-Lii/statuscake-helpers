@@ -2,18 +2,14 @@
 <#
 .Synopsis
    Retrieves a StatusCake Contact Group with a specific name or Test ID
-.PARAMETER baseContactGroupURL
-    Base URL endpoint of the statuscake Contact Group API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER GroupName
     Name of the Contact Group
 .PARAMETER ContactID
     ID of the Contact Group to be copied
 .EXAMPLE
-   Get-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -ContactID 123456
+   Get-StatusCakeHelperContactGroup -ContactID 123456
 .OUTPUTS
     Returns the details of the test which exists returning $null if no matching test
 .FUNCTIONALITY
@@ -22,34 +18,33 @@
 #>
 function Get-StatusCakeHelperContactGroup
 {
-    [CmdletBinding(PositionalBinding=$false)]
+    [CmdletBinding(PositionalBinding=$false,DefaultParameterSetName='all')]
     Param(
-        $baseTestURL = "https://app.statuscake.com/API/ContactGroups/",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "Group Name")]
         [ValidateNotNullOrEmpty()]
         [string]$GroupName,
+
         [Parameter(ParameterSetName = "Contact ID")]
         [ValidateNotNullOrEmpty()]
         [int]$ContactID
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
-        uri = $baseTestURL
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/ContactGroups/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
     }
 
-    $jsonResponse = Invoke-WebRequest @requestParams
-    $response = $jsonResponse | ConvertFrom-Json
+    $response = Invoke-RestMethod @requestParams
 
-    if($GroupName)
+    if($PSCmdlet.ParameterSetName -eq "all")
+    {
+        $matchingGroups = $response
+    }
+    elseif($GroupName)
     {
         $matchingGroups = $response | Where-Object {$_.GroupName -eq $GroupName}
     }
@@ -58,10 +53,7 @@ function Get-StatusCakeHelperContactGroup
         $matchingGroups = $response | Where-Object {$_.ContactID -eq $ContactID}
     }
 
-    if($matchingGroups)
-    {
-        Return $matchingGroups
-    }
-    Return $null
+    Return $matchingGroups
+
 }
 

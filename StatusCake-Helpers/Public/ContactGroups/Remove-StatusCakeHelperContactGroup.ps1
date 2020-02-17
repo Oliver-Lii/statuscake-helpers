@@ -3,18 +3,18 @@
 <#
 .Synopsis
    Removes the specified StatusCake ContactGroup
-.PARAMETER baseContactGroupURL
-    Base URL endpoint of the statuscake Contact Group API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Username and APIKey Credentials to access StatusCake API
 .PARAMETER ContactID
     ID of the ContactGroup to be removed
 .PARAMETER GroupName
     Name of the Contact Group to be removed
+.PARAMETER Force
+    Delete the contact group if it is in use
+.PARAMETER Passthru
+    Return the object to be deleted
 .EXAMPLE
-   Remove-StatusCakeHelperContactGroup -Username "Username" -ApiKey "APIKEY" -contactID 123456
+   Remove-StatusCakeHelperContactGroup -contactID 123456
 .OUTPUTS
     Returns the result of the ContactGroup removal as an object
 .FUNCTIONALITY
@@ -25,50 +25,55 @@ function Remove-StatusCakeHelperContactGroup
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $baseContactGroupURL = "https://app.statuscake.com/API/ContactGroups/Update/?ContactID=",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "ContactID")]
         [ValidateNotNullOrEmpty()]
         [int]$ContactID,
+
         [Parameter(ParameterSetName = "GroupName")]
         [ValidateNotNullOrEmpty()]
         [string]$GroupName,
+
         [switch]$Force,
+
         [switch]$PassThru
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
+    $checkParams = @{}
     if($GroupName)
     {
-        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Contact Groups") )
+        $checkParams.Add("GroupName",$GroupName)
+    }
+    else
+    {
+        $checkParams.Add("ContactID",$ContactID)
+    }
+
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Contact Groups") )
+    {
+        $contactGroup = Get-StatusCakeHelperContactGroup -APICredential $APICredential @checkParams
+        if($contactGroup)
         {
-            $ContactGroupCheck = Get-StatusCakeHelperContactGroup @statusCakeFunctionAuth -GroupName $GroupName
-            if($ContactGroupCheck)
+            if($contactGroup.GetType().Name -eq 'Object[]')
             {
-                if($ContactGroupCheck.GetType().Name -eq 'Object[]')
-                {
-                    Write-Error "Multiple ContactGroups found with name [$GroupName]. Please remove the ContactGroup by ContactID"
-                    Return $null
-                }
-                $ContactID = $ContactGroupCheck.ContactID
-            }
-            else
-            {
-                Write-Error "Unable to find ContactGroup with name [$GroupName]"
+                Write-Error "Multiple ContactGroups found with name [$GroupName]. Please remove the ContactGroup by ContactID"
                 Return $null
             }
+            $ContactID = $contactGroup.ContactID
+        }
+        else
+        {
+            Write-Error "Unable to find ContactGroup with name [$GroupName]"
+            Return $null
         }
     }
 
+
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
     {
-        $StatusCakeTests = Get-StatusCakeHelperAllTests @statusCakeFunctionAuth
+        $StatusCakeTests = Get-StatusCakeHelperTest -APICredential $APICredential
         $StatusCakeTestsWithContact = $StatusCakeTests | Where-Object {$_.ContactGroup -Contains $ContactID}
         if($StatusCakeTestsWithContact -and !$Force)
         {
@@ -78,26 +83,24 @@ function Remove-StatusCakeHelperContactGroup
     }
 
     $requestParams = @{
-        uri = "$baseContactGroupURL$ContactID"
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/ContactGroups/Update/?ContactID=$ContactID"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         Method = "Delete"
     }
 
     if( $pscmdlet.ShouldProcess("ContactID - $ContactID", "Remove StatusCake ContactGroup") )
     {
-        $jsonResponse = Invoke-WebRequest @requestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
-            Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
         }
-        if(!$PassThru)
+        elseif($PassThru)
         {
-            Return
+            Return $contactGroup
         }
-        Return $response
     }
 }
 
