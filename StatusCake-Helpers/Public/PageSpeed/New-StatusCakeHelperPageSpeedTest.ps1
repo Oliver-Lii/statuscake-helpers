@@ -2,12 +2,8 @@
 <#
 .Synopsis
    Create a StatusCake PageSpeed Test
-.PARAMETER basePageSpeedTestURL
-    Base URL endpoint of the statuscake PageSpeed Test API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER Name
     Name for PageSpeed test
 .PARAMETER Website_Url
@@ -35,12 +31,8 @@ function New-StatusCakeHelperPageSpeedTest
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/Update",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
@@ -52,7 +44,7 @@ function New-StatusCakeHelperPageSpeedTest
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("AU","CA","DE","IN","NL","SG","UK","US","PRIVATE")]
-        $location_iso,
+        [string]$location_iso,
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("1","5","10","15","30","60","1440")]
@@ -73,57 +65,49 @@ function New-StatusCakeHelperPageSpeedTest
         [ValidateNotNullOrEmpty()]
         [string]$private_name
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
-
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Test") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed tests") )
     {
-        $PageSpeedTest = Get-StatusCakeHelperPageSpeedTest -Username $username -apikey $ApiKey -name $name
-        if($PageSpeedTest)
+        $pageSpeedTest = Get-StatusCakeHelperPageSpeedTest -APICredential $APICredential -name $name
+        if($pageSpeedTest)
         {
-            Write-Error "PageSpeed Check with specified name already exists [$name] [$($PageSpeedTest.id)]"
+            Write-Error "PageSpeed test with specified name already exists [$name] [$($pageSpeedTest.id)]"
             Return $null
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("basePageSpeedTestURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
-
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $webRequestParams = @{
-        uri = $basePageSpeedTestURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Pagespeed/Update/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Post"
         ContentType = "application/x-www-form-urlencoded"
         body = $statusCakeAPIParams
     }
 
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake PageSpeed Test") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake PageSpeed Test") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams = @{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }
-        Return $response
+        else
+        {   # If there are no changes no id is returned
+            if($response.data.new_id)
+            {
+                $id = $response.data.new_id
+            }
+            $result = Get-StatusCakeHelperPageSpeedTestDetail -APICredential $APICredential -id $id
+        }
+        Return $result
     }
+
 
 }

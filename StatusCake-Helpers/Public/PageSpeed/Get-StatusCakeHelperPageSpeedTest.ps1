@@ -2,16 +2,14 @@
 <#
 .Synopsis
    Gets a StatusCake PageSpeed Test
-.PARAMETER basePageSpeedTestURL
-    Base URL endpoint of the statuscake PageSpeed Test API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER Name
     Name of the PageSpeed test
 .PARAMETER Id
     ID of the PageSpeed Test
+.PARAMETER Detailed
+    Retrieve detailed test data
 .EXAMPLE
    Get-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -id 123456
 .OUTPUTS
@@ -22,14 +20,10 @@
 #>
 function Get-StatusCakeHelperPageSpeedTest
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    [CmdletBinding(PositionalBinding=$false,DefaultParameterSetName='All')]
     Param(
-        $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "name")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
@@ -37,71 +31,42 @@ function Get-StatusCakeHelperPageSpeedTest
 
         [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
-        [int]$id
+        [int]$id,
+
+        [switch]$Detailed
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
+
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Pagespeed/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
+        UseBasicParsing = $true
+    }
+
+    $response = Invoke-RestMethod @requestParams
+    $requestParams=@{}
+    $matchingTests = $response.data
 
     if($name)
     {
-        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
-        {
-            $matchingTest = Get-StatusCakeHelperAllPageSpeedTests -Username $username -apikey $ApiKey
-            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}
-            if(!$matchingTest)
-            {
-                Return $null
-            }
-            #Retrieving PageSpeed tests without an ID number returns data with different field names
-            #Recursively call the function itself to ensure data is returned in the same format
-            $pageSpeedTestData=@()
-            foreach($match in $matchingTest)
-            {
-                $pageSpeedTestData+=Get-StatusCakeHelperPageSpeedTest -Username $username -apikey $ApiKey -id $match.id
-            }
-            Return $pageSpeedTestData
-        }
-
+        $matchingTests = $response.data | Where-Object {$_.Title -eq $name}
     }
-
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("basePageSpeedTestURL","Username","ApiKey","name")
-    foreach ($key in $ParameterList.keys)
+    elseif($id)
     {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
+        $matchingTests = $response.data | Where-Object {$_.ID -eq $id}
     }
 
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $putRequestParams = @{
-        uri = $basePageSpeedTestURL
-        Headers = $authenticationHeader
-        UseBasicParsing = $true
-        method = "Get"
-        ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams
-    }
-
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
+    $result = $matchingTests
+    if($Detailed)
     {
-        $jsonResponse = Invoke-WebRequest @putRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
-        if($response.Success -ne "True")
+        $detailList = [System.Collections.Generic.List[PSObject]]::new()
+        foreach($test in $matchingTests)
         {
-            Write-Verbose $response
-            Write-Error "$($response.Message) [$($response.Issues)]"
+            $item = Get-StatusCakeHelperPageSpeedTestDetail -APICredential $APICredential -Id $test.Id
+            $detailList.Add($item)
         }
-
-        Return $response.data
+        $result = $detailList
     }
-
+    $requestParams = @{}
+    Return $result
 }
 

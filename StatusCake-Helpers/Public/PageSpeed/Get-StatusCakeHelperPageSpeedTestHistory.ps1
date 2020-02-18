@@ -2,12 +2,8 @@
 <#
 .Synopsis
    Gets the history of a StatusCake PageSpeed Test
-.PARAMETER basePageSpeedTestURL
-    Base URL endpoint of the statuscake PageSpeed Test API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER Name
     Name of the PageSpeed test
 .PARAMETER Id
@@ -24,12 +20,8 @@ function Get-StatusCakeHelperPageSpeedTestHistory
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/History/",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "name")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
@@ -44,14 +36,12 @@ function Get-StatusCakeHelperPageSpeedTestHistory
         [ValidateRange(0,14)]
         [int]$days
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     if($name)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
         {
-            $matchingTest = Get-StatusCakeHelperAllPageSpeedTests -Username $username -apikey $ApiKey
-            $matchingTest = $matchingTest | Where-Object {$_.title -eq $name}
+            $matchingTest = Get-StatusCakeHelperPageSpeedTest -APICredential $APICredential -name $name
             if(!$matchingTest)
             {
                 Write-Error "No PageSpeed Check with specified name exists [$name]"
@@ -69,27 +59,13 @@ function Get-StatusCakeHelperPageSpeedTestHistory
 
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("basePageSpeedTestURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $webRequestParams = @{
-        uri = $basePageSpeedTestURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Pagespeed/History/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
@@ -98,8 +74,8 @@ function Get-StatusCakeHelperPageSpeedTestHistory
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams = @{}
         if($response.Success -ne "True")
         {
             Write-Verbose $response
