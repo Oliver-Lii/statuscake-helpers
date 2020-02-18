@@ -2,12 +2,8 @@
 <#
 .Synopsis
    Create a StatusCake Maintenance Window
-.PARAMETER baseMaintenanceWindowURL
-    Base URL endpoint of the statuscake Maintenance Window API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER Name
     A descriptive name for the maintenance window
 .PARAMETER start_date
@@ -33,14 +29,8 @@ function New-StatusCakeHelperMaintenanceWindow
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        [Parameter(ParameterSetName='SetByTestTags')]
-        [Parameter(ParameterSetName='SetByTestIDs')]
-        $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/Update",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
@@ -49,10 +39,12 @@ function New-StatusCakeHelperMaintenanceWindow
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
+        [Alias('start_unix')]
         [datetime]$start_date,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
+        [Alias('end_unix')]
         [datetime]$end_date,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
@@ -62,27 +54,24 @@ function New-StatusCakeHelperMaintenanceWindow
 
         [Parameter(ParameterSetName='SetByTestIDs')]
         [ValidateScript({$_ -match '^[\d]+$'})]
-        [object]$raw_tests,
+        [int[]]$raw_tests,
 
         [Parameter(ParameterSetName='SetByTestTags')]
-        [object]$raw_tags,
+        [string[]]$raw_tags,
 
         [Parameter(ParameterSetName='SetByTestIDs')]
         [Parameter(ParameterSetName='SetByTestTags')]
         [ValidateSet("0","1","7","14","30")]
-        $recur_every,
+        [int]$recur_every,
 
         [Parameter(ParameterSetName='SetByTestIDs')]
         [Parameter(ParameterSetName='SetByTestTags')]
-        [ValidateRange(0,1)]
-        $follow_dst
+        [boolean]$follow_dst
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
     {
-        $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -name $name -state "PND"
+        $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -name $name -state "PND"
         if($maintenanceWindow)
         {
             if($maintenanceWindow.GetType().Name -eq 'Object[]')
@@ -98,28 +87,13 @@ function New-StatusCakeHelperMaintenanceWindow
 
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseMaintenanceWindowURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
-
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $postRequestParams = @{
-        uri = $baseMaintenanceWindowURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Maintenance/Update"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Post"
         ContentType = "application/x-www-form-urlencoded"
@@ -128,14 +102,18 @@ function New-StatusCakeHelperMaintenanceWindow
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake Maintenance Window") )
     {
-        $jsonResponse = Invoke-WebRequest @postRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }
-        Return $response
+        else
+        {
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -id $response.data.new_id
+        }
+        Return $maintenanceWindow
     }
 
 }

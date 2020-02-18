@@ -2,12 +2,8 @@
 <#
 .Synopsis
    Clears the tests associated with a StatusCake Maintenance Window
-.PARAMETER baseMaintenanceWindowURL
-    Base URL endpoint of the statuscake Maintenance Window API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER Name
     Name of the maintenance window to clear the tests from
 .PARAMETER ByName
@@ -19,7 +15,7 @@
 .PARAMETER raw_tags
     Flag to clear all tags of the tests to be included in a maintenance window
 .EXAMPLE
-   Clear-StatusCakeHelperMaintenanceWindow -Username "Username" -ApiKey "APIKEY" -id 123456 -raw_tests
+   Clear-StatusCakeHelperMaintenanceWindow -id 123456 -raw_tests
 .FUNCTIONALITY
    Clears the tests and/or tags associated with a pending StatusCake Maintenance Window. You can only clear the tests for a window which is in a pending state.
 #>
@@ -27,47 +23,32 @@ function Clear-StatusCakeHelperMaintenanceWindow
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByName')]
-        $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/Update",
-
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByName')]
+        [Parameter(ParameterSetName='ByID')]
+        [Parameter(ParameterSetName='ByName')]
 		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByName')]
-        [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
-
-        [Parameter(ParameterSetName='SetByName',Mandatory=$true)]
-        [switch]$ByName,
-
-        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='ByID')]
         [ValidateNotNullOrEmpty()]
         [string]$id,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByName')]
+        [Parameter(ParameterSetName='ByName')]
         [string]$name,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByName')]
+        [Parameter(ParameterSetName='ByID')]
+        [Parameter(ParameterSetName='ByName')]
         [switch]$raw_tests,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByName')]
+        [Parameter(ParameterSetName='ByID')]
+        [Parameter(ParameterSetName='ByName')]
         [switch]$raw_tags
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
-    if($SetByName -and $name)
+    if($name)
     {   #If setting test by name verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -name $name -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -name $name -state "PND"
             if(!$maintenanceWindow)
             {
                 Write-Error "No pending Maintenance Window with specified name exists [$name]"
@@ -85,7 +66,7 @@ function Clear-StatusCakeHelperMaintenanceWindow
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -id $id -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -id $id -state "PND"
             if(!$maintenanceWindow)
             {
                 Write-Error "No pending Maintenance Window with specified ID exists [$id]"
@@ -101,45 +82,31 @@ function Clear-StatusCakeHelperMaintenanceWindow
         Return
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseMaintenanceWindowURL","Username","ApiKey","Name","ByName")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.Name -eq "id")
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-        elseif($var.value -eq $true)
-        {   #Send empty field name to clear value for field
-            $psParams.Add($var.name,"")
-        }
-    }
+    $exclude = @("Name")
+    $clear = @()
+    if($raw_tests){$clear += "raw_tests"}
+    if($raw_tags){$clear += "raw_tags"}
 
-    $putRequestParams = @{
-        uri = $baseMaintenanceWindowURL
-        Headers = $authenticationHeader
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -exclude $exclude -clear $clear
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
+
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Maintenance/Update"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Post"
         ContentType = "application/x-www-form-urlencoded"
-        body = $psParams
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake Maintenance Window") )
     {
-        $jsonResponse = Invoke-WebRequest @putRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
-            Return $null
         }
-        Return $response
     }
-
 }

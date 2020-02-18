@@ -2,12 +2,8 @@
 <#
 .Synopsis
    Gets a StatusCake Maintenance Window
-.PARAMETER baseMaintenanceWindowURL
-    Base URL endpoint of the statuscake Maintenance Window API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER Name
     Name of the maintenance window to retrieve
 .PARAMETER ID
@@ -15,7 +11,7 @@
 .PARAMETER State
     Filter results based on state
 .EXAMPLE
-   Get-StatusCakeHelperMaintenanceWindow -Username "Username" -ApiKey "APIKEY" -id 123456
+   Get-StatusCakeHelperMaintenanceWindow -id 123456
 .OUTPUTS
     Returns StatusCake Maintenance Windows as an object
 .FUNCTIONALITY
@@ -24,21 +20,12 @@
 #>
 function Get-StatusCakeHelperMaintenanceWindow
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true,DefaultParameterSetName='all')]
     Param(
         [Parameter(ParameterSetName = "Name")]
         [Parameter(ParameterSetName = "ID")]
-        $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/",
-
-        [Parameter(ParameterSetName = "Name")]
-        [Parameter(ParameterSetName = "ID")]
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-
-        [Parameter(ParameterSetName = "Name")]
-        [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "Name")]
         [Parameter(ParameterSetName = "ID")]
@@ -53,29 +40,14 @@ function Get-StatusCakeHelperMaintenanceWindow
         [ValidateNotNullOrEmpty()]
         [int]$id
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseMaintenanceWindowURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $webRequestParams = @{
-        uri = $baseMaintenanceWindowURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Maintenance/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
@@ -84,26 +56,30 @@ function Get-StatusCakeHelperMaintenanceWindow
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Window") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
-            Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
+            Return $null
         }
 
-        if($name)
+        if($PSCmdlet.ParameterSetName -eq "all")
         {
-            $matchingTests = $response.data | Where-Object {$_.name -eq $name}
+            $matchingMW = $response.data
+        }
+        elseif($name)
+        {
+            $matchingMW = $response.data | Where-Object {$_.name -eq $name}
         }
         elseif($id)
         {
-            $matchingTests = $response.data | Where-Object {$_.id -eq $id}
+            $matchingMW = $response.data | Where-Object {$_.id -eq $id}
         }
 
-        if($matchingTests)
+        if($matchingMW)
         {
-            Return $matchingTests
+            Return $matchingMW
         }
 
         Return $null
