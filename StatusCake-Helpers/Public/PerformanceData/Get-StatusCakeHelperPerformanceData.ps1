@@ -2,64 +2,61 @@
 <#
 .Synopsis
    Retrieves the tests that have been carried out on a given check
+.PARAMETER APICredential
+   Credentials to access StatusCake API
+.PARAMETER TestID
+    ID of the Test to retrieve the performance data for
+.PARAMETER TestName
+    Name of the Test to retrieve the performance data for
+.PARAMETER Fields
+    Array of additional fields, these additional fields will give you more data about each check
+.PARAMETER Start
+    Supply to include results only since the specified date
+.PARAMETER Limit
+    Limits to a subset of results - maximum of 1000
 .EXAMPLE
    Get-StatusCakeHelperPerformanceData -TestID 123456 -start "2018-01-07 10:14:00"
-.INPUTS
-    basePerfDataURL - Base URL endpoint of the statuscake alert API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    TestID - ID of the Test to retrieve the performance data for
-    TestName - Name of the Test to retrieve the performance data for
-    Fields - Array of additional fields, these additional fields will give you more data about each check.
-    Start - Supply to include results only since the specified date
-    Limit - Limits to a subset of results - maximum of 1000.
-.OUTPUTS    
+.OUTPUTS
     Returns an object with the details on the tests that have been carried out on a given check
 .FUNCTIONALITY
     Retrieves the tests that have been carried out on a given check
-   
+
 #>
 function Get-StatusCakeHelperPerformanceData
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
-    Param(                     
-        $basePerfDataURL = "https://app.statuscake.com/API/Tests/Checks",
-         
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    [OutputType([System.Collections.Generic.List[PSObject]])]
+    Param(
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [ValidateNotNullOrEmpty()]        
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
-                    
-        [int]$TestID,     
-              
-        [ValidateNotNullOrEmpty()]            
+        [int]$TestID,
+
+        [ValidateNotNullOrEmpty()]
         [string]$TestName,
-                   
+
         [datetime]$Start,
 
-        [ValidateScript({ @("status","location","human","time","headers","performance") -contains $_ })]        
-        [object]$Fields,
+        [ValidateScript({ $_ -in @("status","location","human","time","headers","performance")})]
+        [string[]]$Fields=@("status","location","human","time","headers","performance"),
 
         [ValidateRange(0,1000)]
-        $Limit
+        [int]$Limit
 
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}      
 
     if($TestName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
         {
-            $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
+            $testCheck = Get-StatusCakeHelperTest -APICredential $APICredential -TestName $TestName
             if($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve performance data via TestID"
-                Return $null            
+                Return $null
             }
             $TestID = $testCheck.TestID
-            else 
+            else
             {
                 Write-Error "Unable to find Test with name [$TestName]"
                 Return $null
@@ -67,38 +64,46 @@ function Get-StatusCakeHelperPerformanceData
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("basePerfDataURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {   
-            $psParams.Add($var.name,$var.value)                  
-        }
-    }
-
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
-        uri = $basePerfDataURL
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/Tests/Checks"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Performance Data") )
     {
-        $jsonResponse = Invoke-WebRequest @requestParams
-        $response = $jsonResponse | ConvertFrom-Json
-        Return $response
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
+
+        if($Start)
+        {
+            Return $response
+        }
+
+        #Restructure response into a list if start parameter not supplied
+        $times = $response | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name
+        $perfDataList = [System.Collections.Generic.List[PSObject]]::new()
+        foreach($time in $times)
+        {
+            $value = $response | Select-Object -ExpandProperty $time
+            $element = [PSCustomObject]@{
+                Time = $value.Time
+                Status = $value.Status
+                Location = $value.Location
+                Performance = $value.Performance
+                Headers = $value.Headers
+                Human = $value.Human
+            }
+            $perfDataList.Add($element)
+        }
+        Return $perfDataList
     }
 }
 
