@@ -4,20 +4,26 @@
    Create a StatusCake SSL Test
 .EXAMPLE
    New-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -Domain "https://www.example.com" -checkrate 3600
-.INPUTS
-    baseSSLTestURL - Base URL endpoint of the statuscake ContactGroup API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    
-    Domain - URL to check SSL certificate, must begin with https://
-    CheckRate - Checkrate in seconds.
-    Contact_Groups - Array containing contact IDs to alert.
-    Alert_At - Number of days before expiration when reminders will be sent. Defaults to reminders at 60, 30 and 7 days. Must be 3 numeric values.
-    Alert_expiry - 	Set to true to enable expiration alerts. False to disable
-    Alert_reminder - Set to true to enable reminder alerts. False to disable
-    Alert_broken - Set to true to enable broken alerts. False to disable
-    Alert_mixed - Set to true to enable mixed content alerts. False to disable
-
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER Domain
+    Name of the test to retrieve
+.PARAMETER ID
+    Test ID to retrieve
+.PARAMETER CheckRate
+    Checkrate in seconds
+.PARAMETER Contact_Groups
+    Array containing contact IDs to alert.
+.PARAMETER Alert_At
+    Number of days before expiration when reminders will be sent. Defaults to reminders at 60, 30 and 7 days. Must be 3 numeric values.
+.PARAMETER Alert_expiry
+    Set to true to enable expiration alerts. False to disable
+.PARAMETER Alert_reminder
+    Set to true to enable reminder alerts. False to disable
+.PARAMETER Alert_broken
+    Set to true to enable broken alerts. False to disable
+.PARAMETER Alert_mixed
+    Set to true to enable mixed content alerts. False to disable
 .FUNCTIONALITY
    Creates a new StatusCake SSL Test using the supplied parameters.
 #>
@@ -25,45 +31,33 @@ function New-StatusCakeHelperSSLTest
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $baseSSLTestURL = "https://app.statuscake.com/API/SSL/Update",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(Mandatory=$true)] 
+        [Parameter(Mandatory=$true)]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         $domain,
 
         #Contact_Groups must be supplied
-        [ValidateScript({$_ -match '^[\d]+$'})] 
-        [object]$contact_groups="0",
+        [int[]]$contact_groups,
 
-        [Parameter(Mandatory=$true)] 
+        [Parameter(Mandatory=$true)]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
         $checkrate,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [object]$alert_at=@("7","30","60"),
+        [int[]]$alert_at=@("7","14","30"),
 
-        [ValidateRange(0,1)]
-        $alert_expiry=1,
+        [boolean]$alert_expiry=$true,
 
-        [ValidateRange(0,1)]
-        $alert_reminder=1,
+        [boolean]$alert_reminder=$true,
 
-        [ValidateRange(0,1)]
-        $alert_broken=1,
+        [boolean]$alert_broken=$true,
 
-        [ValidateRange(0,1)]
-        $alert_mixed=1
+        [boolean]$alert_mixed=$true
 
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
- 
-    if($Alert_At.count -ne 3)
+
+    if($Alert_At -and $Alert_At.count -ne 3)
     {
         Write-Error "Only three values must be specified for Alert_At parameter"
         Return
@@ -71,51 +65,43 @@ function New-StatusCakeHelperSSLTest
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Checks") )
     {
-        $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -domain $domain
+        $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -domain $domain
         if($sslTest)
         {
             Write-Error "SSL Check with specified domain already exists [$domain] [$($sslTest.id)]"
-            Return $null 
-        }
-    }    
-
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseSSLTestURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {   
-            $psParams.Add($var.name,$var.value)                  
+            Return $null
         }
     }
 
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    if(!$contact_groups)
+    {
+        # If no contact groups to be added then this must be sent empty
+        $allParameterValues.Add("contact_groups","")
+    }
 
-    $putRequestParams = @{
-        uri = $baseSSLTestURL
-        Headers = $authenticationHeader
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
+
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/SSL/Update"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake SSL Test") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "New StatusCake SSL Test") )
     {
-        $jsonResponse = Invoke-WebRequest @putRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
-        }         
+        }
+        $response = Get-StatusCakeHelperSSLTest -APICredential $APICredential -id $response.Message
         Return $response
     }
 

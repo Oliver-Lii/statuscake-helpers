@@ -2,21 +2,28 @@
 <#
 .Synopsis
    Updates a StatusCake SSL Test
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER Domain
+    Name of the test to retrieve
+.PARAMETER ID
+    Test ID to retrieve
+.PARAMETER CheckRate
+    Checkrate in seconds
+.PARAMETER Contact_Groups
+    Array containing contact IDs to alert.
+.PARAMETER Alert_At
+    Number of days before expiration when reminders will be sent. Defaults to reminders at 60, 30 and 7 days. Must be 3 numeric values.
+.PARAMETER Alert_expiry
+    Set to true to enable expiration alerts. False to disable
+.PARAMETER Alert_reminder
+    Set to true to enable reminder alerts. False to disable
+.PARAMETER Alert_broken
+    Set to true to enable broken alerts. False to disable
+.PARAMETER Alert_mixed
+    Set to true to enable mixed content alerts. False to disable
 .EXAMPLE
-   Set-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -id 123456 -checkrate 3600
-.INPUTS
-    baseSSLTestURL - Base URL endpoint of the statuscake ContactGroup API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    
-    Domain - URL to check SSL certificate, must begin with https://
-    CheckRate - Checkrate in seconds.
-    Contact_Groups - Array containing contact IDs to alert.
-    Alert_At - Number of days before expiration when reminders will be sent. Must be 3 numeric values.
-    Alert_Expiry - 	Set to true to enable expiration alerts.
-    Alert_Reminder - Set to true to enable reminder alerts.
-    Alert_Broken - Set to true to enable broken alerts
-
+   Set-StatusCakeHelperSSLTest -id 123456 -checkrate 3600
 .FUNCTIONALITY
    Creates a new StatusCake SSL Test using the supplied parameters.
 #>
@@ -24,26 +31,14 @@ function Set-StatusCakeHelperSSLTest
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        #[Parameter(ParameterSetName='SetByDomain',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]
-        [Parameter(ParameterSetName='NewSSLTest')]
-        $baseSSLTestURL = "https://app.statuscake.com/API/SSL/Update",
-
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByDomain')]
-        [Parameter(ParameterSetName='NewSSLTest')]
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest')]
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        $id,
+        [int]$id,
 
         [Parameter(ParameterSetName='SetByDomain',Mandatory=$true)]
         [switch]$SetByDomain,
@@ -51,53 +46,45 @@ function Set-StatusCakeHelperSSLTest
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByDomain')]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        $domain,
+        [string]$domain,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [object]$contact_groups,
+        [Int[]]$contact_groups,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
-        $checkrate,
+        [int]$checkrate,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [object]$alert_at,
+        [Int[]]$alert_at,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [ValidateRange(0,1)]
-        $alert_expiry,
+        [boolean]$alert_expiry,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [ValidateRange(0,1)]
-        $alert_reminder,
+        [boolean]$alert_reminder,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [ValidateRange(0,1)]
-        $alert_broken,
+        [boolean]$alert_broken,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [ValidateRange(0,1)]
-        $alert_mixed
+        [boolean]$alert_mixed
 
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($Alert_At -and $Alert_At.count -ne 3)
     {
@@ -109,11 +96,11 @@ function Set-StatusCakeHelperSSLTest
     {   #If setting test by domain verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests"))
         {
-            $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -Domain $Domain
+            $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -Domain $Domain
             if(!$sslTest)
             {
                 Write-Error "No SSL test with Specified Domain Exists [$Domain]"
-                Return $null 
+                Return $null
             }
             elseif($sslTest.GetType().Name -eq 'Object[]')
             {
@@ -127,7 +114,7 @@ function Set-StatusCakeHelperSSLTest
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests"))
         {
-            $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -id $id
+            $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -id $id
             if(!$sslTest)
             {
                 Write-Error "No SSL test with Specified ID Exists [$id]"
@@ -136,11 +123,11 @@ function Set-StatusCakeHelperSSLTest
             $id = $sslTest.id
         }
     }
-    else 
+    else
     {   #Setup a test with the supplied detiails
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests") )
         {
-            $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -Domain $Domain
+            $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -Domain $Domain
             if($sslTest)
             {
                 Write-Error "SSL test with specified name already exists [$Domain] [$($sslTest.id)]"
@@ -149,42 +136,36 @@ function Set-StatusCakeHelperSSLTest
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseSSLTestURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {   #Contact_Groups can be empty string but must be supplied
-            $psParams.Add($var.name,$var.value)
-        }
-    }
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $putRequestParams = @{
-        uri = $baseSSLTestURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/SSL/Update"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake SSL Test") )
     {
-        $jsonResponse = Invoke-WebRequest @putRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }
+
+        $responseId = $response.Message
+        if($id)
+        {   #Updating a test does not return an id
+            $responseId = $id
+        }
+
+        $response = Get-StatusCakeHelperSSLTest -APICredential $APICredential -id $responseId
         Return $response
     }
 

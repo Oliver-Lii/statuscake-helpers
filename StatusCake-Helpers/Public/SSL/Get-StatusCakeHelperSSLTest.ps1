@@ -1,50 +1,45 @@
 
 <#
 .Synopsis
-   Gets a StatusCake SSL Test
+    Gets a StatusCake SSL Test
 .EXAMPLE
-   Get-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -id 123456
-.INPUTS
-    baseSSLTestURL - Base URL endpoint of the statuscake auth API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    Domain - Name of the test to retrieve
-    ID - Test ID to retrieve    
-.OUTPUTS    
+    Get-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -id 123456
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER Domain
+    Name of the test to retrieve
+.PARAMETER ID
+    Test ID to retrieve
+.OUTPUTS
     Returns a StatusCake SSL Tests as an object
 .FUNCTIONALITY
     Retrieves a specific StatusCake SSL Test
-   
+
 #>
 function Get-StatusCakeHelperSSLTest
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false,DefaultParameterSetName='All')]
     Param(
-        $baseSSLTestURL = "https://app.statuscake.com/API/SSL/",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "Domain")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         [string]$domain,
 
         [Parameter(ParameterSetName = "ID")]
-        [ValidateNotNullOrEmpty()]            
-        [int]$id      
+        [ValidateNotNullOrEmpty()]
+        [int]$id
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
-        uri = $baseSSLTestURL
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/SSL/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
     }
 
-    $jsonResponse = Invoke-WebRequest @requestParams
-    $response = $jsonResponse | ConvertFrom-Json
+    $response = Invoke-RestMethod @requestParams
+    $requestParams = @{}
 
     if($domain)
     {
@@ -53,6 +48,10 @@ function Get-StatusCakeHelperSSLTest
     elseif($id)
     {
         $matchingTests = $response | Where-Object {$_.id -eq $id}
+    }
+    else
+    {
+        $matchingTests = $response
     }
 
     if($matchingTests)
