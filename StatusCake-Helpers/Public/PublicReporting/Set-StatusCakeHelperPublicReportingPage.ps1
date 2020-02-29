@@ -2,29 +2,40 @@
 <#
 .Synopsis
    Updates a StatusCake Public Reporting Page
+.PARAMETER APICredential
+   Credentials to access StatusCake API
+.PARAMETER Title
+    The title of the Public Reporting Page
+.PARAMETER CName
+    Cname record for a custom domain
+.PARAMETER Password
+    Password protection for the page. Leave empty to disable
+.PARAMETER Twitter
+    Twitter handle to display with the @. Leave empty to disable
+.PARAMETER Display_Annotations
+    Set to true to show annotations for status periods
+.PARAMETER Display_Orbs
+    Set to true to display uptime as colored orbs
+.PARAMETER Search_Indexing
+    Set to false to disable search engine indexing
+.PARAMETER Sort_Alphabetical
+    Set to true to order tests by alphabetical name
+.PARAMETER Use_Tags
+    Set to true to select tests by their tag, rather than ID
+.PARAMETER Tests_Or_Tags
+    Array of TestIDs or Tags, depends on previous value
+.PARAMETER Tags_Inclusive
+    Set to true to select all tests that include one or more of the provided tags
+.PARAMETER Announcement
+    Free text field that will appear as an announcement on the page
+.PARAMETER Bg_Color
+    HEX value for the background colour
+.PARAMETER Header_Color
+    HEX value for the header colour
+.PARAMETER Title_Color
+    HEX value for the header text colour
 .EXAMPLE
    Set-StatusCakeHelperPublicReportingPage -id 123456 -display_orbs $false
-.INPUTS
-    baseAPIURL - Base URL endpoint of the statuscake ContactGroup API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-
-    title - The title of the Public Reporting Page
-    cname - Cname record for a custom domain
-    password - Password protection for the page. Leave empty to disable
-    twitter - Twitter handle to display with the @. Leave empty to disable
-    display_annotations - 	Set to true to show annotations for status periods
-    display_orbs - Set to true to display uptime as colored orbs
-    search_indexing - Set to false to disable search engine indexing
-    sort_alphabetical - Set to true to order tests by alphabetical name
-    use_tags - Set to true to select tests by their tag, rather than ID
-    tests_or_tags - Array of TestIDs or Tags, depends on previous value
-    tags_inclusive - Set to true to select all tests that include one or more of the provided tags
-    announcement - Free text field that will appear as an announcement on the page.
-    bg_color - HEX value for the background colour
-    header_color - HEX value for the header colour
-    title_color - HEX value for the header text colour
-
 .FUNCTIONALITY
    Sets the configuration of StatusCake Public Reporting Page using the supplied parameters.
 #>
@@ -32,26 +43,14 @@ function Set-StatusCakeHelperPublicReportingPage
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        #[Parameter(ParameterSetName='SetByTitle',Mandatory=$true)]
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
-        $baseAPIURL = "https://app.statuscake.com//API/PublicReporting/Update",
-
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        $id,
+        [string]$id,
 
         [Parameter(ParameterSetName='SetByTitle',Mandatory=$true)]
         [switch]$SetByTitle,
@@ -59,13 +58,18 @@ function Set-StatusCakeHelperPublicReportingPage
         [Parameter(ParameterSetName='NewPublicReportingPage',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTitle')]
         [ValidateNotNullOrEmpty()]
-        $title,
+        [string]$title,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
         [ValidatePattern('^([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+)$')]
-        [object]$cname,
+        [string]$cname,
+
+        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByTitle')]
+        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [securestring]$password,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
@@ -75,43 +79,37 @@ function Set-StatusCakeHelperPublicReportingPage
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidateRange(0,1)]
-        $display_annotations,
+        [boolean]$display_annotations,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidateRange(0,1)]
-        $display_orbs,
+        [boolean]$display_orbs,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidateRange(0,1)]
-        $search_indexing,
+        [boolean]$search_indexing,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidateRange(0,1)]
-        $sort_alphabetical,
+        [boolean]$sort_alphabetical,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidateRange(0,1)]
-        $use_tags,
+        [boolean]$use_tags,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [object]$tests_or_tags,
+        [string[]]$tests_or_tags,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidateRange(0,1)]
-        $tags_inclusive,
+        [boolean]$tags_inclusive,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
@@ -137,14 +135,12 @@ function Set-StatusCakeHelperPublicReportingPage
         [string]$title_color
 
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($SetByTitle -and $title)
     {   #If setting page by title verify if a page or pages with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
         {
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -title $title
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -title $title
             if(!$statusCakeItem)
             {
                 Write-Error "No Public Reporting Page with Specified title Exists [$title]"
@@ -162,7 +158,7 @@ function Set-StatusCakeHelperPublicReportingPage
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
         {
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -id $id
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -id $id
             if(!$statusCakeItem)
             {
                 Write-Error "No Public Reporting Page with Specified ID Exists [$id]"
@@ -175,7 +171,7 @@ function Set-StatusCakeHelperPublicReportingPage
     {   #Setup a page with the supplied details
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages") )
         {
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -title $title
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -title $title
             if($statusCakeItem)
             {
                 Write-Error "Public Reporting Page with specified name already exists [$title] [$($statusCakeItem.id)]"
@@ -184,27 +180,14 @@ function Set-StatusCakeHelperPublicReportingPage
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseAPIURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
+    $join = @{Tests_or_Tags = "|"}
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -join $join
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $webRequestParams = @{
-        uri = $baseAPIURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com//API/PublicReporting/Update"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Post"
         ContentType = "application/x-www-form-urlencoded"
@@ -213,13 +196,20 @@ function Set-StatusCakeHelperPublicReportingPage
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake Public Reporting Page") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }
+        $responseId = $response.data.new_id
+        if($id)
+        {   #Updating a test does not return an id
+            $responseId = $id
+        }
+
+        $response = Get-StatusCakeHelperPublicReportingPageDetail -APICredential $APICredential -id $responseId
         Return $response
     }
 

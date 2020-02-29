@@ -2,14 +2,16 @@
 <#
 .Synopsis
    Retrieves a StatusCake Public Reporting Page
+.PARAMETER APICredential
+   Credentials to access StatusCake API
+.PARAMETER ID
+    ID of the public reporting page
+.PARAMETER Title
+    Title of the public reporting page
+.PARAMETER Detailed
+    Retrieve detailed public reporting page data
 .EXAMPLE
    Get-StatusCakeHelperPublicReportingPage -id 123456
-.INPUTS
-    baseAPIURL - Base URL endpoint of the statuscake auth API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    Title - Name of the test to retrieve
-    ID - Test ID to retrieve
 .OUTPUTS
     Returns StatusCake Public Reporting Pages as an object
 .FUNCTIONALITY
@@ -20,31 +22,26 @@ function Get-StatusCakeHelperPublicReportingPage
 {
     [CmdletBinding(PositionalBinding=$false)]
     Param(
-        $baseAPIURL = "https://app.statuscake.com/API/PublicReporting/",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [ValidateNotNullOrEmpty()]
         [string]$title,
 
         [ValidateNotNullOrEmpty()]
-        [string]$id
+        [string]$id,
+
+        [switch]$Detailed
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
-        uri = $baseAPIURL
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/PublicReporting/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
     }
 
-    $jsonResponse = Invoke-WebRequest @requestParams
-    $response = $jsonResponse | ConvertFrom-Json
-
+    $response = Invoke-RestMethod @requestParams
+    $requestParams = @{}
     $matchingItems = $response.data
     if($title)
     {
@@ -55,7 +52,19 @@ function Get-StatusCakeHelperPublicReportingPage
         $matchingItems = $response.data | Where-Object {$_.id -eq $id}
     }
 
-    Return $matchingItems
+    $result = $matchingItems
+    if($Detailed)
+    {
+        $detailList = [System.Collections.Generic.List[PSObject]]::new()
+        foreach($test in $matchingItems)
+        {
+            $item = Get-StatusCakeHelperPublicReportingPageDetail -APICredential $APICredential -Id $test.Id
+            $detailList.Add($item)
+        }
+        $result = $detailList
+    }
+    $requestParams = @{}
+    Return $result
 
 }
 
