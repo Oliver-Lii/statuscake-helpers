@@ -2,122 +2,308 @@
 
 The following are examples for the functions which work against the StatusCake Tests API
 
-### Get-StatusCakeHelperAllTests
-The cmdlet retrieves all the tests that the user has permission for.
-
-```powershell
-Get-StatusCakeHelperAllTests @StatusCakeAuth
-```
-![get-statuscakehelperalltests](https://user-images.githubusercontent.com/30263630/29495718-ad4af0d2-85bc-11e7-92c4-320f2c9bebca.PNG)
-
-### Get-StatusCakeHelperDetailedTestData
-The cmdlet retrieves detailed test data for a specific test via the Test Name or Test ID
-
-```powershell
-Get-StatusCakeHelperDetailedTestData @StatusCakeAuth -TestName "Yahoo DNS"
-```
-![get-statuscakehelperdetailedtestdata](https://user-images.githubusercontent.com/30263630/29495774-d094e24a-85bd-11e7-8ff4-0a7e263e8cd3.PNG)
-
 ### Get-StatusCakeHelperTest
-The cmdlet retrieves basic test data for a specific test via the Test Name or Test ID
+The cmdlet retrieves test data for a specific test via the Test Name or Test ID. If no test name or ID is specified this will return a list of all tests.
 
 ```powershell
-Get-StatusCakeHelperTest @StatusCakeAuth -TestName "Yahoo DNS"
+Get-StatusCakeHelperTest -TestName "www.example.com Website"
+TestID             : 123456
+Paused             : False
+TestType           : HTTP
+WebsiteName        : www.example.com Website
+WebsiteURL         : https://www.example.com
+CheckRate          : 300
+ContactGroup       : {}
+Public             : 0
+Status             : Up
+TestTags           : {Example}
+WebsiteHost        :
+NormalisedResponse : 0
+Uptime             : 100
 ```
-![get-statuscakehelpertest](https://user-images.githubusercontent.com/30263630/29495889-fe88432a-85bf-11e7-8ea5-08cc99fc5883.PNG)
+### Get-StatusCakeHelperTestDetail
+The cmdlet retrieves test data for a specific test via the Test ID.
 
-### Get-StatusCakeHelperPausedTests
-This cmdlet retrieves all tests paused longer than the specified time. If no additional parameters specified it returns all tests paused longer than 1 day. 
+```powershell
+Get-StatusCakeHelperTestDetail -TestName "www.example.com Website"
+Method           : GET
+TestID           : 123456
+TestType         : HTTP
+Paused           : False
+WebsiteName      : www.example.com Website
+URI              : https://www.example.com
+ContactGroup     : Contact Group
+ContactID        : 12345
+ContactGroups    : {@{ID=12345; Name=Contact Group; Email=email@example.com}}
+Status           : Up
+Tags             : {Example}
+Uptime           : 100
+CheckRate        : 300
+Timeout          : 30
+LogoImage        :
+Confirmation     : 2
+FinalEndpoint    :
+WebsiteHost      :
+NodeLocations    : {}
+FindString       :
+DoNotFind        : False
+LastTested       : 2020-01-01 00:00:00
+NextLocation     : UNSET
+Processing       : False
+ProcessingState  : Complete
+ProcessingOn     :
+DownTimes        : 0
+TriggerRate      : 5
+Sensitive        : False
+EnableSSLWarning : False
+FollowRedirect   : False
+DNSIP            :
+DNSServer        :
+CustomHeader     :
+PostRaw          :
+UseJar           : 0
+StatusCodes      : {204, 205, 206, 303...}
+```
+
+### Get-StatusCakeHelperPausedTest
+This cmdlet retrieves all tests paused longer than the specified time. If no additional parameters specified it returns all tests paused longer than 1 day.
 Granularity of time can specified down to the minute. This function will be slow if there are large numbers of paused tests as detailed test data has to be
 retrieved for each paused test to determine the length of time it has been paused.
 
 ```powershell
-Get-StatusCakeHelperPausedTests @StatusCakeAuth
+Get-StatusCakeHelperPausedTest
 ```
 
 ### Remove-StatusCakeHelperTest
 The cmdlet removes a specific test via the Test Name or Test ID. No output is return unless the PassThru switch is supplied or an error encountered
 
 ```powershell
-Remove-StatusCakeHelperTest @StatusCakeAuth -TestName "Yahoo DNS" -PassThru
+Remove-StatusCakeHelperTest -TestName "www.example.com Website" -PassThru
+Method           : GET
+TestID           : 123456
+TestType         : HTTP
+Paused           : False
+WebsiteName      : www.example.com Website
+URI              : https://www.example.com
+ContactGroup     : Contact Group
+ContactID        : 12345
+ContactGroups    : {@{ID=12345; Name=Contact Group; Email=email@example.com}}
+Status           : Up
+Tags             : {Example}
+Uptime           : 100
+CheckRate        : 300
+Timeout          : 30
+LogoImage        :
+Confirmation     : 2
+FinalEndpoint    :
+WebsiteHost      :
+NodeLocations    : {}
+FindString       :
+DoNotFind        : False
+LastTested       : 2020-01-01 00:00:00
+NextLocation     : UNSET
+Processing       : False
+ProcessingState  : Complete
+ProcessingOn     :
+DownTimes        : 0
+TriggerRate      : 5
+Sensitive        : False
+EnableSSLWarning : False
+FollowRedirect   : False
+DNSIP            :
+DNSServer        :
+CustomHeader     :
+PostRaw          :
+UseJar           : 0
+StatusCodes      : {204, 205, 206, 303...}
 ```
-![remove-statuscakehelpertest](https://user-images.githubusercontent.com/30263630/29495953-c29d1d1c-85c0-11e7-941e-fb100c060ae9.PNG)
 
 ### Set-StatusCakeHelperTest
-The cmdlet sets a specific test configuration via the Test ID. The example illustrated below pauses the specified check. Any values supplied overwrites existing configuration.
+The cmdlet sets a specific test configuration via the Test ID. The example illustrated changes the checkrate to 600 seconds. Any values supplied overwrites existing configuration.
 
 ```powershell
-Set-StatusCakeHelperTest @StatusCakeAuth -TestID "2425217" -Paused 1
+Set-StatusCakeHelperTest -TestID "123456" -CheckRate 600
+Method           : GET
+TestID           : 123456
+TestType         : HTTP
+Paused           : False
+WebsiteName      : www.example.com Website
+URI              : https://www.example.com
+ContactGroup     : Contact Group
+ContactID        : 12345
+ContactGroups    : {@{ID=12345; Name=Contact Group; Email=email@example.com}}
+Status           : Up
+Tags             : {Example}
+Uptime           : 100
+CheckRate        : 600
+Timeout          : 30
+LogoImage        :
+Confirmation     : 2
+FinalEndpoint    :
+WebsiteHost      :
+NodeLocations    : {}
+FindString       :
+DoNotFind        : False
+LastTested       : 2020-01-01 00:00:00
+NextLocation     : UNSET
+Processing       : False
+ProcessingState  : Complete
+ProcessingOn     :
+DownTimes        : 0
+TriggerRate      : 5
+Sensitive        : False
+EnableSSLWarning : False
+FollowRedirect   : False
+DNSIP            :
+DNSServer        :
+CustomHeader     :
+PostRaw          :
+UseJar           : 0
+StatusCodes      : {204, 205, 206, 303...}
 ```
-![set-statuscakehelpertest](https://user-images.githubusercontent.com/30263630/29495985-4b5557be-85c1-11e7-81db-1cf63c95af06.PNG)
+
 
 ### New-StatusCakeHelperTest
 The cmdlet creates a new Status Cake Test. Parameters shown below are the minimum parameters to create a test. The cmdlet checks to see if a test with the same name already exists before the test is created.
 
 ```powershell
-New-StatusCakeHelperTest @StatusCakeAuth -TestName "Example" -TestURL "https://www.example.com" -CheckRate 300 -TestType HTTP
+New-StatusCakeHelperTest -TestName "Example" -TestURL "https://www.example.com" -CheckRate 300 -TestType HTTP
+Method           : GET
+TestID           : 123456
+TestType         : HTTP
+Paused           : False
+WebsiteName      : www.example.com Website
+URI              : https://www.example.com
+ContactGroup     : Contact Group
+ContactID        : 12345
+ContactGroups    : {@{ID=12345; Name=Contact Group; Email=email@example.com}}
+Status           : Up
+Tags             : {Example}
+Uptime           : 100
+CheckRate        : 300
+Timeout          : 30
+LogoImage        :
+Confirmation     : 2
+FinalEndpoint    :
+WebsiteHost      :
+NodeLocations    : {}
+FindString       :
+DoNotFind        : False
+LastTested       : 2020-01-01 00:00:00
+NextLocation     : UNSET
+Processing       : False
+ProcessingState  : Complete
+ProcessingOn     :
+DownTimes        : 0
+TriggerRate      : 5
+Sensitive        : False
+EnableSSLWarning : False
+FollowRedirect   : False
+DNSIP            :
+DNSServer        :
+CustomHeader     :
+PostRaw          :
+UseJar           : 0
+StatusCodes      : {204, 205, 206, 303...}
 ```
-![new-statuscakehelpertest](https://user-images.githubusercontent.com/30263630/29495757-4adfce26-85bd-11e7-8a68-1f8253a91068.PNG)
+
 
 ### Copy-StatusCakeHelperTest
 The cmdlet copies a Status Cake Test. The cmdlet checks to see if a test with the same name already exists before a copy is created. Supply the TestURL or Paused parameter to override the original values in the source test. Not all values can be copied as some values are not returned when retrieving a test. E.g. BasicUser and BasicPass are not returned when retrieving detailed data on a test.
 
 ```powershell
-Copy-StatusCakeHelperTest @StatusCakeAuth -TestName "Example" -NewTestName "Example - Copy" 
+Copy-StatusCakeHelperTest -TestName "www.example.com Website" -NewTestName "Example - Copy"
+Method           : GET
+TestID           : 123456
+TestType         : HTTP
+Paused           : False
+WebsiteName      : Example - Copy
+URI              : https://www.example.com
+ContactGroup     : Contact Group
+ContactID        : 12345
+ContactGroups    : {@{ID=12345; Name=Contact Group; Email=email@example.com}}
+Status           : Up
+Tags             : {Example}
+Uptime           : 100
+CheckRate        : 300
+Timeout          : 30
+LogoImage        :
+Confirmation     : 2
+FinalEndpoint    :
+WebsiteHost      :
+NodeLocations    : {}
+FindString       :
+DoNotFind        : False
+LastTested       : 2020-01-01 00:00:00
+NextLocation     : UNSET
+Processing       : False
+ProcessingState  : Complete
+ProcessingOn     :
+DownTimes        : 0
+TriggerRate      : 5
+Sensitive        : False
+EnableSSLWarning : False
+FollowRedirect   : False
+DNSIP            :
+DNSServer        :
+CustomHeader     :
+PostRaw          :
+UseJar           : 0
+StatusCodes      : {204, 205, 206, 303...}
 ```
 
-### Add-StatusCakeHelperTestNodeLocations
+### Add-StatusCakeHelperTestNodeLocation
 This cmdlet add a Test Node location to a Status Cake Test. The cmdlet checks to see if a test node location is valid by verifying it against the list of server codes retrieved from the StatusCake API before adding it to the test.
 
 ```powershell
-Add-StatusCakeHelperTestNodeLocations @StatusCakeAuth -TestID "123456" -NodeLocations @("EU1","EU2")
+Add-StatusCakeHelperTestNodeLocations -TestID "123456" -NodeLocations @("EU1","EU2")
 ```
 
-### Add-StatusCakeHelperTestStatusCodes
+### Add-StatusCakeHelperTestStatusCode
 This cmdlet add a HTTP Status code to a Status Cake Test. The cmdlet checks to see if a HTTP Status Code is valid before adding it to the test.
 
 ```powershell
-Add-StatusCakeHelperTestStatusCodes @StatusCakeAuth -TestID "123456" -StatusCodes @("206","207")
+Add-StatusCakeHelperTestStatusCodes -TestID "123456" -StatusCodes @("206","207")
 ```
 
-### Add-StatusCakeHelperTestTags
+### Add-StatusCakeHelperTestTag
 This cmdlet adds an additional tag to a Status Cake Test.
 
 ```powershell
-Add-StatusCakeHelperTestTags @StatusCakeAuth -TestID "123456" -TestTags @("Tag1","Tag2")
+Add-StatusCakeHelperTestTag -TestID "123456" -TestTags @("Tag1","Tag2")
 ```
 
-### Remove-StatusCakeHelperTestNodeLocations
+### Remove-StatusCakeHelperTestNodeLocation
 This cmdlet removes a Test Node location from a Status Cake Test. The cmdlet checks to see if a test node location is valid by verifying it against the list of server codes retrieved from the StatusCake API before removing it from the test.
 
 ```powershell
-Add-StatusCakeHelperTestNodeLocations @StatusCakeAuth -TestID "123456" -NodeLocations @("EU1","EU2")
+Add-StatusCakeHelperTestNodeLocation -TestID "123456" -NodeLocations @("EU1","EU2")
 ```
 
-### Remove-StatusCakeHelperTestStatusCodes
+### Remove-StatusCakeHelperTestStatusCode
 This cmdlet removes a HTTP Status code from a Status Cake Test. The cmdlet checks to see if a HTTP Status Code is valid before removing it from the test.
 
 ```powershell
-Remove-StatusCakeHelperTestStatusCodes @StatusCakeAuth -TestID "123456" -StatusCodes @("206","207")
+Remove-StatusCakeHelperTestStatusCode -TestID "123456" -StatusCodes @("206","207")
 ```
 
-### Remove-StatusCakeHelperTestTags
+### Remove-StatusCakeHelperTestTag
 This cmdlet removes a tag from a Status Cake Test.
 
 ```powershell
-Remove-StatusCakeHelperTestTags @StatusCakeAuth -TestID "123456" -TestTags @("Tag1","Tag2")
+Remove-StatusCakeHelperTestTag -TestID "123456" -TestTags @("Tag1","Tag2")
 ```
 ### Suspend-StatusCakeHelperTest
 This cmdlet pauses a Status Cake Test.
 
 ```powershell
-Suspend-StatusCakeHelperTest @StatusCakeAuth -TestID "123456"
+Suspend-StatusCakeHelperTest -TestID "123456"
 ```
 ### Resume-StatusCakeHelperTest
 This cmdlet resumes a Status Cake Test.
 
 ```powershell
-Resume-StatusCakeHelperTest @StatusCakeAuth -TestID "123456"
+Resume-StatusCakeHelperTest -TestID "123456"
 ```
 
 # Authors

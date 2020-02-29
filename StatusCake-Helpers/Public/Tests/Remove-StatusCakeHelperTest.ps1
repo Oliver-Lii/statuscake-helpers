@@ -3,82 +3,85 @@
 <#
 .Synopsis
    Removes the specified StatusCake Test
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER TestID
+    ID of the Test to be removed from StatusCake
+.PARAMETER TestName
+    Name of the Test to be removed from StatusCake
+.PARAMETER PassThru
+    Return the object that is removed
 .EXAMPLE
-   Remove-StatusCakeHelperTest -Username "Username" -ApiKey "APIKEY" -TestID 123456
-.INPUTS
-    baseTestURL - Base URL endpoint of the statuscake Test API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    TestID - ID of the Test to be removed
-.OUTPUTS    
+   Remove-StatusCakeHelperTest -TestID 123456
+.OUTPUTS
     Returns the result of the test removal as an object
 .FUNCTIONALITY
-    Removes the StatusCake test via it's Test ID
-   
+    Removes the StatusCake test via it's Test ID or name
+
 #>
 function Remove-StatusCakeHelperTest
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $baseTestURL = "https://app.statuscake.com/API/Tests/Details/?TestID=",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "Test ID")]
         [ValidateNotNullOrEmpty()]
         [int]$TestID,
+
         [Parameter(ParameterSetName = "Test Name")]
         [ValidateNotNullOrEmpty()]
-        [string]$TestName,        
+        [string]$TestName,
+
         [switch]$PassThru
     )
 
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
-    
+    $checkParams = @{}
     if($TestName)
     {
-        $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
-        if($testCheck)
+        $checkParams.Add("TestName",$TestName)
+    }
+    else
+    {
+        $checkParams.Add("TestID",$TestID)
+    }
+
+    $testCheck = Get-StatusCakeHelperTest -APICredential $APICredential -Detailed @checkParams
+    if($testCheck)
+    {
+        if($testCheck.GetType().Name -eq 'Object[]')
         {
-            if($testCheck.GetType().Name -eq 'Object[]')
-            {
-                Write-Error "Multiple Tests found with name [$TestName]. Please remove the test by TestID"
-                Return $null            
-            }
-            $TestID = $testCheck.TestID
-        }
-        else 
-        {
-            Write-Error "Unable to find Test with name [$TestName]"
+            Write-Error "Multiple Tests found with name [$TestName]. Please remove the test by TestID"
             Return $null
         }
+        $TestID = $testCheck.TestID
+    }
+    else
+    {
+        Write-Error "Unable to find Test with name [$TestName]"
+        Return $null
     }
 
     $requestParams = @{
-        uri = "$baseTestURL$TestID"
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/Tests/Details/?TestID=$TestID"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         Method = "Delete"
     }
 
     if( $pscmdlet.ShouldProcess("TestID - $TestID", "Remove StatusCake Test") )
     {
-        $jsonResponse = Invoke-WebRequest @requestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams = @{}
         if($response.Success -ne "True")
         {
-            Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
         }
-        if(!$PassThru)
+        elseif($PassThru)
         {
-            Return
+            Return $response
         }
-        Return $response        
     }
 }
 
