@@ -6,78 +6,106 @@ if(! (Test-StatusCakeHelperAPIAuthSet))
     $scUser = Read-Host "Enter the StatusCake Username"
     $scAPIKey = Read-Host "Enter the StatusCake API key" -AsSecureString
     $scCredentials = New-Object System.Management.Automation.PSCredential ($scUser, $scAPIKey)
-    Set-StatusCakeHelperAPIAuth -Credentials $scCredentials
+    Set-StatusCakeHelperAPIAuth -Credential $scCredentials
 }
+
+Remove-Module statuscake-helpers -ErrorAction SilentlyContinue
+
+Describe 'StatusCake Module Tests' {
+
+    It "Module statuscake-helpers imports without throwing an exception" {
+        {Import-Module $ModuleRoot\statuscake-helpers.psd1 -Force } | Should -Not -Throw
+    }
+
+}
+
+Import-Module $ModuleRoot\statuscake-helpers.psd1 -Force
 
 Describe "StatusCake Tests" {
 
     It "New-StatusCakeHelperTest creates a test"{
-        $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test StatusCake Test" -TestURL "https://www.example.com" -checkRate 300 -testType HTTP
-        $scTest.Success | Should Be "True"
+        $Script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test StatusCake Test" -TestURL "https://www.example.com" -checkRate 300 -testType HTTP
+        $scTest.WebsiteName | Should -Be "Pester Test StatusCake Test"
+        $scTest.URI | Should -Be "https://www.example.com"
+        $scTest.CheckRate | Should -Be 300
+        $scTest.TestType | Should -Be "HTTP"
     }
 
-    It "Get-StatusCakeHelperAllTests retrieves all tests"{
-        $results = Get-StatusCakeHelperAllTests
+    It "Get-StatusCakeHelperTest retrieves all tests"{
+        $results = Get-StatusCakeHelperTest
         $results.count | Should -BeGreaterThan 0
+    }
+
+    It "Get-StatusCakeHelperTest retrieves the detailed data for specific test"{
+        $result = Get-StatusCakeHelperTestDetail -TestID $SCTest.TestID
+        $result.StatusCodes.count | Should -BeGreaterOrEqual 10 -Because "Status Codes are only part of detailed test data"
     }
 
     It "Copy-StatusCakeHelperTest copies a test"{
         $result = Copy-StatusCakeHelperTest -TestName "Pester Test StatusCake Test" -NewTestName "Pester Test StatusCake Test - Copy"
-        $result.Success | Should Be "True"
+        $result.WebsiteName | Should -Be "Pester Test StatusCake Test - Copy"
+        $result.URI | Should -Be "https://www.example.com"
+        $result.CheckRate | Should -Be 300
+        $result.TestType | Should -Be "HTTP"
     }
 
-    It "Set-StatusCakeHelperTest pauses a test"{
-        $result = Set-StatusCakeHelperTest -TestID $SCTest.InsertID -Paused 1
-        $result.Success | Should Be "True"
+    It "Suspend-StatusCakeHelperTest pauses a test"{
+        Suspend-StatusCakeHelperTest -TestID $SCTest.TestID
+        $test = Get-StatusCakeHelperTest -TestID $SCTest.TestID
+        $test.Paused | Should -Be "True"
     }
 
-    It "Get-StatusCakeHelperPausedTests retrieves paused tests"{
-        $result = Get-StatusCakeHelperPausedTests -Minutes 1 -IncludeNotTested
-        $result.Paused | Should Be "True"
+    It "Get-StatusCakeHelperPausedTest retrieves paused tests"{
+        $result = Get-StatusCakeHelperPausedTest -Minutes 1 -IncludeNotTested
+        $result.Paused | Should -Not -Contain $False
     }
 
     It "Get-StatusCakeHelperTest retrieves the test created by name"{
-        $result = Get-StatusCakeHelperTest -TestName $SCTest.Data.WebsiteName
-        $result | Should Be $true
+        $result = Get-StatusCakeHelperTest -TestName $SCTest.WebsiteName
+        $result.WebsiteName | Should -Be "Pester Test StatusCake Test"
     }
 
-    It "Get-StatusCakeHelperDetailedTestData retrieves the detailed test data"{
-        $result = Get-StatusCakeHelperDetailedTestData -TestID $SCTest.InsertID
-        $result | Should Be $true
+    It "Add-StatusCakeHelperTestTag adds tags to a test"{
+        Add-StatusCakeHelperTestTag -TestID $SCTest.TestID -TestTags @("Pester Test","Add Tags Test")
+        $test = Get-StatusCakeHelperTestDetail -TestID $SCTest.TestID
+        $test.Tags | Should -Contain "Pester Test"
+        $test.Tags | Should -Contain "Add Tags Test"
     }
 
-    It "Add-StatusCakeHelperTestTags adds tags to a test"{
-        $result = Add-StatusCakeHelperTestTags -TestID $SCTest.InsertID -TestTags @("Pester Test","Add Tags Test")
-        $result.Success | Should Be "True"
+    It "Remove-StatusCakeHelperTestTag removes tags from a test"{
+        Remove-StatusCakeHelperTestTag -TestID $SCTest.TestID -TestTags @("Add Tags Test")
+        $result = Get-StatusCakeHelperTestDetail -TestID $SCTest.TestID
+        $result.Tags | Should -Contain "Pester Test"
+        $result.Tags | Should -Not -Contain "Add Tags Test"
     }
 
-    It "Remove-StatusCakeHelperTestTags removes tags from a test"{
-        $result = Remove-StatusCakeHelperTestTags -TestID $SCTest.InsertID -TestTags @("Add Tags Test")
-        $result.Success | Should Be "True"
+    It "Get-StatusCakeHelperTest retrieves tests filtered by a tag"{
+        $results = Get-StatusCakeHelperTest -tags @("Pester Test")
+        $results.TestTags | Should -Contain "Pester Test"
     }
 
-    It "Get-StatusCakeHelperAllTests retrieves tests filtered by a tag"{
-        Get-StatusCakeHelperAllTests -tags @("Pester Test") | Should Be $true
+    It "Remove-StatusCakeHelperTestStatusCode removes a status code from a test"{
+        Remove-StatusCakeHelperTestStatusCode -TestID $SCTest.TestID -StatusCodes 401
+        $testData = Get-StatusCakeHelperTestDetail -TestID $SCTest.TestID
+        $testData.StatusCodes | Should -Not -Contain 401
     }
 
-    It "Remove-StatusCakeHelperTestStatusCodes removes a status code from a test"{
-        $result = Remove-StatusCakeHelperTestStatusCodes -TestID $SCTest.InsertID -StatusCodes 401
-        $result.Success | Should Be "True"
-    }
-
-    It "Add-StatusCakeHelperTestStatusCodes adds a statuscode to a test"{
-        $result = Add-StatusCakeHelperTestStatusCodes -TestID $SCTest.InsertID -StatusCodes 401
-        $result.Success | Should Be "True"
+    It "Add-StatusCakeHelperTestStatusCode adds a status code to a test"{
+        Add-StatusCakeHelperTestStatusCode -TestID $SCTest.TestID -StatusCodes 401
+        $testData = Get-StatusCakeHelperTest -TestID $SCTest.TestID -Detailed
+        $testData.StatusCodes | Should -Contain 401
     }
 
     It "Remove-StatusCakeHelperTest removes a test"{
-        $result = Remove-StatusCakeHelperTest -TestID $SCTest.InsertID -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperTest -TestID $SCTest.TestID
+        $testData = Get-StatusCakeHelperTest
+        $testData.TestID | Should -Not -Contain $SCTest.TestID
     }
 
     It "Remove-StatusCakeHelperTest removes a test by name"{
-        $result = Remove-StatusCakeHelperTest -TestName "Pester Test StatusCake Test - Copy" -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperTest -TestName "Pester Test StatusCake Test - Copy"
+        $testData = Get-StatusCakeHelperTest
+        $testData.WebsiteName | Should -Not -Contain "Pester Test StatusCake Test - Copy"
     }
 
 }
@@ -86,37 +114,41 @@ Describe "StatusCake Contact Groups" {
 
     It "New-StatusCakeHelperContactGroup creates a contact group"{
         $script:SCContactGroup = New-StatusCakeHelperContactGroup -GroupName "Pester Test Contact Group" -Mobile "+12345678910"
-        $SCContactGroup.Success | Should Be "True"
+        $SCContactGroup.GroupName | Should -Be "Pester Test Contact Group"
+        $SCContactGroup.Mobiles | Should -Contain "+12345678910"
     }
 
-    It "Get-StatusCakeHelperAllContactGroups retrieves all contact groups"{
-        $results = Get-StatusCakeHelperAllContactGroups
+    It "Get-StatusCakeHelperContactGroup retrieves all contact groups"{
+        $results = Get-StatusCakeHelperContactGroup
         $results.count | Should -BeGreaterThan 0
     }
 
     It "Set-StatusCakeHelperContactGroup adds a email address"{
-        $result = Set-StatusCakeHelperContactGroup -ContactID $SCContactGroup.InsertID -Email @("pestertest@example.com")
-        $result.Success | Should Be "True"
+        $result = Set-StatusCakeHelperContactGroup -ContactID $SCContactGroup.ContactID -Email @("pestertest@example.com")
+        $result.Emails | Should -Contain "pestertest@example.com"
     }
 
     It "Copy-StatusCakeHelperContactGroup copies a contact"{
-        $result = Copy-StatusCakeHelperContactGroup -ContactID $SCContactGroup.InsertID -NewGroupName "Pester Test Contact Group - Copy"
-        $result.Success | Should Be "True"
+        $result = Copy-StatusCakeHelperContactGroup -ContactID $SCContactGroup.ContactID -NewGroupName "Pester Test Contact Group - Copy"
+        $result.GroupName | Should -Be "Pester Test Contact Group - Copy"
+        $result.Mobiles | Should -Contain "+12345678910"
     }
 
     It "Get-StatusCakeHelperContactGroup retrieves a contact by group name"{
-        $result = Get-StatusCakeHelperContactGroup -GroupName $SCContactGroup.Data.GroupName
-        $result | Should Be $true
+        $result = Get-StatusCakeHelperContactGroup -GroupName "Pester Test Contact Group"
+        $result.GroupName | Should -Be "Pester Test Contact Group"
     }
 
     It "Remove-StatusCakeHelperContactGroup removes a contact by ID"{
-        $result = Remove-StatusCakeHelperContactGroup -ContactID $SCContactGroup.InsertID -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperContactGroup -ContactID $SCContactGroup.ContactID
+        $results = Get-StatusCakeHelperContactGroup
+        $results.ContactID | Should -Not -Contain $SCContactGroup.ContactID
     }
 
     It "Remove-StatusCakeHelperContactGroup removes a contact by name"{
-        $result = Remove-StatusCakeHelperContactGroup -GroupName "Pester Test Contact Group - Copy" -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperContactGroup -GroupName "Pester Test Contact Group - Copy"
+        $results = Get-StatusCakeHelperContactGroup
+        $results.GroupName | Should -Not -Contain "Pester Test Contact Group - Copy"
     }
 
 }
@@ -125,42 +157,50 @@ Describe "StatusCake Page Speed Tests" {
 
     It "New-StatusCakeHelperPageSpeedTest creates a page speed test"{
         $script:SCPageSpeedTest = New-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check" -website_url "https://www.example.com" -location_iso UK -checkrate 1440
-        $SCPageSpeedTest.Success | Should Be "True"
+        $SCPageSpeedTest.Name | Should -Be "Pester Test Page Speed Check"
+        $SCPageSpeedTest.Website_URL | Should -Be "https://www.example.com"
+        $SCPageSpeedTest.Location_ISO | Should -Be "UK"
+        $SCPageSpeedTest.CheckRate | Should -Be 1440
     }
 
     It "Get-StatusCakeHelperPageSpeedTest retrieves all Page Speed Tests"{
-        $results = Get-StatusCakeHelperAllPageSpeedTests
+        $results = Get-StatusCakeHelperPageSpeedTest
         $results.count | Should -BeGreaterThan 0
     }
 
     It "Set-StatusCakeHelperPageSpeedTest updates the checkrate"{
-        $result = Set-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.data.new_id -checkrate 60
-        $result.Success | Should Be "True"
+        $result = Set-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.id -checkrate 60
+        $result.CheckRate | Should Be 60
     }
 
     It "Copy-StatusCakeHelperPageSpeedTest copies a Page Speed Test"{
-        $result = Copy-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.data.new_id -NewName "Pester Test Page Speed Check - Copy"
-        $result.Success | Should Be "True"
+        $result = Copy-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.id -NewName "Pester Test Page Speed Check - Copy"
+        $result.Name | Should -Be "Pester Test Page Speed Check - Copy"
+        $result.Website_URL | Should -Be "https://www.example.com"
+        $result.Location_ISO | Should -Be "UK"
+        $result.checkrate | Should -Be 60
     }
 
     It "Get-StatusCakeHelperPageSpeedTest retrieves a Page Speed test by name"{
         $result = Get-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check"
-        $result | Should Be $true
+        $result.Title | Should Be "Pester Test Page Speed Check"
     }
 
     It "Get-StatusCakeHelperPageSpeedTestHistory retrieves the history of a page speed check"{
-        $result = Get-StatusCakeHelperPageSpeedTestHistory -id $SCPageSpeedTest.data.new_id
+        $result = Get-StatusCakeHelperPageSpeedTestHistory -id $SCPageSpeedTest.id
         $result | Should Be $true
     }
 
     It "Remove-StatusCakeHelperPageSpeedTest removes a test by ID"{
-        $result = Remove-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.data.new_id -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.id
+        $results = Get-StatusCakeHelperPageSpeedTest
+        $results.Title | Should -Not -Contain "Pester Test Page Speed Check"
     }
 
     It "Remove-StatusCakeHelperPageSpeedTest removes a test by name"{
-        $result = Remove-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check - Copy" -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check - Copy"
+        $results = Get-StatusCakeHelperPageSpeedTest
+        $results.Title | Should -Not -Contain "Pester Test Page Speed Check - Copy"
     }
 
 }
@@ -169,37 +209,41 @@ Describe "StatusCake SSL Tests" {
 
     It "New-StatusCakeHelperSSLTest creates a SSL Test"{
         $script:SCSSLTest = New-StatusCakeHelperSSLTest -domain "https://www.example.com" -checkrate 2073600
-        $SCSSLTest.Success | Should Be "True"
+        $SCSSLTest.domain | Should -Be "https://www.example.com"
+        $SCSSLTest.checkrate | Should -Be 2073600
     }
 
-    It "Get-StatusCakeHelperAllSSLTests retrieves all SSL Tests"{
-        $results = Get-StatusCakeHelperAllSSLTests
+    It "Get-StatusCakeHelperSSLTest retrieves all SSL Tests"{
+        $results = Get-StatusCakeHelperSSLTest
         $results.count | Should -BeGreaterThan 0
     }
 
     It "Set-StatusCakeHelperSSLTest updates the checkrate"{
-        $result = Set-StatusCakeHelperSSLTest -id $SCSSLTest.Message -checkrate 86400
-        $result.Success | Should Be "True"
+        $result = Set-StatusCakeHelperSSLTest -id $SCSSLTest.ID -checkrate 86400
+        $result.checkrate | Should -Be 86400
     }
 
     It "Copy-StatusCakeHelperSSLTest copies a SSL Test"{
-        $result = Copy-StatusCakeHelperSSLTest -id $SCSSLTest.Message -newdomain "https://www.example.org"
-        $result.Success | Should Be "True"
+        $result = Copy-StatusCakeHelperSSLTest -id $SCSSLTest.ID -newdomain "https://www.example.org"
+        $result.domain | Should -Be "https://www.example.org"
+        $result.checkrate | Should -Be 86400
     }
 
     It "Get-StatusCakeHelperSSLTest retrieves a SSL test by domain"{
         $result = Get-StatusCakeHelperSSLTest -domain "https://www.example.com"
-        $result | Should Be $true
+        $result.domain | Should -Be "https://www.example.com"
     }
 
     It "Remove-StatusCakeHelperSSLTest removes a SSL test by ID"{
-        $result = Remove-StatusCakeHelperSSLTest -id $SCSSLTest.Message -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperSSLTest -id $SCSSLTest.Id
+        $results = Get-StatusCakeHelperSSLTest
+        $results.ID | Should -Not -Contain $SCSSLTest.Id
     }
 
     It "Remove-StatusCakeHelperSSLTest removes a SSL test by domain"{
-        $result = Remove-StatusCakeHelperSSLTest -domain "https://www.example.org" -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperSSLTest -domain "https://www.example.org"
+        $results = Get-StatusCakeHelperSSLTest
+        $results.domain | Should -Not -Contain "https://www.example.org"
     }
 
 }
@@ -207,36 +251,52 @@ Describe "StatusCake SSL Tests" {
 Describe "StatusCake Maintenance Windows" {
 
     It "New-StatusCakeHelperMaintenanceWindow creates a maintenance window"{
-        $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test SC Test for MW" -TestURL "https://www.example.com" -checkRate 24000 -testType HTTP
-        $script:SCMWTest = New-StatusCakeHelperMaintenanceWindow -name "Pester Test Maintenance Window" -timezone UTC -start_date $(Get-Date).AddHours(1) -end_date $(Get-Date).AddDays(1) -raw_tests @($SCTest.InsertID)
-        $SCMWTest.Success | Should Be "True"
+        $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test SC Test for Maintenance Window" -TestURL "https://www.example.com" -checkRate 24000 -testType HTTP
+        $startDate = $(Get-Date).AddHours(1)
+        $endDate = $(Get-Date).AddDays(1)
+
+        $startDateString = ($startDate | Get-Date -Format 'yyyy-MM-dd HH:mm:ss').ToString()
+        $endDateString = ($endDate | Get-Date -Format 'yyyy-MM-dd HH:mm:ss').ToString()
+        $startDateString = $startDateString.substring(0,$startDateString.length-1) + '*'
+        $endDateString = $endDateString.substring(0,$endDateString.length-1) + '*'
+
+        $script:mwName = "Pester Test Maintenance Window - $($startDate.ToUniversalTime().ToString())"
+        $script:SCMWTest = New-StatusCakeHelperMaintenanceWindow -name $mwName -timezone UTC -start_date $startDate -end_date $endDate -raw_tests @($SCTest.TestID)
+
+        $SCMWTest.name | Should -Be "Pester Test Maintenance Window - $($startDate.ToUniversalTime().ToString())"
+        $SCMWTest.timezone | Should -Be "UTC"
+        $SCMWTest.start_utc | Should -BeLike $startDateString -Because "Start time can differ by up a second from when command is sent"
+        $SCMWTest.end_utc | Should -BeLike $endDateString -Because "End time can differ by up a second from when command is sent"
+        $SCMWTest.raw_tests | Should -Contain $SCTest.TestID
     }
 
-    It "Get-StatusCakeHelperAllMaintenanceWindows retrieves all maintenance windows"{
-        $results = Get-StatusCakeHelperAllMaintenanceWindows
+    It "Get-StatusCakeHelperMaintenanceWindow retrieves all maintenance windows"{
+        $results = Get-StatusCakeHelperMaintenanceWindow
         $results.count | Should -BeGreaterThan 0
     }
 
     It "Update-StatusCakeHelperMaintenanceWindow updates the maintenance window"{
-        $result = Update-StatusCakeHelperMaintenanceWindow -id $SCMWTest.data.new_id -recur_every 30
+        $result = Update-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id -recur_every 30
         $result.Success | Should Be "True"
     }
 
     It "Clear-StatusCakeHelperMaintenanceWindow clears a test associated with a maintenance window"{
-        $result = Clear-StatusCakeHelperMaintenanceWindow -id $SCMWTest.data.new_id -raw_tests
-        $result.Success | Should Be "True"
+        Clear-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id -raw_tests
+        $results = Get-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id
+        $results.raw_tests | Should -BeFalse
     }
 
     It "Get-StatusCakeHelperMaintenanceWindow retrieves a maintenance window by name"{
-        $result = Get-StatusCakeHelperMaintenanceWindow -name "Pester Test Maintenance Window"
-        $result | Where-Object {$_.state -eq "Pending"} | Select-Object -ExpandProperty "name" | Should Be "Pester Test Maintenance Window"
+        $result = Get-StatusCakeHelperMaintenanceWindow -name $mwName
+        $result | Where-Object {$_.state -eq "Pending"} | Select-Object -ExpandProperty "name" | Should Be $mwName
         $result.id | Should -BeGreaterThan 0
     }
 
     It "Remove-StatusCakeHelperMaintenanceWindow removes a maintenance window"{
-        Remove-StatusCakeHelperTest -TestName "Pester Test SC Test for MW"
-        $result = Remove-StatusCakeHelperMaintenanceWindow -id $SCMWTest.data.new_id -Series $true -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperTest -TestName "Pester Test SC Test for Maintenance Window"
+        Remove-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id -Series $true
+        $results = Get-StatusCakeHelperMaintenanceWindow
+        $results.id | Should -Not -Contain $SCMWTest.id
     }
 
 }
@@ -244,33 +304,48 @@ Describe "StatusCake Maintenance Windows" {
 Describe "StatusCake Public Reporting Pages" {
 
     It "New-StatusCakeHelperPublicReportingPage creates a public reporting page"{
-        $script:SCPRPage = New-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page" -display_orbs $false
-        $SCPRPage.Success | Should Be "True"
+        $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test SC Test for Public Reporting Page" -TestURL "https://www.example.com" -Tags @("Pester Test") -checkRate 24000 -testType HTTP
+        $script:SCPRPage = New-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page" -testIDs @($SCTest.TestID) -search_indexing $false
+        $SCPRPage.title | Should -Be "Pester Test Public Reporting Page"
+        $SCPRPage.tests_or_tags | Should -Contain $SCTest.TestID
     }
 
-    It "Get-StatusCakeHelperAllPublicReportingPages retrieves all public reporting pages"{
+    It "Get-StatusCakeHelperPublicReportingPage retrieves all public reporting pages"{
         $results = Get-StatusCakeHelperPublicReportingPage
         $results.count | Should -BeGreaterThan 0
     }
 
     It "Get-StatusCakeHelperPublicReportingPage retrieves a public reporting page by title"{
-        Get-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page" | Should Be $true
+        $result = Get-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page"
+        $result.title | Should -Be "Pester Test Public Reporting Page"
     }
 
-    It "Set-StatusCakeHelperPublicReportingPage updates a public reporting page"{
-        $result = Set-StatusCakeHelperPublicReportingPage -id $SCPRPage.data.new_id -display_orbs $true
-        $result.Success | Should Be "True"
+    It "Set-StatusCakeHelperPublicReportingPage updates a public reporting page to use a tag"{
+        $result = Set-StatusCakeHelperPublicReportingPage -id $SCPRPage.id -search_indexing $true -tags @("Pester Test")
+        $result.search_indexing | Should -Be "True"
+        $result.tests_or_tags | Should -Contain "Pester Test"
+    }
+
+    It "Get-StatusCakeHelperPublicReportingPageDetail retrieves detailed data about a public reporting page"{
+        $result = Get-StatusCakeHelperPublicReportingPageDetail -id $SCPRPage.id
+        $result.title | Should -Be "Pester Test Public Reporting Page"
+        $result.search_indexing | Should -Be "True"
     }
 
     It "Copy-StatusCakeHelperPublicReportingPage copies a Public Reporting Page"{
-        $result = Copy-StatusCakeHelperPublicReportingPage -id $SCPRPage.data.new_id -newtitle "Pester Test Public Reporting Page (Copy)"
-        $result.Success | Should Be "True"
+        $result = Copy-StatusCakeHelperPublicReportingPage -id $SCPRPage.id -newtitle "Pester Test Public Reporting Page (Copy)"
+        $result.title | Should -Be "Pester Test Public Reporting Page (Copy)"
+        $result.search_indexing | Should -Be "True"
+        $result.tests_or_tags | Should -Contain "Pester Test"
     }
 
     It "Remove-StatusCakeHelperPublicReportingPage removes a public reporting page"{
         Remove-StatusCakeHelperPublicReportingPage -Title "Pester Test Public Reporting Page (Copy)"
-        $result = Remove-StatusCakeHelperPublicReportingPage -id $SCPRPage.data.new_id -PassThru
-        $result.Success | Should Be "True"
+        Remove-StatusCakeHelperPublicReportingPage -id $SCPRPage.id
+        Remove-StatusCakeHelperTest -TestID $SCTest.TestID
+        $results = Get-StatusCakeHelperPublicReportingPage
+        $results.title | Should -Not -Contain "Pester Test Public Reporting Page (Copy)"
+        $results.id | Should -Not -Contain $SCPRPage.id
     }
 
 }
