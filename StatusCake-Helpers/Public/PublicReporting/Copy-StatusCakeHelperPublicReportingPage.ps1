@@ -76,6 +76,23 @@ function Copy-StatusCakeHelperPublicReportingPage
     $psParams = $statusCakeItem | Get-StatusCakeHelperCopyParameter -FunctionName "New-StatusCakeHelperPublicReportingPage"
     $psParams.Title = $NewTitle
 
+    if(!([string]::IsNullOrEmpty($statusCakeItem.tests_or_tags)))
+    {
+        #Work out whether tests_or_tags property contain test IDs or tags
+        if($statusCakeItem.use_tags -eq "true")
+        {
+            $tags = $statusCakeItem.tests_or_tags -split ","
+            $psParams.Add("Tags",$tags)
+        }
+        else
+        {
+            $testIDs = [int[]]$statusCakeItem.tests_or_tags -split ","
+            $psParams.Add("TestIDs",$testIDs)
+            #Tags_inclusive will always be returned with a value and function only requires this value if tags are used to setup public reporting page
+            $psParams.Remove("tags_inclusive")
+        }
+    }
+
     if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake Public Reporting Page"))
     {
         $result = New-StatusCakeHelperPublicReportingPage -APICredential $APICredential @psParams

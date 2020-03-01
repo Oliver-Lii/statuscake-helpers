@@ -20,12 +20,12 @@
     Set to false to disable search engine indexing
 .PARAMETER Sort_Alphabetical
     Set to true to order tests by alphabetical name
-.PARAMETER Use_Tags
-    Set to true to select tests by their tag, rather than ID
-.PARAMETER Tests_Or_Tags
-    Array of TestIDs or Tags, depends on previous value
+.PARAMETER Tags
+    Array of tags which a test must contain to be included on the Public Reporting Page
 .PARAMETER Tags_Inclusive
     Set to true to select all tests that include one or more of the provided tags
+.PARAMETER TestIDs
+    Array of TestIDs to be associated with Public Reporting page
 .PARAMETER Announcement
     Free text field that will appear as an announcement on the page
 .PARAMETER Bg_Color
@@ -65,21 +65,24 @@ function New-StatusCakeHelperPublicReportingPage
 
         [boolean]$sort_alphabetical,
 
-        [boolean]$use_tags,
+        [Parameter(ParameterSetName='UseTags')]
+        [string[]]$tags,
 
-        [string[]]$tests_or_tags,
-
+        [Parameter(ParameterSetName='UseTags')]
         [boolean]$tags_inclusive,
+
+        [Parameter(ParameterSetName='UseTestIDs')]
+        [int[]]$testIDs,
 
         [string]$announcement,
 
-        [ValidatePattern('^\#([A-F0-9])+$')]
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
         [string]$bg_color,
 
-        [ValidatePattern('^\#([A-F0-9])+$')]
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
         [string]$header_color,
 
-        [ValidatePattern('^\#([A-F0-9])+$')]
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
         [string]$title_color
 
     )
@@ -94,9 +97,27 @@ function New-StatusCakeHelperPublicReportingPage
         }
     }
 
-    $join = @{Tests_or_Tags = "|"}
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Join $join
+    $apiParameterParams =@{"InvocationInfo" = $MyInvocation}
+    If($tags -or $testIDs)
+    {
+        if($tags)
+        {
+            $tests_or_tags = $tags
+            $allParameterValues.Add("use_tags","true")
+        }
+        elseif($testIDs)
+        {
+            $tests_or_tags = $testIDs
+            $allParameterValues.Add("use_tags","false")
+        }
+        $join = @{"Tests_or_Tags" = "|"} #Tags and tests for public reporting are separated by pipe symbol "|"
+        $exclude = @("tags","testIDs")
+        $allParameterValues.Add("tests_or_tags",$tests_or_tags)
+        $apiParameterParams.Add("join",$join)
+        $apiParameterParams.Add("exclude",$exclude)
+    }
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter @apiParameterParams
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     if($statusCakeAPIParams.Password)

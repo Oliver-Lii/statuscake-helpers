@@ -43,95 +43,73 @@ function Set-StatusCakeHelperPublicReportingPage
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
+        [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
+        [Parameter(ParameterSetName='UseTestIDs',Mandatory=$true)]
         [string]$id,
 
         [Parameter(ParameterSetName='SetByTitle',Mandatory=$true)]
+        [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
+        [Parameter(ParameterSetName='UseTestIDs',Mandatory=$true)]
         [switch]$SetByTitle,
 
         [Parameter(ParameterSetName='NewPublicReportingPage',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTitle')]
+        [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
+        [Parameter(ParameterSetName='UseTestIDs',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$title,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
         [ValidatePattern('^([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+)$')]
         [string]$cname,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [ValidateNotNullOrEmpty()]
         [securestring]$password,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [ValidateNotNullOrEmpty()]
         [string]$twitter,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [ValidateNotNullOrEmpty()]
         [boolean]$display_annotations,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [ValidateNotNullOrEmpty()]
         [boolean]$display_orbs,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [ValidateNotNullOrEmpty()]
         [boolean]$search_indexing,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [ValidateNotNullOrEmpty()]
         [boolean]$sort_alphabetical,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [boolean]$use_tags,
+        [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
+        [string[]]$tags,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [string[]]$tests_or_tags,
-
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [Parameter(ParameterSetName='UseTags')]
         [boolean]$tags_inclusive,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
+        [Parameter(ParameterSetName='UseTestIDs',Mandatory=$true)]
+        [int[]]$testIDs,
+
         [string]$announcement,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidatePattern('^\#([A-F0-9])+$')]
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
         [string]$bg_color,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidatePattern('^\#([A-F0-9])+$')]
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
         [string]$header_color,
 
-        [Parameter(ParameterSetName='SetByID')]
-        [Parameter(ParameterSetName='SetByTitle')]
-        [Parameter(ParameterSetName='NewPublicReportingPage')]
-        [ValidatePattern('^\#([A-F0-9])+$')]
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
         [string]$title_color
 
     )
@@ -180,9 +158,27 @@ function Set-StatusCakeHelperPublicReportingPage
         }
     }
 
-    $join = @{Tests_or_Tags = "|"}
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -join $join
+    $apiParameterParams =@{"InvocationInfo" = $MyInvocation}
+    If($tags -or $testIDs)
+    {
+        if($tags)
+        {
+            $tests_or_tags = $tags
+            $allParameterValues.Add("use_tags","true")
+        }
+        elseif($testIDs)
+        {
+            $tests_or_tags = $testIDs
+            $allParameterValues.Add("use_tags","false")
+        }
+        $join = @{"Tests_or_Tags" = "|"} #Tags and tests for public reporting are separated by pipe symbol "|"
+        $exclude = @("tags","testIDs")
+        $allParameterValues.Add("tests_or_tags",$tests_or_tags)
+        $apiParameterParams.Add("join",$join)
+        $apiParameterParams.Add("exclude",$exclude)
+    }
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter @apiParameterParams
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
