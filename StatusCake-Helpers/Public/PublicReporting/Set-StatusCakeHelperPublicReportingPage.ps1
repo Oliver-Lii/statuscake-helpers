@@ -7,35 +7,35 @@
 .PARAMETER Title
     The title of the Public Reporting Page
 .PARAMETER CName
-    Cname record for a custom domain
+    CName record for a custom domain
 .PARAMETER Password
     Password protection for the page. Leave empty to disable
 .PARAMETER Twitter
     Twitter handle to display with the @. Leave empty to disable
-.PARAMETER Display_Annotations
+.PARAMETER DisplayAnnotations
     Set to true to show annotations for status periods
-.PARAMETER Display_Orbs
+.PARAMETER DisplayOrbs
     Set to true to display uptime as colored orbs
-.PARAMETER Search_Indexing
+.PARAMETER SearchIndexing
     Set to false to disable search engine indexing
 .PARAMETER Sort_Alphabetical
     Set to true to order tests by alphabetical name
-.PARAMETER Use_Tags
+.PARAMETER TestTags
     Set to true to select tests by their tag, rather than ID
-.PARAMETER Tests_Or_Tags
-    Array of TestIDs or Tags, depends on previous value
-.PARAMETER Tags_Inclusive
+.PARAMETER TestIDs
+    Array of TestIDs to be associated with Public Reporting page
+.PARAMETER TagsInclusive
     Set to true to select all tests that include one or more of the provided tags
 .PARAMETER Announcement
     Free text field that will appear as an announcement on the page
-.PARAMETER Bg_Color
+.PARAMETER BgColor
     HEX value for the background colour
-.PARAMETER Header_Color
+.PARAMETER HeaderColor
     HEX value for the header colour
-.PARAMETER Title_Color
+.PARAMETER TitleColor
     HEX value for the header text colour
 .EXAMPLE
-   Set-StatusCakeHelperPublicReportingPage -id 123456 -display_orbs $false
+   Set-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5 -DisplayOrbs $false
 .FUNCTIONALITY
    Sets the configuration of StatusCake Public Reporting Page using the supplied parameters.
 #>
@@ -49,7 +49,7 @@ function Set-StatusCakeHelperPublicReportingPage
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
         [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
         [Parameter(ParameterSetName='UseTestIDs',Mandatory=$true)]
-        [string]$id,
+        [string]$ID,
 
         [Parameter(ParameterSetName='SetByTitle',Mandatory=$true)]
         [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
@@ -61,98 +61,102 @@ function Set-StatusCakeHelperPublicReportingPage
         [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
         [Parameter(ParameterSetName='UseTestIDs',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$title,
+        [string]$Title,
 
         [ValidatePattern('^([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+)$')]
-        [string]$cname,
+        [string]$CName,
 
         [ValidateNotNullOrEmpty()]
-        [securestring]$password,
+        [securestring]$Password,
 
         [ValidateNotNullOrEmpty()]
-        [string]$twitter,
+        [string]$Twitter,
 
-        [ValidateNotNullOrEmpty()]
-        [boolean]$display_annotations,
+        [Alias('display_annotations')]
+        [boolean]$DisplayAnnotations,
 
-        [ValidateNotNullOrEmpty()]
-        [boolean]$display_orbs,
+        [Alias('display_orbs')]
+        [boolean]$DisplayOrbs,
 
-        [ValidateNotNullOrEmpty()]
-        [boolean]$search_indexing,
+        [Alias('search_indexing')]
+        [boolean]$SearchIndexing,
 
-        [ValidateNotNullOrEmpty()]
-        [boolean]$sort_alphabetical,
+        [Alias('sort_alphabetical')]
+        [boolean]$SortAlphabetical,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
         [Parameter(ParameterSetName='UseTags',Mandatory=$true)]
-        [string[]]$tags,
+        [string[]]$TestTags,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='NewPublicReportingPage')]
         [Parameter(ParameterSetName='UseTags')]
-        [boolean]$tags_inclusive,
+        [Alias('tags_inclusive')]
+        [boolean]$TagsInclusive,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByTitle')]
         [Parameter(ParameterSetName='UseTestIDs',Mandatory=$true)]
-        [int[]]$testIDs,
+        [int[]]$TestIDs,
 
-        [string]$announcement,
-
-        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
-        [string]$bg_color,
+        [string]$Announcement,
 
         [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
-        [string]$header_color,
+        [Alias('bg_color')]
+        [string]$BGColor,
 
         [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
-        [string]$title_color
+        [Alias('header_color')]
+        [string]$HeaderColor,
+
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
+        [Alias('title_color')]
+        [string]$TitleColor
 
     )
 
-    if($SetByTitle -and $title)
+    if($SetByTitle -and $Title)
     {   #If setting page by title verify if a page or pages with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
         {
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -title $title
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -Title $Title
             if(!$statusCakeItem)
             {
-                Write-Error "No Public Reporting Page with Specified title Exists [$title]"
+                Write-Error "No Public Reporting Page with Specified title Exists [$Title]"
                 Return $null
             }
             elseif($statusCakeItem.GetType().Name -eq 'Object[]')
             {
-                Write-Error "Multiple Public Reporting Pages with the same name [$title] [$($statusCakeItem.id)]"
+                Write-Error "Multiple Public Reporting Pages with the same name [$Title] [$($statusCakeItem.id)]"
                 Return $null
             }
-            $id = $statusCakeItem.id
+            $ID = $statusCakeItem.id
         }
     }
-    elseif($id)
+    elseif($ID)
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
         {
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -id $id
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -ID $ID
             if(!$statusCakeItem)
             {
-                Write-Error "No Public Reporting Page with Specified ID Exists [$id]"
+                Write-Error "No Public Reporting Page with Specified ID Exists [$ID]"
                 Return $null
             }
-            $id = $statusCakeItem.id
+            $ID = $statusCakeItem.id
         }
     }
     else
     {   #Setup a page with the supplied details
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages") )
         {
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -title $title
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -Title $Title
             if($statusCakeItem)
             {
-                Write-Error "Public Reporting Page with specified name already exists [$title] [$($statusCakeItem.id)]"
+                Write-Error "Public Reporting Page with specified name already exists [$Title] [$($statusCakeItem.id)]"
                 Return $null
             }
         }
@@ -160,25 +164,26 @@ function Set-StatusCakeHelperPublicReportingPage
 
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
     $apiParameterParams =@{"InvocationInfo" = $MyInvocation}
-    If($tags -or $testIDs)
+    If($TestTags -or $TestIDs)
     {
-        if($tags)
+        if($TestTags)
         {
-            $tests_or_tags = $tags
+            $tests_or_tags = $TestTags
             $allParameterValues.Add("use_tags","true")
         }
-        elseif($testIDs)
+        elseif($TestIDs)
         {
-            $tests_or_tags = $testIDs
+            $tests_or_tags = $TestIDs
             $allParameterValues.Add("use_tags","false")
         }
         $join = @{"Tests_or_Tags" = "|"} #Tags and tests for public reporting are separated by pipe symbol "|"
-        $exclude = @("tags","testIDs")
+        $exclude = @("TestTags","TestIDs")
         $allParameterValues.Add("tests_or_tags",$tests_or_tags)
         $apiParameterParams.Add("join",$join)
         $apiParameterParams.Add("exclude",$exclude)
     }
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter @apiParameterParams
+    $lower = @('ID','Title','CName','Password','Twitter','Announcement')
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter @apiParameterParams -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
@@ -200,12 +205,12 @@ function Set-StatusCakeHelperPublicReportingPage
             Return $null
         }
         $responseId = $response.data.new_id
-        if($id)
+        if($ID)
         {   #Updating a test does not return an id
-            $responseId = $id
+            $responseId = $ID
         }
 
-        $response = Get-StatusCakeHelperPublicReportingPageDetail -APICredential $APICredential -id $responseId
+        $response = Get-StatusCakeHelperPublicReportingPageDetail -APICredential $APICredential -ID $responseId
         Return $response
     }
 

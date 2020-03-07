@@ -11,7 +11,7 @@
 .PARAMETER Detailed
     Retrieve detailed public reporting page data
 .EXAMPLE
-   Get-StatusCakeHelperPublicReportingPage -id 123456
+   Get-StatusCakeHelperPublicReportingPage -ID 123456
 .OUTPUTS
     Returns StatusCake Public Reporting Pages as an object
 .FUNCTIONALITY
@@ -26,10 +26,10 @@ function Get-StatusCakeHelperPublicReportingPage
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [ValidateNotNullOrEmpty()]
-        [string]$title,
+        [string]$Title,
 
         [ValidateNotNullOrEmpty()]
-        [string]$id,
+        [string]$ID,
 
         [switch]$Detailed
     )
@@ -43,13 +43,13 @@ function Get-StatusCakeHelperPublicReportingPage
     $response = Invoke-RestMethod @requestParams
     $requestParams = @{}
     $matchingItems = $response.data
-    if($title)
+    if($Title)
     {
-        $matchingItems = $response.data | Where-Object {$_.title -eq $title}
+        $matchingItems = $response.data | Where-Object {$_.title -eq $Title}
     }
-    elseif($id)
+    elseif($ID)
     {
-        $matchingItems = $response.data | Where-Object {$_.id -eq $id}
+        $matchingItems = $response.data | Where-Object {$_.id -eq $ID}
     }
 
     $result = $matchingItems

@@ -82,7 +82,7 @@ function Copy-StatusCakeHelperPublicReportingPage
         if($statusCakeItem.use_tags -eq "true")
         {
             $tags = $statusCakeItem.tests_or_tags -split ","
-            $psParams.Add("Tags",$tags)
+            $psParams.Add("TestTags",$tags)
         }
         else
         {

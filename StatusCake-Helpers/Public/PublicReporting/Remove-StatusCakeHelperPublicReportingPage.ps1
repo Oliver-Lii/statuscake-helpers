@@ -11,7 +11,7 @@
 .PARAMETER Passthru
     Return the object to be deleted
 .EXAMPLE
-   Remove-StatusCakeHelperPublicReportingPage -ID 123456
+   Remove-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5
 .FUNCTIONALITY
    Deletes a StatusCake Public Reporting page using the supplied ID.
 #>
@@ -23,22 +23,22 @@ function Remove-StatusCakeHelperPublicReportingPage
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "ID")]
-        [string]$id,
+        [string]$ID,
 
-        [Parameter(ParameterSetName = "title")]
-        [string]$title,
+        [Parameter(ParameterSetName = "Title")]
+        [string]$Title,
 
         [switch]$PassThru
     )
 
     $checkParams = @{}
-    if($title)
+    if($Title)
     {
-        $checkParams.Add("title",$title)
+        $checkParams.Add("title",$Title)
     }
     else
     {
-        $checkParams.Add("id",$id)
+        $checkParams.Add("id",$ID)
     }
 
     $publicReportingPage = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -Detailed @checkParams
@@ -46,19 +46,19 @@ function Remove-StatusCakeHelperPublicReportingPage
     {
         if($publicReportingPage.GetType().Name -eq 'Object[]')
         {
-            Write-Error "Multiple Public Reporting pages found with title [$title]. Please remove the Public Reporting page by ID"
+            Write-Error "Multiple Public Reporting pages found with title [$Title]. Please remove the Public Reporting page by ID"
             Return $null
         }
-        $id = $publicReportingPage.id
+        $ID = $publicReportingPage.id
     }
     else
     {
-        Write-Error "Unable to find Public Reporting page with name [$title]"
+        Write-Error "Unable to find Public Reporting page with name [$Title]"
         Return $null
     }
 
     $requestParams = @{
-        uri = "https://app.statuscake.com/API/PublicReporting/Update/?id=$id"
+        uri = "https://app.statuscake.com/API/PublicReporting/Update/?id=$ID"
         Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Delete"

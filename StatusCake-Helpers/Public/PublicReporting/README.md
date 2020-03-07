@@ -45,7 +45,7 @@ visits              : 0
 This cmdlet creates a new public reporting page. The cmdlet tests to see if a page with the title to be monitored already exists before creating the public reporting page.
 
 ```powershell
-New-StatusCakeHelperPublicReportingPage -title "Example Public Reporting Page" -tests_or_tags @("12345","23456")
+New-StatusCakeHelperPublicReportingPage -Title "Example Public Reporting Page" -TestIDs @("12345","23456")
 id                  : a1B2c3D4e5
 title               : Example Public Reporting Page
 url                 : https://uptime.statuscake.com/a1B2c3D4e5
@@ -71,7 +71,7 @@ visits              : 0
 This cmdlet copies a public reporting page. The cmdlet tests to see if a page with the title to be monitored already exists before creating the public reporting page.
 
 ```powershell
-Copy-StatusCakeHelperPublicReportingPage -title "Example Public Reporting Page" -NewTitle "Example Public Reporting Page - Copy"
+Copy-StatusCakeHelperPublicReportingPage -Title "Example Public Reporting Page" -NewTitle "Example Public Reporting Page - Copy"
 id                  : B2c3D4e5F6
 title               : Example Public Reporting Page - Copy
 url                 : https://uptime.statuscake.com/B2c3D4e5F6
@@ -97,7 +97,7 @@ visits              : 0
 This cmdlet sets the configuration of a public reporting page. If a id or a title with setByTitle flag set is not supplied then a new public reporting page will be created.
 
 ```powershell
-Set-StatusCakeHelperPublicReportingPage -id "a1B2c3D4e5" -display_orbs $true
+Set-StatusCakeHelperPublicReportingPage -ID "a1B2c3D4e5" -DisplayOrbs $true
 id                  : a1B2c3D4e5
 title               : Example Public Reporting Page
 url                 : https://uptime.statuscake.com/a1B2c3D4e5
@@ -120,7 +120,7 @@ visits              : 0
 ```
 A public reporting page can be updated by title if there are no duplicates as follows:
 ```powershell
-Set-StatusCakeHelperPublicReportingPage -title "Example Public Reporting Page" -display_orbs $false -SetByTitle
+Set-StatusCakeHelperPublicReportingPage -Title "Example Public Reporting Page" -DisplayOrbs $false -SetByTitle
 id                  : a1B2c3D4e5
 title               : Example Public Reporting Page
 url                 : https://uptime.statuscake.com/a1B2c3D4e5
@@ -146,11 +146,11 @@ visits              : 0
 This cmdlet removes a Public Reporting page via either id or title of the public reporting page
 
 ```powershell
-Remove-StatusCakeHelperPublicReportingPage -id "1a2b3c4d5"
+Remove-StatusCakeHelperPublicReportingPage -ID "1a2b3c4d5"
 ```
 To remove by title specify the title parameter
 ```powershell
-Remove-StatusCakeHelperPublicReportingPage -title "Example Public Reporting Page" -PassThru
+Remove-StatusCakeHelperPublicReportingPage -Title "Example Public Reporting Page" -PassThru
 id                  : a1B2c3D4e5
 title               : Example Public Reporting Page
 url                 : https://uptime.statuscake.com/a1B2c3D4e5

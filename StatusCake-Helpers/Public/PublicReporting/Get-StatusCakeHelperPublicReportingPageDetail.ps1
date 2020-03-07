@@ -7,7 +7,7 @@
 .PARAMETER ID
     ID of the public reporting page
 .EXAMPLE
-   Get-StatusCakeHelperPublicReportingPageDetail -id a1b2c3d4
+   Get-StatusCakeHelperPublicReportingPageDetail -ID a1b2c3d4
 .OUTPUTS
     Returns the details of a StatusCake Public Reporting page
 .FUNCTIONALITY
@@ -22,7 +22,7 @@ function Get-StatusCakeHelperPublicReportingPageDetail
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [ValidateNotNullOrEmpty()]
-        [string]$id
+        [string]$ID
     )
 
     $requestParams = @{
@@ -31,7 +31,7 @@ function Get-StatusCakeHelperPublicReportingPageDetail
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = @{id = $id}
+        body = @{id = $ID}
     }
 
     $response = Invoke-RestMethod @requestParams
