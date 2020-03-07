@@ -16,7 +16,7 @@
     Filter tests to a specific status
 .PARAMETER Tags
     Match tests with tags
-.PARAMETER Matchany
+.PARAMETER MatchAny
     Match tests which have any of the supplied tags (true) or all of the supplied tags (false)
 .EXAMPLE
    Get-StatusCakeHelperTest -testID 123456
@@ -57,11 +57,10 @@ function Get-StatusCakeHelperTest
 
         [Parameter(Mandatory=$false,ParameterSetName='MatchTag')]
         [Parameter(Mandatory=$true,ParameterSetName='MatchAnyTag')]
-        [string[]]$tags,
+        [string[]]$Tags,
 
         [Parameter(Mandatory=$false,ParameterSetName='MatchAnyTag')]
-        [ValidateSet("true","false")]
-        [string]$matchany
+        [boolean]$MatchAny
     )
 
     $requestParams = @{
@@ -72,8 +71,9 @@ function Get-StatusCakeHelperTest
 
     if($PSCmdlet.ParameterSetName -eq "MatchTag" -or $PSCmdlet.ParameterSetName -eq "MatchAnyTag")
     {
+        $lower =@('Tags','MatchAny')
         $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-        $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+        $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
         $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
         $requestParams.Add("ContentType","application/x-www-form-urlencoded")
         $requestParams.Add("body",$statusCakeAPIParams)
