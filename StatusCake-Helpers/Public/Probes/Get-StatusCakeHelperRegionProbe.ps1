@@ -20,10 +20,8 @@ function Get-StatusCakeHelperRegionProbe
         $AWSRegion,
         [ValidateSet("*","up","down")]
         $Status = '*',
-        $StatusCakeProbeData
+        $StatusCakeProbeData=(Get-StatusCakeHelperProbe)
     )
-
-    if(!$StatusCakeProbeData){$StatusCakeProbeData=Get-StatusCakeHelperProbe}
 
     $awsRegionMap = @{
         'ap-northeast-1' = 'JPN'
