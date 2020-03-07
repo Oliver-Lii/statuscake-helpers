@@ -43,21 +43,20 @@ function Set-StatusCakeHelperContactGroup
         [Parameter(ParameterSetName='SetByGroupName',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByContactID')]
         [ValidateNotNullOrEmpty()]
-        $GroupName,
+        [string]$GroupName,
 
         [Parameter(ParameterSetName='SetByGroupName')]
         [Parameter(ParameterSetName='SetByContactID')]
-        [ValidateRange(0,1)]
-        $DesktopAlert,
+        [boolean]$DesktopAlert,
 
         [Parameter(ParameterSetName='SetByGroupName')]
         [Parameter(ParameterSetName='SetByContactID')]
-        [object]$Email,
+        [string[]]$Email,
 
         [Parameter(ParameterSetName='SetByGroupName')]
         [Parameter(ParameterSetName='SetByContactID')]
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        $PingURL,
+        [string]$PingURL,
 
         [Parameter(ParameterSetName='SetByGroupName')]
         [Parameter(ParameterSetName='SetByContactID')]
@@ -71,7 +70,7 @@ function Set-StatusCakeHelperContactGroup
 
         [Parameter(ParameterSetName='SetByGroupName')]
         [Parameter(ParameterSetName='SetByContactID')]
-        [object]$Mobile
+        [string[]]$Mobile
     )
 
     if($SetByGroupName -and $GroupName)
