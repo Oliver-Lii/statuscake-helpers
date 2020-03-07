@@ -35,7 +35,7 @@ last_updated_utc : 0000-00-00 00:00:00
 This cmdlet creates a new SSL Test. The cmdlet tests to see if the domain to be monitored already being checked before creating the SSL Test. A SSL test is created by default to have all reminders enabled at 60, 30 and 7 days intervals. Mandatory parameters are illustrated in the example below:
 
 ```powershell
-New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -checkrate 3600
+New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -Checkrate 3600
 id               : 123456
 checkrate        : 86400
 paused           : False
@@ -91,7 +91,7 @@ last_updated_utc : 0000-00-00 00:00:00
 This cmdlet sets the configuration of a specific SSL Test. If a id or a domain with setByDomain flag set is not supplied then a new test will be created
 
 ```powershell
-Set-StatusCakeHelperSSLTest -id 123456 -checkrate 3600 -Alert_At @("14","90","120")
+Set-StatusCakeHelperSSLTest -ID 123456 -Checkrate 3600 -AlertAt @("14","90","120")
 id               : 123456
 checkrate        : 3600
 paused           : False
@@ -116,7 +116,7 @@ last_updated_utc : 0000-00-00 00:00:00
 ```
 A SSL Test can be updated by domain if there are no duplicates as follows:
 ```powershell
-Set-StatusCakeHelperSSLTest -Domain "https://www.example.com" -checkrate 3600 -Alert_At @("14","90","120") -SetByDomain
+Set-StatusCakeHelperSSLTest -Domain "https://www.example.com" -Checkrate 3600 -AlertAt @("14","90","120") -SetByDomain
 id               : 123456
 checkrate        : 3600
 paused           : False
@@ -141,7 +141,7 @@ last_updated_utc : 0000-00-00 00:00:00
 ```
 A new SSL Test can be created via the cmdlet with the following parameters:
 ```powershell
-Set-StatusCakeHelperSSLTest -domain https://www.example.org -CheckRate "3600" -alert_expiry $False -alert_reminder $False -alert_broken $False -Alert_At @("14","90","120")
+Set-StatusCakeHelperSSLTest -domain https://www.example.org -CheckRate "3600" -AlertExpiry $False -AlertReminder $False -AlertBroken $False -AlertAt @("14","90","120")
 id               : 234567
 checkrate        : 3600
 paused           : False

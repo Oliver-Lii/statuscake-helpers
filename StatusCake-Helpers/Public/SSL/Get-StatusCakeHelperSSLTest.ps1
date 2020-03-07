@@ -25,11 +25,11 @@ function Get-StatusCakeHelperSSLTest
 
         [Parameter(ParameterSetName = "Domain")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$domain,
+        [string]$Domain,
 
         [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
-        [int]$id
+        [int]$ID
     )
 
     $requestParams = @{
@@ -41,13 +41,13 @@ function Get-StatusCakeHelperSSLTest
     $response = Invoke-RestMethod @requestParams
     $requestParams = @{}
 
-    if($domain)
+    if($Domain)
     {
-        $matchingTests = $response | Where-Object {$_.domain -eq $domain}
+        $matchingTests = $response | Where-Object {$_.domain -eq $Domain}
     }
-    elseif($id)
+    elseif($ID)
     {
-        $matchingTests = $response | Where-Object {$_.id -eq $id}
+        $matchingTests = $response | Where-Object {$_.id -eq $ID}
     }
     else
     {

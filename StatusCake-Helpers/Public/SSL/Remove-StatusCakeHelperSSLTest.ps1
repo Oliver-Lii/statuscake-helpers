@@ -23,23 +23,23 @@ function Remove-StatusCakeHelperSSLTest
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "ID")]
-        [int]$id,
+        [int]$ID,
 
-        [Parameter(ParameterSetName = "domain")]
+        [Parameter(ParameterSetName = "Domain")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$domain,
+        [string]$Domain,
 
         [switch]$PassThru
     )
 
     $checkParams = @{}
-    if($domain)
+    if($Domain)
     {
-        $checkParams.Add("domain",$domain)
+        $checkParams.Add("Domain",$Domain)
     }
     else
     {
-        $checkParams.Add("id",$id)
+        $checkParams.Add("ID",$ID)
     }
 
     $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential @checkParams
@@ -47,19 +47,19 @@ function Remove-StatusCakeHelperSSLTest
     {
         if($sslTest.GetType().Name -eq 'Object[]')
         {
-            Write-Error "Multiple SSL Tests found with domain [$domain]. Please remove the SSL test by ID"
+            Write-Error "Multiple SSL Tests found with domain [$Domain]. Please remove the SSL test by ID"
             Return $null
         }
-        $id = $sslTest.id
+        $ID = $sslTest.id
     }
     else
     {
-        Write-Error "Unable to find SSL Test with name [$domain]"
+        Write-Error "Unable to find SSL Test with name [$Domain]"
         Return $null
     }
 
     $requestParams = @{
-        uri = "https://app.statuscake.com/API/SSL/Update?id=$id"
+        uri = "https://app.statuscake.com/API/SSL/Update?id=$ID"
         Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Delete"

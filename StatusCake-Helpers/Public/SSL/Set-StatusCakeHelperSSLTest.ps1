@@ -10,17 +10,17 @@
     Test ID to retrieve
 .PARAMETER CheckRate
     Checkrate in seconds
-.PARAMETER Contact_Groups
+.PARAMETER ContactIDs
     Array containing contact IDs to alert.
-.PARAMETER Alert_At
+.PARAMETER AlertAt
     Number of days before expiration when reminders will be sent. Defaults to reminders at 60, 30 and 7 days. Must be 3 numeric values.
-.PARAMETER Alert_expiry
+.PARAMETER AlertExpiry
     Set to true to enable expiration alerts. False to disable
-.PARAMETER Alert_reminder
+.PARAMETER AlertReminder
     Set to true to enable reminder alerts. False to disable
-.PARAMETER Alert_broken
+.PARAMETER AlertBroken
     Set to true to enable broken alerts. False to disable
-.PARAMETER Alert_mixed
+.PARAMETER AlertMixed
     Set to true to enable mixed content alerts. False to disable
 .EXAMPLE
    Set-StatusCakeHelperSSLTest -id 123456 -checkrate 3600
@@ -38,7 +38,7 @@ function Set-StatusCakeHelperSSLTest
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
-        [int]$id,
+        [int]$ID,
 
         [Parameter(ParameterSetName='SetByDomain',Mandatory=$true)]
         [switch]$SetByDomain,
@@ -46,47 +46,53 @@ function Set-StatusCakeHelperSSLTest
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByDomain')]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$domain,
+        [string]$Domain,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [Int[]]$contact_groups,
+        [Alias('contact_groups')]
+        [int[]]$ContactIDs,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
-        [int]$checkrate,
+        [int]$Checkrate,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [Int[]]$alert_at,
+        [Alias('alert_at')]
+        [Int[]]$AlertAt,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [boolean]$alert_expiry,
+        [Alias('alert_expiry')]
+        [boolean]$AlertExpiry,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [boolean]$alert_reminder,
+        [Alias('alert_reminder')]
+        [boolean]$AlertReminder,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [boolean]$alert_broken,
+        [Alias('alert_broken')]
+        [boolean]$AlertBroken,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
-        [boolean]$alert_mixed
+        [Alias('alert_mixed')]
+        [boolean]$AlertMixed
 
     )
 
-    if($Alert_At -and $Alert_At.count -ne 3)
+    if($AlertAt -and $AlertAt.count -ne 3)
     {
         Write-Error "Only three values must be specified for Alert_At parameter"
         Return
@@ -107,20 +113,20 @@ function Set-StatusCakeHelperSSLTest
                 Write-Error "Multiple SSL tests with the same name [$Domain] [$($sslTest.id)]"
                 Return $null
             }
-            $id = $sslTest.id
+            $ID = $sslTest.id
         }
     }
-    elseif($id)
+    elseif($ID)
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests"))
         {
-            $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -id $id
+            $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -id $ID
             if(!$sslTest)
             {
-                Write-Error "No SSL test with Specified ID Exists [$id]"
+                Write-Error "No SSL test with Specified ID Exists [$ID]"
                 Return $null
             }
-            $id = $sslTest.id
+            $ID = $sslTest.id
         }
     }
     else
@@ -136,8 +142,9 @@ function Set-StatusCakeHelperSSLTest
         }
     }
 
+    $lower = @('ID','Checkrate','Domain')
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
@@ -160,9 +167,9 @@ function Set-StatusCakeHelperSSLTest
         }
 
         $responseId = $response.Message
-        if($id)
+        if($ID)
         {   #Updating a test does not return an id
-            $responseId = $id
+            $responseId = $ID
         }
 
         $response = Get-StatusCakeHelperSSLTest -APICredential $APICredential -id $responseId

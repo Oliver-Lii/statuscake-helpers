@@ -27,8 +27,7 @@ function Copy-StatusCakeHelperSSLTest
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
-        [ValidatePattern('^\d{1,}$')]
-        [int]$id,
+        [int]$ID,
 
         [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]
         [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]
@@ -42,7 +41,7 @@ function Copy-StatusCakeHelperSSLTest
         [Parameter(ParameterSetName='CopyByName')]
         [Parameter(ParameterSetName='CopyById')]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
-        [int]$checkrate="86400"
+        [int]$Checkrate="86400"
     )
 
     if($Name)

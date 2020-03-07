@@ -2,28 +2,28 @@
 <#
 .Synopsis
    Create a StatusCake SSL Test
-.EXAMPLE
-   New-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -Domain "https://www.example.com" -checkrate 3600
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER Domain
     Name of the test to retrieve
 .PARAMETER ID
     Test ID to retrieve
-.PARAMETER CheckRate
+.PARAMETER Checkrate
     Checkrate in seconds
-.PARAMETER Contact_Groups
+.PARAMETER ContactIDs
     Array containing contact IDs to alert.
-.PARAMETER Alert_At
+.PARAMETER AlertAt
     Number of days before expiration when reminders will be sent. Defaults to reminders at 60, 30 and 7 days. Must be 3 numeric values.
-.PARAMETER Alert_expiry
+.PARAMETER AlertExpiry
     Set to true to enable expiration alerts. False to disable
-.PARAMETER Alert_reminder
+.PARAMETER AlertReminder
     Set to true to enable reminder alerts. False to disable
-.PARAMETER Alert_broken
+.PARAMETER AlertBroken
     Set to true to enable broken alerts. False to disable
-.PARAMETER Alert_mixed
+.PARAMETER AlertMixed
     Set to true to enable mixed content alerts. False to disable
+.EXAMPLE
+   New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -checkrate 3600
 .FUNCTIONALITY
    Creates a new StatusCake SSL Test using the supplied parameters.
 #>
@@ -36,24 +36,30 @@ function New-StatusCakeHelperSSLTest
 
         [Parameter(Mandatory=$true)]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        $domain,
+        [string]$Domain,
 
         #Contact_Groups must be supplied
-        [int[]]$contact_groups,
+        [Alias('contact_groups')]
+        [int[]]$ContactIDs,
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
-        $checkrate,
+        [int]$Checkrate,
 
-        [int[]]$alert_at=@("7","14","30"),
+        [Alias('alert_at')]
+        [int[]]$AlertAt=@("7","14","30"),
 
-        [boolean]$alert_expiry=$true,
+        [Alias('alert_expiry')]
+        [boolean]$AlertExpiry=$true,
 
-        [boolean]$alert_reminder=$true,
+        [Alias('alert_reminder')]
+        [boolean]$AlertReminder=$true,
 
-        [boolean]$alert_broken=$true,
+        [Alias('alert_broken')]
+        [boolean]$AlertBroken=$true,
 
-        [boolean]$alert_mixed=$true
+        [Alias('alert_mixed')]
+        [boolean]$AlertMixed=$true
 
     )
 
@@ -65,22 +71,23 @@ function New-StatusCakeHelperSSLTest
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Checks") )
     {
-        $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -domain $domain
+        $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential -Domain $Domain
         if($sslTest)
         {
-            Write-Error "SSL Check with specified domain already exists [$domain] [$($sslTest.id)]"
+            Write-Error "SSL Check with specified domain already exists [$Domain] [$($sslTest.id)]"
             Return $null
         }
     }
 
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    if(!$contact_groups)
+    if(!$ContactIDs)
     {
         # If no contact groups to be added then this must be sent empty
         $allParameterValues.Add("contact_groups","")
     }
 
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $lower=@('Checkrate','Domain')
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
