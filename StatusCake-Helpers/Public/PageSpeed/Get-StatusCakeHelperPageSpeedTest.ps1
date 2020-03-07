@@ -6,14 +6,16 @@
    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the PageSpeed test
-.PARAMETER Id
+.PARAMETER ID
     ID of the PageSpeed Test
 .PARAMETER Detailed
     Retrieve detailed test data
 .EXAMPLE
-   Get-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -id 123456
-.OUTPUTS
-    Returns a StatusCake PageSpeed Tests as an object
+    # Retrieve all page speed tests
+    Get-StatusCakeHelperPageSpeedTest
+.EXAMPLE
+    # Retrieve detailed page speed test information for a test
+    Get-StatusCakeHelperPageSpeedTest -Name "Example Page Speed Test" -Detailed
 .FUNCTIONALITY
     Retrieves a specific StatusCake PageSpeed Test
 
@@ -25,13 +27,12 @@ function Get-StatusCakeHelperPageSpeedTest
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(ParameterSetName = "name")]
-        [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$name,
+        [Parameter(ParameterSetName = "Name")]
+        [string]$Name,
 
         [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
-        [int]$id,
+        [int]$ID,
 
         [switch]$Detailed
     )
@@ -46,13 +47,13 @@ function Get-StatusCakeHelperPageSpeedTest
     $requestParams=@{}
     $matchingTests = $response.data
 
-    if($name)
+    if($Name)
     {
-        $matchingTests = $response.data | Where-Object {$_.Title -eq $name}
+        $matchingTests = $response.data | Where-Object {$_.Title -eq $Name}
     }
-    elseif($id)
+    elseif($ID)
     {
-        $matchingTests = $response.data | Where-Object {$_.ID -eq $id}
+        $matchingTests = $response.data | Where-Object {$_.ID -eq $ID}
     }
 
     $result = $matchingTests

@@ -10,6 +10,8 @@
     ID of the Page Speed Test to be copied
 .PARAMETER NewName
     Name of the Page Speed Test copy
+.PARAMETER WebsiteURL
+    Name of the URL to be used in the copy of the test
 .EXAMPLE
    Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy"
 .FUNCTIONALITY
@@ -25,7 +27,7 @@ function Copy-StatusCakeHelperPageSpeedTest
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
-        [int]$id,
+        [int]$ID,
 
         [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
@@ -39,7 +41,8 @@ function Copy-StatusCakeHelperPageSpeedTest
         [Parameter(ParameterSetName='CopyByName')]
         [Parameter(ParameterSetName='CopyById')]
         [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]
-        [string]$website_url
+        [Alias('website_url')]
+        [string]$WebsiteURL
     )
 
     if($Name)
@@ -81,9 +84,9 @@ function Copy-StatusCakeHelperPageSpeedTest
     $psParams = $statusCakeItem | Get-StatusCakeHelperCopyParameter -FunctionName "New-StatusCakeHelperPageSpeedTest"
 
     $psParams.Name = $NewName
-    if($website_url)
+    if($WebsiteURL)
     {
-        $psParams.website_url = $website_url
+        $psParams.WebsiteURL = $WebsiteURL
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake Page Speed Test"))

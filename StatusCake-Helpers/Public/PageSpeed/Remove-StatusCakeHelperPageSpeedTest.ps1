@@ -11,7 +11,7 @@
 .PARAMETER Passthru
     2-letter ISO code of the location. Valid values: AU, CA, DE, IN, NL, SG, UK, US, PRIVATE
 .EXAMPLE
-   Remove-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -ID 123456
+   Remove-StatusCakeHelperPageSpeedTest -ID 123456
 .FUNCTIONALITY
    Deletes a StatusCake PageSpeed Test using the supplied ID.
 #>
@@ -23,22 +23,22 @@ function Remove-StatusCakeHelperPageSpeedTest
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "ID")]
-        [int]$id,
+        [int]$ID,
 
-        [Parameter(ParameterSetName = "name")]
-        [string]$name,
+        [Parameter(ParameterSetName = "Name")]
+        [string]$Name,
 
         [switch]$PassThru
     )
 
     $checkParams = @{}
-    if($name)
+    if($Name)
     {
-        $checkParams.Add("name",$name)
+        $checkParams.Add("name",$Name)
     }
     else
     {
-        $checkParams.Add("id",$id)
+        $checkParams.Add("id",$ID)
     }
 
     $pageSpeedTest = Get-StatusCakeHelperPageSpeedTest -APICredential $APICredential -Detailed @checkParams
@@ -46,19 +46,19 @@ function Remove-StatusCakeHelperPageSpeedTest
     {
         if($pageSpeedTest.GetType().Name -eq 'Object[]')
         {
-            Write-Error "Multiple PageSpeed Tests found with name [$name]. Please remove the PageSpeed test by ID"
+            Write-Error "Multiple PageSpeed Tests found with name [$Name]. Please remove the PageSpeed test by ID"
             Return $null
         }
-        $id = $pageSpeedTest.id
+        $ID = $pageSpeedTest.id
     }
     else
     {
-        Write-Error "Unable to find PageSpeed Test with name [$name]"
+        Write-Error "Unable to find PageSpeed Test with name [$Name]"
         Return $null
     }
 
     $requestParams = @{
-        uri = "https://app.statuscake.com/API/Pagespeed/Update/?id=$id"
+        uri = "https://app.statuscake.com/API/Pagespeed/Update/?id=$ID"
         Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Delete"

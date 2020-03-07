@@ -6,7 +6,7 @@ The following are examples for the functions which work against the StatusCake P
 This cmdlet retrieves a page speed test by name or id. If no id or name is supplied all page speed tests will be returned.
 
 ```powershell
-Get-StatusCakeHelperPageSpeedTest -id 123456
+Get-StatusCakeHelperPageSpeedTest -ID 123456
 ID            : 123456
 Title         : Example website
 URL           : https://www.example.com
@@ -20,7 +20,7 @@ LatestStats   : @{Loadtime_ms=293; Filesize_kb=1.227; Requests=1}
 This cmdlet retrieves detailed page speed test information by id.
 
 ```powershell
-Get-StatusCakeHelperPageSpeedTestDetail -id 123456
+Get-StatusCakeHelperPageSpeedTestDetail -ID 123456
 id             : 123456
 name           : Example website
 website_url    : https://www.example.com
@@ -38,7 +38,7 @@ latest_stats   : @{Loadtime_ms=293; Filesize_kb=1.227; Requests=1; has_issue=Fal
 This cmdlet retrieves the history of a page speed test by name or id
 
 ```powershell
-Get-StatusCakeHelperPageSpeedTestHistory -id 123456
+Get-StatusCakeHelperPageSpeedTestHistory -ID 123456
 aggregated                                          results
 ----------                                          -------
 @{loadtime_ms=; requests=; filesize_kb=; results=1} @{1581870651=}
@@ -48,7 +48,7 @@ aggregated                                          results
 This cmdlet creates a new page speed test. The following are the minimum required parameters to create a test.
 
 ```powershell
-New-StatusCakeHelperPageSpeedTest -Name "Example website" -website_url "https://www.example.com" -checkrate 30 -location_iso UK
+New-StatusCakeHelperPageSpeedTest -Name "Example website" -WebsiteURL "https://www.example.com" -Checkrate 30 -LocationISO UK
 id             : 123456
 name           : Example website
 website_url    : https://www.example.com
@@ -108,7 +108,7 @@ This cmdlet sets the configuration of a specific PageSpeed Test. If a id or a na
 
 A PageSpeed Test can be updated by name if there are no duplicates as follows:
 ```powershell
-Set-StatusCakeHelperPageSpeedTest -ID 123456 -SetByName -name "Example website" -website_url "https://www.example.com" -location_iso UK -checkrate 60 -Verbose
+Set-StatusCakeHelperPageSpeedTest -ID 123456 -SetByName -Name "Example website" -WebsiteURL "https://www.example.com" -LocationISO UK -Checkrate 60
 id             : 123456
 name           : Example Website
 website_url    : https://www.example.com
@@ -123,7 +123,7 @@ latest_stats   : @{Loadtime_ms=; Filesize_kb=; Requests=; has_issue=; latest_iss
 ```
 A new PageSpeed Test can be created via the cmdlet with the following parameters:
 ```powershell
-Set-StatusCakeHelperPageSpeedTest -ID 123456 -Name "Example website" -website_url "https://www.example.com" -checkrate 30 -location_iso UK
+Set-StatusCakeHelperPageSpeedTest -ID 123456 -Name "Example website" -WebsiteURL "https://www.example.com" -Checkrate 30 -LocationISO UK
 id             : 123456
 name           : Example Website
 website_url    : https://www.example.com

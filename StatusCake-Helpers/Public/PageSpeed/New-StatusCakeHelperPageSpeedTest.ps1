@@ -6,24 +6,24 @@
    Credentials to access StatusCake API
 .PARAMETER Name
     Name for PageSpeed test
-.PARAMETER Website_Url
+.PARAMETER WebsiteURL
     URL that should be checked
-.PARAMETER Location_iso
+.PARAMETER LocationISO
     2-letter ISO code of the location. Valid values: AU, CA, DE, IN, NL, SG, UK, US, PRIVATE
-.PARAMETER Private_Name
+.PARAMETER PrivateName
     Must select PRIVATE in location_iso. Name of private server [NOT YET IMPLEMENTED]
 .PARAMETER Checkrate
     Frequency in minutes with which the page speed test should be run
-.PARAMETER Contact_Groups
+.PARAMETER ContactIDs
     IDs of selected Contact Groups to alert
-.PARAMETER Alert_Smaller
+.PARAMETER AlertSmaller
     Size in kb, will alert to Contact Groups if actual size is smaller
-.PARAMETER Alert_Bigger
+.PARAMETER AlertBigger
     Size in kb, will alert to Contact Groups if actual size is bigger
-.PARAMETER Alert_Slower
+.PARAMETER AlertSlower
     Time in ms, will alert to Contact Groups if actual time is slower
 .EXAMPLE
-   New-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -website_url "https://www.example.com" -checkrate 3600 -location_iso UK
+   New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 3600 -LocationISO UK
 .FUNCTIONALITY
    Creates a new StatusCake PageSpeed Test using the supplied parameters.
 #>
@@ -36,34 +36,37 @@ function New-StatusCakeHelperPageSpeedTest
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$name,
+        [string]$Name,
 
         [Parameter(Mandatory=$true)]
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$website_url,
+        [Alias('website_url')]
+        [string]$WebsiteURL,
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("AU","CA","DE","IN","NL","SG","UK","US","PRIVATE")]
-        [string]$location_iso,
+        [Alias('location_iso')]
+        [string]$LocationISO,
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("1","5","10","15","30","60","1440")]
-        [int]$checkrate,
+        [int]$Checkrate,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [int]$alert_bigger=0,
+        [Alias('alert_bigger')]
+        [int]$AlertBigger=0,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [int]$alert_slower=0,
+        [Alias('alert_slower')]
+        [int]$AlertSlower=0,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [int]$alert_smaller=0,
+        [Alias('alert_smaller')]
+        [int]$AlertSmaller=0,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [object]$contact_groups,
+        [Alias('contact_groups')]
+        [int[]]$ContactIDs,
 
         [ValidateNotNullOrEmpty()]
-        [string]$private_name
+        [Alias('private_name')]
+        [string]$PrivateName
     )
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed tests") )
@@ -76,8 +79,9 @@ function New-StatusCakeHelperPageSpeedTest
         }
     }
 
+    $lower =@('Name','Checkrate')
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{

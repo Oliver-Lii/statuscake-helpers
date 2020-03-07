@@ -6,10 +6,12 @@
    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the PageSpeed test
-.PARAMETER Id
+.PARAMETER ID
     ID of the PageSpeed Test
+.PARAMETER Days
+    Amount of days to look up
 .EXAMPLE
-   Get-StatusCakeHelperPageSpeedTestHistory -Username "Username" -ApiKey "APIKEY" -id 123456
+   Get-StatusCakeHelperPageSpeedTestHistory -id 123456
 .OUTPUTS
     Returns a StatusCake PageSpeed Tests History as an object
 .FUNCTIONALITY
@@ -25,26 +27,26 @@ function Get-StatusCakeHelperPageSpeedTestHistory
 
         [Parameter(ParameterSetName = "name")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$name,
+        [string]$Name,
 
         [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
-        [int]$id,
+        [int]$ID,
 
         [Parameter(ParameterSetName = "name")]
         [Parameter(ParameterSetName = "ID")]
-        [ValidateRange(0,14)]
-        [int]$days
+        [ValidateRange(1,30)]
+        [int]$Days
     )
 
-    if($name)
+    if($Name)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Tests") )
         {
-            $matchingTest = Get-StatusCakeHelperPageSpeedTest -APICredential $APICredential -name $name
+            $matchingTest = Get-StatusCakeHelperPageSpeedTest -APICredential $APICredential -name $Name
             if(!$matchingTest)
             {
-                Write-Error "No PageSpeed Check with specified name exists [$name]"
+                Write-Error "No PageSpeed Check with specified name exists [$Name]"
                 Return $null
             }
 
@@ -59,8 +61,9 @@ function Get-StatusCakeHelperPageSpeedTestHistory
 
     }
 
+    $lower =@('ID','Days')
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{

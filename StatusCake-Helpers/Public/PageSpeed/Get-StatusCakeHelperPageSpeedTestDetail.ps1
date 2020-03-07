@@ -4,7 +4,7 @@
    Retrieves the details of a StatusCake Page Speed Test
 .PARAMETER APICredential
     Credentials to access StatusCake API
-.PARAMETER TestID
+.PARAMETER ID
     Test ID to retrieve detailed test data
 .EXAMPLE
    Get-StatusCakeHelperPageSpeedTestDetail -ID 123456
@@ -21,7 +21,7 @@ function Get-StatusCakeHelperPageSpeedTestDetail
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [ValidateNotNullOrEmpty()]
-        [int]$id
+        [int]$ID
 
     )
 
@@ -31,7 +31,7 @@ function Get-StatusCakeHelperPageSpeedTestDetail
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = @{id = $id}
+        body = @{id = $ID}
     }
 
     $response = Invoke-RestMethod @requestParams
