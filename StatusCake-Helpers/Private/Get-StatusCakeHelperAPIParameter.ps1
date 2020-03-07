@@ -11,6 +11,8 @@
    Hashtable containing values which need to be joined by specific separator
 .PARAMETER Rename
    Hashtable containing values which need to be renamed to the expected values by StatusCake API
+.PARAMETER ToLowerName
+   Parameter names not aliased which need to be lower case
 #>
 Function Get-StatusCakeHelperAPIParameter
 {
@@ -26,7 +28,9 @@ Function Get-StatusCakeHelperAPIParameter
 
         [hashtable] $Join=@{},
 
-        [string[]] $Exclude=@()
+        [string[]] $Exclude=@(),
+
+        [string[]] $ToLowerName=@()
     )
 
     $parameterAction = $InputHashTable
@@ -56,7 +60,12 @@ Function Get-StatusCakeHelperAPIParameter
 
     foreach($item in $workingHash)
     {
-        Switch($item.Name)
+        $itemName = $item.Name
+        if($ToLowerName.Contains($itemName))
+        {
+            $itemName = $itemName.ToLower()
+        }
+        Switch($itemName)
         {
             {$rename.ContainsKey($_)}{
                 $outputHashtable[$rename[$_]] = $InputHashTable[$_]

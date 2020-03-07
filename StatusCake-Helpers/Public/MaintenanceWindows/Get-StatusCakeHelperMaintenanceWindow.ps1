@@ -11,7 +11,11 @@
 .PARAMETER State
     Filter results based on state
 .EXAMPLE
-   Get-StatusCakeHelperMaintenanceWindow -id 123456
+    # Get all maintenance windows
+    Get-StatusCakeHelperMaintenanceWindow
+.EXAMPLE
+    # Get all pending maintenance windows
+    Get-StatusCakeHelperMaintenanceWindow -State PND
 .OUTPUTS
     Returns StatusCake Maintenance Windows as an object
 .FUNCTIONALITY
@@ -30,19 +34,20 @@ function Get-StatusCakeHelperMaintenanceWindow
         [Parameter(ParameterSetName = "Name")]
         [Parameter(ParameterSetName = "ID")]
         [ValidateSet("ALL","PND","ACT","END","CNC")]
-        [string]$state,
+        [string]$State,
 
         [Parameter(ParameterSetName = "Name")]
         [ValidateNotNullOrEmpty()]
-        [string]$name,
+        [string]$Name,
 
         [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
-        [int]$id
+        [int]$ID
     )
 
+    $lower=@("State")
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
@@ -68,13 +73,13 @@ function Get-StatusCakeHelperMaintenanceWindow
         {
             $matchingMW = $response.data
         }
-        elseif($name)
+        elseif($Name)
         {
-            $matchingMW = $response.data | Where-Object {$_.name -eq $name}
+            $matchingMW = $response.data | Where-Object {$_.name -eq $Name}
         }
-        elseif($id)
+        elseif($ID)
         {
-            $matchingMW = $response.data | Where-Object {$_.id -eq $id}
+            $matchingMW = $response.data | Where-Object {$_.id -eq $ID}
         }
 
         if($matchingMW)

@@ -6,16 +6,15 @@
    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the maintenance window to clear the tests from
-.PARAMETER ByName
-    Flag to set if you want to clear tests by test name
-.PARAMETER Id
+.PARAMETER ID
     The maintenance window ID
-.PARAMETER raw_tests
+.PARAMETER TestIDs
     Flag to clear all tests included in a maintenance window
-.PARAMETER raw_tags
+.PARAMETER TestTags
     Flag to clear all tags of the tests to be included in a maintenance window
 .EXAMPLE
-   Clear-StatusCakeHelperMaintenanceWindow -id 123456 -raw_tests
+    # Clear all test IDs associated with maintenance window 123456
+    Clear-StatusCakeHelperMaintenanceWindow -ID 123456 -TestIDs
 .FUNCTIONALITY
    Clears the tests and/or tags associated with a pending StatusCake Maintenance Window. You can only clear the tests for a window which is in a pending state.
 #>
@@ -30,53 +29,55 @@ function Clear-StatusCakeHelperMaintenanceWindow
 
         [Parameter(ParameterSetName='ByID')]
         [ValidateNotNullOrEmpty()]
-        [string]$id,
+        [string]$ID,
 
         [Parameter(ParameterSetName='ByName')]
-        [string]$name,
-
-        [Parameter(ParameterSetName='ByID')]
-        [Parameter(ParameterSetName='ByName')]
-        [switch]$raw_tests,
+        [string]$Name,
 
         [Parameter(ParameterSetName='ByID')]
         [Parameter(ParameterSetName='ByName')]
-        [switch]$raw_tags
+        [Alias('raw_tests')]
+        [switch]$TestIDs,
+
+        [Parameter(ParameterSetName='ByID')]
+        [Parameter(ParameterSetName='ByName')]
+        [Alias('raw_tags')]
+        [switch]$TestTags
     )
 
-    if($name)
+    if($Name)
     {   #If setting test by name verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -name $name -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -name $Name -state "PND"
             if(!$maintenanceWindow)
             {
-                Write-Error "No pending Maintenance Window with specified name exists [$name]"
+                Write-Error "No pending Maintenance Window with specified name exists [$Name]"
                 Return $null
             }
             elseif($maintenanceWindow.GetType().Name -eq 'Object[]')
             {
-                Write-Error "Multiple Pending Maintenance Windows with the same name [$name] [$($maintenanceWindow.id)]"
+                Write-Error "Multiple Pending Maintenance Windows with the same name [$Name] [$($maintenanceWindow.id)]"
                 Return $null
             }
-            $id = $maintenanceWindow.id
+            $ID = $maintenanceWindow.id
         }
     }
-    elseif($id)
+    elseif($ID)
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -id $id -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -ID $ID -state "PND"
             if(!$maintenanceWindow)
             {
-                Write-Error "No pending Maintenance Window with specified ID exists [$id]"
+                Write-Error "No pending Maintenance Window with specified ID exists [$ID]"
                 Return $null
             }
-            $id = $maintenanceWindow.id
+            $ID = $maintenanceWindow.id
         }
     }
 
-    If(!$raw_tests -and !$raw_tags)
+    If(!$TestIDs -and !$TestTags)
     {
         Write-Error "Please set the switch to clear tests or tags from the maintenance window"
         Return
@@ -84,11 +85,11 @@ function Clear-StatusCakeHelperMaintenanceWindow
 
     $exclude = @("Name")
     $clear = @()
-    if($raw_tests){$clear += "raw_tests"}
-    if($raw_tags){$clear += "raw_tags"}
+    if($TestIDs){$clear += "raw_tests"}
+    if($TestTags){$clear += "raw_tags"}
 
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -exclude $exclude -clear $clear
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude $exclude -Clear $clear
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{

@@ -17,6 +17,7 @@ Function Get-StatusCakeHelperParameterValue
     param(
         [Parameter(Mandatory=$True,ValueFromPipeline=$True)]
         [System.Management.Automation.InvocationInfo]$InvocationInfo,
+
         [Parameter(Mandatory=$True)]
         [hashtable]$BoundParameters
     )

@@ -6,24 +6,24 @@
    Credentials to access StatusCake API
 .PARAMETER Name
     A descriptive name for the maintenance window
-.PARAMETER Id
+.PARAMETER ID
     The maintenance window ID
-.PARAMETER start_date
+.PARAMETER StartDate
     Start date of your window. Can be slightly in the past
-.PARAMETER end_date
+.PARAMETER EndDate
     End time of your window. Must be in the future
-.PARAMETER timezone
+.PARAMETER Timezone
     Must be a valid timezone, or UTC
-.PARAMETER raw_tests
+.PARAMETER TestIDs
     Individual tests that should be included
-.PARAMETER raw_tags
+.PARAMETER TestTags
     Tests with these tags will be included
-.PARAMETER recur_every
+.PARAMETER RecurEvery
     How often in days this window should recur. 0 disables this
-.PARAMETER follow_dst
+.PARAMETER FollowDST
     Whether DST should be followed or not
 .EXAMPLE
-   Update-StatusCakeHelperMaintenanceWindow -Username "Username" -ApiKey "APIKEY" -id 123456 -checkrate 3600
+   Update-StatusCakeHelperMaintenanceWindow -ID 123456 -RecurEvery 30
 .FUNCTIONALITY
    Updates the configuration of StatusCake Maintenance Window using the supplied parameters. You can only update a window which is in a pending state.
 #>
@@ -36,81 +36,85 @@ function Update-StatusCakeHelperMaintenanceWindow
 
         [Parameter(ParameterSetName='SetByID')]
         [ValidateNotNullOrEmpty()]
-        [string]$id,
+        [string]$ID,
 
         [Parameter(ParameterSetName='SetByName')]
         [ValidateNotNullOrEmpty()]
-        [string]$name,
+        [string]$Name,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
         [Alias('start_unix')]
-        [datetime]$start_date,
+        [datetime]$StartDate,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
         [Alias('end_unix')]
-        [datetime]$end_date,
+        [datetime]$EndDate,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
-        [string]$timezone,
+        [string]$Timezone,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [int[]]$raw_tests,
+        [Alias('raw_tests')]
+        [int[]]$TestIDs,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
-        [string[]]$raw_tags,
+        [Alias('raw_tags')]
+        [string[]]$TestTags,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
         [ValidateSet("0","1","7","14","30")]
-        [int]$recur_every,
+        [Alias('recur_every')]
+        [int]$RecurEvery,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
-        [boolean]$follow_dst
+        [Alias('follow_dst')]
+        [boolean]$FollowDST
 
     )
 
-    if($name)
+    if($Name)
     {   #If setting test by name verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -name $name -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -Name $Name -State "PND"
             if(!$maintenanceWindow)
             {
-                Write-Error "No pending Maintenance Window with specified name exists [$name]"
+                Write-Error "No pending Maintenance Window with specified name exists [$Name]"
                 Return $null
             }
             elseif($maintenanceWindow.GetType().Name -eq 'Object[]')
             {
-                Write-Error "Multiple Pending Maintenance Windows with the same name [$name] [$($maintenanceWindow.id)]"
+                Write-Error "Multiple Pending Maintenance Windows with the same name [$Name] [$($maintenanceWindow.id)]"
                 Return $null
             }
-            $id = $maintenanceWindow.id
+            $ID = $maintenanceWindow.id
         }
     }
-    elseif($id)
+    elseif($ID)
     {   #If setting by id verify that id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
         {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -id $id -state "PND"
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -ID $ID -State "PND"
             if(!$maintenanceWindow)
             {
-                Write-Error "No pending Maintenance Window with specified ID exists [$id]"
+                Write-Error "No pending Maintenance Window with specified ID exists [$ID]"
                 Return $null
             }
-            $id = $maintenanceWindow.id
+            $ID = $maintenanceWindow.id
         }
     }
 
     $exclude = @("Name")
+    $lower = @("Timezone","Name")
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude $exclude
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude $exclude -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
     $requestParams = @{
@@ -133,7 +137,7 @@ function Update-StatusCakeHelperMaintenanceWindow
         }
         else
         {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -id $id
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -ID $ID
         }
         Return $maintenanceWindow
     }

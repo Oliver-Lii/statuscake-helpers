@@ -6,18 +6,22 @@
    Credentials to access StatusCake API
 .PARAMETER Name
     A descriptive name for the maintenance window
-.PARAMETER Id
+.PARAMETER ID
     The maintenance window ID
 .PARAMETER State
     The state of the maintenance window to remove. Required only when removing a MW by name.
 .PARAMETER Series
-    Set to True to cancel the entire series, false to just cancel the one window
+    Set flag to cancel the entire series of maintenance windows instead of cancelling the one window
 .PARAMETER Passthru
     Return the object to be deleted
 .EXAMPLE
-   Remove-StatusCakeHelperMaintenanceWindow -ID 123456
+    # Remove the next pending maintenance window under id 123456
+    Remove-StatusCakeHelperMaintenanceWindow -ID 123456
+.EXAMPLE
+    # Remove the series of maintenance windows scheduled under id 123456
+    Remove-StatusCakeHelperMaintenanceWindow -ID 123456 -Series
 .FUNCTIONALITY
-   Deletes a StatusCake Maintenance Window using the supplied ID.
+    Deletes a StatusCake Maintenance Window using the supplied ID.
 #>
 function Remove-StatusCakeHelperMaintenanceWindow
 {
@@ -27,31 +31,31 @@ function Remove-StatusCakeHelperMaintenanceWindow
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "ID")]
-        [int]$id,
+        [int]$ID,
 
         [Parameter(ParameterSetName = "name")]
-        [string]$name,
+        [string]$Name,
 
         [Parameter(ParameterSetName = "name",Mandatory=$true)]
         [ValidateSet("ACT","PND")]
-        [string]$state,
+        [string]$State,
 
         [Parameter(ParameterSetName='ID')]
         [Parameter(ParameterSetName='name')]
-        [boolean]$series=0,
+        [switch]$Series,
 
         [switch]$PassThru
     )
 
     $checkParams = @{}
-    if($name)
+    if($Name)
     {
-        $checkParams.Add("name",$name)
-        $checkParams.Add("state",$state)
+        $checkParams.Add("Name",$Name)
+        $checkParams.Add("State",$State)
     }
     else
     {
-        $checkParams.Add("id",$id)
+        $checkParams.Add("ID",$ID)
     }
 
     $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential @checkParams
@@ -59,21 +63,26 @@ function Remove-StatusCakeHelperMaintenanceWindow
     {
         if($maintenanceWindow.GetType().Name -eq 'Object[]')
         {
-            Write-Error "Multiple Maintenance Windows found in state [$state] with name [$name]. Please remove the Maintenance Window by ID"
+            Write-Error "Multiple Maintenance Windows found in state [$State] with name [$Name]. Please remove the Maintenance Window by ID"
             Return $null
         }
-        $id = $maintenanceWindow.id
+        $ID = $maintenanceWindow.id
     }
     else
     {
 
-        Write-Error "Unable to find Maintenance Window in state [$state] with name [$name]"
+        Write-Error "Unable to find Maintenance Window in state [$State] with name [$Name]"
         Return $null
     }
 
+    $allSeries = 0
+    If($Series)
+    {
+        $allSeries = 1
+    }
 
     $requestParams = @{
-        uri = "https://app.statuscake.com/API/Maintenance/Update?id=$id&series=$series"
+        uri = "https://app.statuscake.com/API/Maintenance/Update?id=$ID&series=$allSeries"
         Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Delete"
