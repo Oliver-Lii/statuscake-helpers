@@ -80,7 +80,7 @@ function Remove-StatusCakeHelperTest
         }
         elseif($PassThru)
         {
-            Return $response
+            Return $testCheck
         }
     }
 }
