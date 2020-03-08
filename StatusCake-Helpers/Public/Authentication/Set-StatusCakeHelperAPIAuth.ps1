@@ -20,6 +20,7 @@ function Set-StatusCakeHelperAPIAuth
     Param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
+        [Alias('Credentials')]
         [System.Management.Automation.PSCredential] $Credential,
 
         [Switch]$Session
