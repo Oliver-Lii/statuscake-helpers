@@ -117,7 +117,7 @@ function Set-StatusCakeHelperPageSpeedTest
 
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if($Alert_At -and $Alert_At.count -ne 3)
     {
         Write-Error "Only three values must be specified for Alert_At parameter"

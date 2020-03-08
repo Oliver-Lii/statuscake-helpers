@@ -15,75 +15,75 @@
 
 .FUNCTIONALITY
     Add node location(s) to a existing test. The supplied node location is tested against a list of the node location server codes to determine if it is valid
-   
+
 #>
 function Add-StatusCakeHelperTestNodeLocations
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         [Parameter(ParameterSetName='AddByTestName')]
-        [Parameter(ParameterSetName='AddByTestID')]      
+        [Parameter(ParameterSetName='AddByTestID')]
         $baseTestURL = "https://app.statuscake.com/API/Tests/Update",
 
         [Parameter(ParameterSetName='AddByTestName')]
         [Parameter(ParameterSetName='AddByTestID')]
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
         [Parameter(ParameterSetName='AddByTestName')]
         [Parameter(ParameterSetName='AddByTestID')]
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='AddByTestID',Mandatory=$true)]
-        [ValidatePattern('^\d{1,}$')]           
+        [ValidatePattern('^\d{1,}$')]
         $TestID,
 
         [Parameter(ParameterSetName='AddByTestName',Mandatory=$true)]
         [switch]$AddByTestName,
 
         [Parameter(ParameterSetName='AddByTestName',Mandatory=$true)]
-        [Parameter(ParameterSetName='AddByTestID')]           
-        [ValidateNotNullOrEmpty()] 
+        [Parameter(ParameterSetName='AddByTestID')]
+        [ValidateNotNullOrEmpty()]
         $TestName,
 
         [Parameter(ParameterSetName='AddByTestName')]
         [Parameter(ParameterSetName='AddByTestID')]
-        [ValidateNotNullOrEmpty()]         
+        [ValidateNotNullOrEmpty()]
         [object]$NodeLocations
     )
 
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
-
+    Write-Warning -Message "Add-StatusCakeHelperTestNodeLocations will be renamed to Add-StatusCakeHelperTestNodeLocation in the next release"
     if($AddByTestName -and $TestName)
     {   #If setting test by name check if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests"))
-        {      
+        {
             $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
             if(!$testCheck)
             {
                 Write-Error "No Test with Specified Name Exists [$TestName]"
-                Return $null 
+                Return $null
             }
             elseif($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests with the same name [$TestName] [$($testCheck.TestID)]"
-                Return $null          
-            }            
+                Return $null
+            }
             $TestID = $testCheck.TestID
         }
     }
     elseif($TestID)
     {   #If setting by TestID verify that TestID already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests"))
-        {      
+        {
             $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestID $TestID
             if(!$testCheck)
             {
                 Write-Error "No Test with Specified ID Exists [$TestID]"
-                Return $null 
-            }            
+                Return $null
+            }
             $TestID = $testCheck.TestID
         }
     }
@@ -99,10 +99,10 @@ function Add-StatusCakeHelperTestNodeLocations
         if(!$($node | Test-StatusCakeHelperNodeLocation))
         {
             Write-Error "Node Location Server code invalid [$node]"
-            Return $null           
+            Return $null
         }
     }
-    $detailedTestData.NodeLocations += $NodeLocations 
+    $detailedTestData.NodeLocations += $NodeLocations
     $NodeLocations = $detailedTestData.NodeLocations | Select-Object -Unique
 
     $psParams = @{}
@@ -116,10 +116,10 @@ function Add-StatusCakeHelperTestNodeLocations
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {        
-            $psParams.Add($var.name,$var.value)                  
+        {
+            $psParams.Add($var.name,$var.value)
         }
-    }     
+    }
 
     $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
 
@@ -129,7 +129,7 @@ function Add-StatusCakeHelperTestNodeLocations
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake Test") )
@@ -140,7 +140,7 @@ function Add-StatusCakeHelperTestNodeLocations
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
-        }        
+        }
         Return $response
     }
 

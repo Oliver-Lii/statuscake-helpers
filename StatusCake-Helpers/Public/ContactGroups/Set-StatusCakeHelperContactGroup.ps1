@@ -84,7 +84,7 @@ function Set-StatusCakeHelperContactGroup
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if($SetByGroupName -and $GroupName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake ContactGroups"))

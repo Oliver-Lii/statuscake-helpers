@@ -13,21 +13,21 @@
     Status - Filter tests to a specific status
     Tags - Match tests with tags
     Matchany - Match tests which have any of the supplied tags (true) or all of the supplied tags (false)
-.OUTPUTS    
+.OUTPUTS
     Returns all the StatusCake Tests as an object
 .FUNCTIONALITY
     Retrieves all the tests from StatusCake that the user has permissions to see
-   
+
 #>
 function Get-StatusCakeHelperAllTests
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false)]
     Param(
         $baseTestURL = "https://app.statuscake.com/API/Tests/",
-        
+
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [ValidatePattern('^\d{1,}$')]
@@ -38,12 +38,12 @@ function Get-StatusCakeHelperAllTests
 
         [array]$tags,
 
-        [ValidateSet("true","false")]         
+        [ValidateSet("true","false")]
         [string]$matchany
     )
 
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-
+    Write-Warning -Message "Get-StatusCakeHelperAllTests will be deprecated in the next release"
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
     $ParamsToIgnore = @("baseTestURL","Username","ApiKey")
@@ -55,10 +55,10 @@ function Get-StatusCakeHelperAllTests
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {        
-            $psParams.Add($var.name,$var.value)                  
+        {
+            $psParams.Add($var.name,$var.value)
         }
-    }     
+    }
 
     $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
 
@@ -68,7 +68,7 @@ function Get-StatusCakeHelperAllTests
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     $jsonResponse = Invoke-WebRequest @requestParams

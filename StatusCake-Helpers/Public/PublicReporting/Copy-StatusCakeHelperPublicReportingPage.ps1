@@ -17,7 +17,7 @@
 #>
 function Copy-StatusCakeHelperPublicReportingPage
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         [Parameter(ParameterSetName='CopyByTitle')]
         [Parameter(ParameterSetName='CopyById')]
@@ -26,14 +26,14 @@ function Copy-StatusCakeHelperPublicReportingPage
 
         [Parameter(ParameterSetName='CopyByTitle')]
         [Parameter(ParameterSetName='CopyById')]
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         $Id,
 
-        [Parameter(ParameterSetName='CopyByTitle',Mandatory=$true)]       
+        [Parameter(ParameterSetName='CopyByTitle',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         $Title,
 
@@ -47,30 +47,30 @@ function Copy-StatusCakeHelperPublicReportingPage
     if($Name)
     {   #If copying by name check if resource with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
-        {      
+        {
             $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -Title $Title
             if(!$statusCakeItem)
             {
                 Write-Error "No Public Reporting Page with Specified Title Exists [$Title]"
-                Return $null 
+                Return $null
             }
             elseif($statusCakeItem.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Public Reporting Pages with the same title [$Title] [$($statusCakeItem.ID)]"
-                Return $null          
-            }            
+                Return $null
+            }
         }
     }
     elseif($ID)
     {   #If copying by ID verify that a resource with the Id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
-        {      
+        {
             $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -id $ID
             if(!$statusCakeItem)
             {
                 Write-Error "No Public Reporting Page with Specified ID Exists [$ID]"
-                Return $null 
-            }            
+                Return $null
+            }
         }
     }
 
@@ -85,15 +85,15 @@ function Copy-StatusCakeHelperPublicReportingPage
     {
         $value = $statusCakeItem.$key
         if($value -or $value -eq 0)
-        {   
-            $psParams.Add($key,$value)                  
+        {
+            $psParams.Add($key,$value)
         }
     }
 
     $psParams.Title = $NewTitle
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake Public Reporting Page"))
-    { 
+    {
         $result = New-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth @psParams
     }
     Return $result

@@ -13,32 +13,32 @@
     Fields - Array of additional fields, these additional fields will give you more data about each check.
     Start - Supply to include results only since the specified date
     Limit - Limits to a subset of results - maximum of 1000.
-.OUTPUTS    
+.OUTPUTS
     Returns an object with the details on the tests that have been carried out on a given check
 .FUNCTIONALITY
     Retrieves the tests that have been carried out on a given check
-   
+
 #>
 function Get-StatusCakeHelperPerformanceData
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
-    Param(                     
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    Param(
         $basePerfDataURL = "https://app.statuscake.com/API/Tests/Checks",
-         
+
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
 
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
-                    
-        [int]$TestID,     
-              
-        [ValidateNotNullOrEmpty()]            
+
+        [int]$TestID,
+
+        [ValidateNotNullOrEmpty()]
         [string]$TestName,
-                   
+
         [datetime]$Start,
 
-        [ValidateScript({ @("status","location","human","time","headers","performance") -contains $_ })]        
+        [ValidateScript({ @("status","location","human","time","headers","performance") -contains $_ })]
         [object]$Fields,
 
         [ValidateRange(0,1000)]
@@ -46,8 +46,8 @@ function Get-StatusCakeHelperPerformanceData
 
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}      
-
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
+    Write-Warning -Message "The output from this function will be changed in the next release when the Start parameter is not supplied"
     if($TestName)
     {
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests") )
@@ -56,10 +56,10 @@ function Get-StatusCakeHelperPerformanceData
             if($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests found with name [$TestName] [$($testCheck.TestID)]. Please retrieve performance data via TestID"
-                Return $null            
+                Return $null
             }
             $TestID = $testCheck.TestID
-            else 
+            else
             {
                 Write-Error "Unable to find Test with name [$TestName]"
                 Return $null
@@ -78,8 +78,8 @@ function Get-StatusCakeHelperPerformanceData
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {   
-            $psParams.Add($var.name,$var.value)                  
+        {
+            $psParams.Add($var.name,$var.value)
         }
     }
 
@@ -91,7 +91,7 @@ function Get-StatusCakeHelperPerformanceData
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Performance Data") )

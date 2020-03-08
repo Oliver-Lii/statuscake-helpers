@@ -55,15 +55,15 @@ function New-StatusCakeHelperContactGroup
         [object]$Mobile
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
-
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake ContactGroups") )
     {
         $ContactGroupCheck = Get-StatusCakeHelperContactGroup @statusCakeFunctionAuth -GroupName $GroupName
         if($ContactGroupCheck)
         {
             Write-Error "ContactGroup with specified name already exists [$ContactGroupCheck]"
-            Return $null 
+            Return $null
         }
     }
 
@@ -75,7 +75,7 @@ function New-StatusCakeHelperContactGroup
             if(!$($emailAddress | Test-StatusCakeHelperEmailAddress))
             {
                 Write-Error "Invalid email address supplied [$emailAddress]"
-                Return $null 
+                Return $null
             }
         }
     }
@@ -117,7 +117,7 @@ function New-StatusCakeHelperContactGroup
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake ContactGroup") )

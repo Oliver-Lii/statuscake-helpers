@@ -48,7 +48,7 @@ function Copy-StatusCakeHelperSSLTest
         $checkrate="86400"
     )
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if($Name)
     {   #If copying by name check if resource with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Tests"))

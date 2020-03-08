@@ -80,7 +80,7 @@ function Copy-StatusCakeHelperPageSpeedTest
             }
         }
     }
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve Detailed StatusCake Test Data"))
     {
         $sourceItemDetails = Get-StatusCakeHelperPageSpeedTest -id $exists.id
