@@ -53,6 +53,12 @@ function ConvertTo-StatusCakeHelperAPIParameter
                 $outputHashTable[$name] = $var.value -join ","
                 Break
             }
+            'SecureString'{ #SecureString needs to be converted to plaintext
+                $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList "UserName", $var.value
+                $outputHashTable[$name] = $Credentials.GetNetworkCredential().Password
+                Write-Verbose "[$($var.name)] [$($var.value.GetType().Name)] will be added with value [$("*".PadRight($Credentials.Password.Length, "*"))]"
+                Break
+            }
             'String[]'{ #Arrays need to be converted to comma separated lists
                 $outputHashTable[$name] = $var.value -join ","
                 Break
@@ -61,7 +67,7 @@ function ConvertTo-StatusCakeHelperAPIParameter
                 $outputHashTable[$name] = $var.value
                 if($outputHashTable[$name] -ceq "True" -or $outputHashTable[$name] -ceq "False")
                 {
-                    $outputHashTable[$name] = $value.ToLower()
+                    $outputHashTable[$name] = $outputHashTable[$name].ToLower()
                 }
                 Break
             }
@@ -69,8 +75,10 @@ function ConvertTo-StatusCakeHelperAPIParameter
                 $outputHashTable[$name] = $var.value
             }
         }
-
-        Write-Verbose "[$($var.name)] [$($var.value.GetType().Name)] will be added with value [$($outputHashTable[$name])]"
+        if($var.value.GetType().Name -ne 'SecureString')
+        {
+            Write-Verbose "[$($var.name)] [$($var.value.GetType().Name)] will be added with value [$($outputHashTable[$name])]"
+        }
     }
     Return $outputHashTable
 }
