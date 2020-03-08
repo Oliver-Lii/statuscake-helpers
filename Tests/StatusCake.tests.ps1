@@ -156,7 +156,7 @@ Describe "StatusCake Contact Groups" {
 Describe "StatusCake Page Speed Tests" {
 
     It "New-StatusCakeHelperPageSpeedTest creates a page speed test"{
-        $script:SCPageSpeedTest = New-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check" -website_url "https://www.example.com" -location_iso UK -checkrate 1440
+        $script:SCPageSpeedTest = New-StatusCakeHelperPageSpeedTest -Name "Pester Test Page Speed Check" -WebsiteURL "https://www.example.com" -LocationISO UK -Checkrate 1440
         $SCPageSpeedTest.Name | Should -Be "Pester Test Page Speed Check"
         $SCPageSpeedTest.Website_URL | Should -Be "https://www.example.com"
         $SCPageSpeedTest.Location_ISO | Should -Be "UK"
@@ -169,12 +169,12 @@ Describe "StatusCake Page Speed Tests" {
     }
 
     It "Set-StatusCakeHelperPageSpeedTest updates the checkrate"{
-        $result = Set-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.id -checkrate 60
+        $result = Set-StatusCakeHelperPageSpeedTest -ID $SCPageSpeedTest.id -Checkrate 60
         $result.CheckRate | Should Be 60
     }
 
     It "Copy-StatusCakeHelperPageSpeedTest copies a Page Speed Test"{
-        $result = Copy-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.id -NewName "Pester Test Page Speed Check - Copy"
+        $result = Copy-StatusCakeHelperPageSpeedTest -ID $SCPageSpeedTest.id -NewName "Pester Test Page Speed Check - Copy"
         $result.Name | Should -Be "Pester Test Page Speed Check - Copy"
         $result.Website_URL | Should -Be "https://www.example.com"
         $result.Location_ISO | Should -Be "UK"
@@ -182,23 +182,23 @@ Describe "StatusCake Page Speed Tests" {
     }
 
     It "Get-StatusCakeHelperPageSpeedTest retrieves a Page Speed test by name"{
-        $result = Get-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check"
+        $result = Get-StatusCakeHelperPageSpeedTest -Name "Pester Test Page Speed Check"
         $result.Title | Should Be "Pester Test Page Speed Check"
     }
 
     It "Get-StatusCakeHelperPageSpeedTestHistory retrieves the history of a page speed check"{
-        $result = Get-StatusCakeHelperPageSpeedTestHistory -id $SCPageSpeedTest.id
+        $result = Get-StatusCakeHelperPageSpeedTestHistory -ID $SCPageSpeedTest.id
         $result | Should Be $true
     }
 
     It "Remove-StatusCakeHelperPageSpeedTest removes a test by ID"{
-        Remove-StatusCakeHelperPageSpeedTest -id $SCPageSpeedTest.id
+        Remove-StatusCakeHelperPageSpeedTest -ID $SCPageSpeedTest.id
         $results = Get-StatusCakeHelperPageSpeedTest
         $results.Title | Should -Not -Contain "Pester Test Page Speed Check"
     }
 
     It "Remove-StatusCakeHelperPageSpeedTest removes a test by name"{
-        Remove-StatusCakeHelperPageSpeedTest -name "Pester Test Page Speed Check - Copy"
+        Remove-StatusCakeHelperPageSpeedTest -Name "Pester Test Page Speed Check - Copy"
         $results = Get-StatusCakeHelperPageSpeedTest
         $results.Title | Should -Not -Contain "Pester Test Page Speed Check - Copy"
     }
@@ -208,7 +208,7 @@ Describe "StatusCake Page Speed Tests" {
 Describe "StatusCake SSL Tests" {
 
     It "New-StatusCakeHelperSSLTest creates a SSL Test"{
-        $script:SCSSLTest = New-StatusCakeHelperSSLTest -domain "https://www.example.com" -checkrate 2073600
+        $script:SCSSLTest = New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -Checkrate 2073600
         $SCSSLTest.domain | Should -Be "https://www.example.com"
         $SCSSLTest.checkrate | Should -Be 2073600
     }
@@ -219,29 +219,29 @@ Describe "StatusCake SSL Tests" {
     }
 
     It "Set-StatusCakeHelperSSLTest updates the checkrate"{
-        $result = Set-StatusCakeHelperSSLTest -id $SCSSLTest.ID -checkrate 86400
+        $result = Set-StatusCakeHelperSSLTest -ID $SCSSLTest.ID -Checkrate 86400
         $result.checkrate | Should -Be 86400
     }
 
     It "Copy-StatusCakeHelperSSLTest copies a SSL Test"{
-        $result = Copy-StatusCakeHelperSSLTest -id $SCSSLTest.ID -newdomain "https://www.example.org"
+        $result = Copy-StatusCakeHelperSSLTest -ID $SCSSLTest.ID -NewDomain "https://www.example.org"
         $result.domain | Should -Be "https://www.example.org"
         $result.checkrate | Should -Be 86400
     }
 
     It "Get-StatusCakeHelperSSLTest retrieves a SSL test by domain"{
-        $result = Get-StatusCakeHelperSSLTest -domain "https://www.example.com"
+        $result = Get-StatusCakeHelperSSLTest -Domain "https://www.example.com"
         $result.domain | Should -Be "https://www.example.com"
     }
 
     It "Remove-StatusCakeHelperSSLTest removes a SSL test by ID"{
-        Remove-StatusCakeHelperSSLTest -id $SCSSLTest.Id
+        Remove-StatusCakeHelperSSLTest -ID $SCSSLTest.Id
         $results = Get-StatusCakeHelperSSLTest
         $results.ID | Should -Not -Contain $SCSSLTest.Id
     }
 
     It "Remove-StatusCakeHelperSSLTest removes a SSL test by domain"{
-        Remove-StatusCakeHelperSSLTest -domain "https://www.example.org"
+        Remove-StatusCakeHelperSSLTest -Domain "https://www.example.org"
         $results = Get-StatusCakeHelperSSLTest
         $results.domain | Should -Not -Contain "https://www.example.org"
     }
@@ -251,7 +251,7 @@ Describe "StatusCake SSL Tests" {
 Describe "StatusCake Maintenance Windows" {
 
     It "New-StatusCakeHelperMaintenanceWindow creates a maintenance window"{
-        $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test SC Test for Maintenance Window" -TestURL "https://www.example.com" -checkRate 24000 -testType HTTP
+        $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test SC Test for Maintenance Window" -TestURL "https://www.example.com" -Checkrate 24000 -TestType HTTP
         $startDate = $(Get-Date).AddHours(1)
         $endDate = $(Get-Date).AddDays(1)
 
@@ -261,7 +261,7 @@ Describe "StatusCake Maintenance Windows" {
         $endDateString = $endDateString.substring(0,$endDateString.length-1) + '*'
 
         $script:mwName = "Pester Test Maintenance Window - $($startDate.ToUniversalTime().ToString())"
-        $script:SCMWTest = New-StatusCakeHelperMaintenanceWindow -name $mwName -timezone UTC -start_date $startDate -end_date $endDate -raw_tests @($SCTest.TestID)
+        $script:SCMWTest = New-StatusCakeHelperMaintenanceWindow -Name $mwName -Timezone UTC -StartDate $startDate -EndDate $endDate -TestIDs @($SCTest.TestID)
 
         $SCMWTest.name | Should -Be "Pester Test Maintenance Window - $($startDate.ToUniversalTime().ToString())"
         $SCMWTest.timezone | Should -Be "UTC"
@@ -276,25 +276,25 @@ Describe "StatusCake Maintenance Windows" {
     }
 
     It "Update-StatusCakeHelperMaintenanceWindow updates the maintenance window"{
-        $result = Update-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id -recur_every 30
+        $result = Update-StatusCakeHelperMaintenanceWindow -ID $SCMWTest.id -RecurEvery 30
         $result.Success | Should Be "True"
     }
 
     It "Clear-StatusCakeHelperMaintenanceWindow clears a test associated with a maintenance window"{
-        Clear-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id -raw_tests
-        $results = Get-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id
+        Clear-StatusCakeHelperMaintenanceWindow -ID $SCMWTest.id -TestIDs
+        $results = Get-StatusCakeHelperMaintenanceWindow -ID $SCMWTest.id
         $results.raw_tests | Should -BeFalse
     }
 
     It "Get-StatusCakeHelperMaintenanceWindow retrieves a maintenance window by name"{
-        $result = Get-StatusCakeHelperMaintenanceWindow -name $mwName
+        $result = Get-StatusCakeHelperMaintenanceWindow -Name $mwName
         $result | Where-Object {$_.state -eq "Pending"} | Select-Object -ExpandProperty "name" | Should Be $mwName
         $result.id | Should -BeGreaterThan 0
     }
 
     It "Remove-StatusCakeHelperMaintenanceWindow removes a maintenance window"{
         Remove-StatusCakeHelperTest -TestName "Pester Test SC Test for Maintenance Window"
-        Remove-StatusCakeHelperMaintenanceWindow -id $SCMWTest.id -Series $true
+        Remove-StatusCakeHelperMaintenanceWindow -ID $SCMWTest.id -Series
         $results = Get-StatusCakeHelperMaintenanceWindow
         $results.id | Should -Not -Contain $SCMWTest.id
     }
@@ -305,7 +305,7 @@ Describe "StatusCake Public Reporting Pages" {
 
     It "New-StatusCakeHelperPublicReportingPage creates a public reporting page"{
         $script:SCTest = New-StatusCakeHelperTest -TestName "Pester Test SC Test for Public Reporting Page" -TestURL "https://www.example.com" -Tags @("Pester Test") -checkRate 24000 -testType HTTP
-        $script:SCPRPage = New-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page" -testIDs @($SCTest.TestID) -search_indexing $false
+        $script:SCPRPage = New-StatusCakeHelperPublicReportingPage -Title "Pester Test Public Reporting Page" -TestIDs @($SCTest.TestID) -SearchIndexing $false
         $SCPRPage.title | Should -Be "Pester Test Public Reporting Page"
         $SCPRPage.tests_or_tags | Should -Contain $SCTest.TestID
     }
@@ -316,24 +316,24 @@ Describe "StatusCake Public Reporting Pages" {
     }
 
     It "Get-StatusCakeHelperPublicReportingPage retrieves a public reporting page by title"{
-        $result = Get-StatusCakeHelperPublicReportingPage -title "Pester Test Public Reporting Page"
+        $result = Get-StatusCakeHelperPublicReportingPage -Title "Pester Test Public Reporting Page"
         $result.title | Should -Be "Pester Test Public Reporting Page"
     }
 
     It "Set-StatusCakeHelperPublicReportingPage updates a public reporting page to use a tag"{
-        $result = Set-StatusCakeHelperPublicReportingPage -id $SCPRPage.id -search_indexing $true -tags @("Pester Test")
+        $result = Set-StatusCakeHelperPublicReportingPage -ID $SCPRPage.id -SearchIndexing $true -TestTags @("Pester Test")
         $result.search_indexing | Should -Be "True"
         $result.tests_or_tags | Should -Contain "Pester Test"
     }
 
     It "Get-StatusCakeHelperPublicReportingPageDetail retrieves detailed data about a public reporting page"{
-        $result = Get-StatusCakeHelperPublicReportingPageDetail -id $SCPRPage.id
+        $result = Get-StatusCakeHelperPublicReportingPageDetail -ID $SCPRPage.id
         $result.title | Should -Be "Pester Test Public Reporting Page"
         $result.search_indexing | Should -Be "True"
     }
 
     It "Copy-StatusCakeHelperPublicReportingPage copies a Public Reporting Page"{
-        $result = Copy-StatusCakeHelperPublicReportingPage -id $SCPRPage.id -newtitle "Pester Test Public Reporting Page (Copy)"
+        $result = Copy-StatusCakeHelperPublicReportingPage -ID $SCPRPage.id -NewTitle "Pester Test Public Reporting Page (Copy)"
         $result.title | Should -Be "Pester Test Public Reporting Page (Copy)"
         $result.search_indexing | Should -Be "True"
         $result.tests_or_tags | Should -Contain "Pester Test"
@@ -341,7 +341,7 @@ Describe "StatusCake Public Reporting Pages" {
 
     It "Remove-StatusCakeHelperPublicReportingPage removes a public reporting page"{
         Remove-StatusCakeHelperPublicReportingPage -Title "Pester Test Public Reporting Page (Copy)"
-        Remove-StatusCakeHelperPublicReportingPage -id $SCPRPage.id
+        Remove-StatusCakeHelperPublicReportingPage -ID $SCPRPage.id
         Remove-StatusCakeHelperTest -TestID $SCTest.TestID
         $results = Get-StatusCakeHelperPublicReportingPage
         $results.title | Should -Not -Contain "Pester Test Public Reporting Page (Copy)"
