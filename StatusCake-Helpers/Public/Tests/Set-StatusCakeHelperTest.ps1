@@ -361,12 +361,6 @@ function Set-StatusCakeHelperTest
     $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-    if($statusCakeAPIParams.ContainsKey("BasicPass"))
-    {
-        $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $statusCakeAPIParams["BasicUser"], $statusCakeAPIParams["BasicPass"]
-        $statusCakeAPIParams["BasicPass"] = $Credentials.GetNetworkCredential().Password
-    }
-
     $requestParams = @{
         uri = "https://app.statuscake.com/API/Tests/Update"
         Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
