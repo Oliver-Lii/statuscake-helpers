@@ -33,7 +33,12 @@ function Add-StatusCakeHelperTestStatusCode
 
         [Parameter(ParameterSetName='ByTestName',Mandatory=$true)]
         [Parameter(ParameterSetName='ByTestID',Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperStatusCode)){
+                Throw "HTTP Status Code invalid [$_]"
+            }
+            else{$true}
+        })]
         [int[]]$StatusCodes,
 
         [Parameter(ParameterSetName='ByTestName')]
@@ -78,15 +83,6 @@ function Add-StatusCakeHelperTestStatusCode
         $detailedTestData = Get-StatusCakeHelperTestDetail -APICredential $APICredential -TestID $TestID
     }
 
-    foreach($statusCode in $StatusCodes)
-    {
-        Write-Verbose "Validating HTTP Status Code [$statusCode]"
-        if(!$($statusCode | Test-StatusCakeHelperStatusCode))
-        {
-            Write-Error "HTTP Status Code invalid [$statusCode]"
-            Return $null
-        }
-    }
     $detailedTestData.StatusCodes += $StatusCodes
     $StatusCodes = $detailedTestData.StatusCodes | Sort-Object -Unique
 

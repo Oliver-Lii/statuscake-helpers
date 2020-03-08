@@ -37,7 +37,12 @@ function Add-StatusCakeHelperTestNodeLocation
 
         [Parameter(ParameterSetName='ByTestName',Mandatory=$true)]
         [Parameter(ParameterSetName='ByTestID',Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperNodeLocation)){
+                Throw "Node Location Server code invalid [$_]"
+            }
+            else{$true}
+        })]
         [string[]]$NodeLocations,
 
         [Parameter(ParameterSetName='ByTestName')]
@@ -82,15 +87,6 @@ function Add-StatusCakeHelperTestNodeLocation
         $detailedTestData = Get-StatusCakeHelperTestDetail -APICredential $APICredential -TestID $TestID
     }
 
-    foreach($node in $NodeLocations)
-    {
-        Write-Verbose "Validating node location [$node]"
-        if(!$($node | Test-StatusCakeHelperNodeLocation))
-        {
-            Write-Error "Node Location Server code invalid [$node]"
-            Return $null
-        }
-    }
     $detailedTestData.NodeLocations += $NodeLocations
     $NodeLocations = $detailedTestData.NodeLocations | Select-Object -Unique
 

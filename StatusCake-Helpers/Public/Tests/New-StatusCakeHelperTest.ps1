@@ -135,6 +135,12 @@ function New-StatusCakeHelperTest
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         [String]$LogoImage,
 
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperNodeLocation)){
+                Throw "Node Location Server code invalid [$_]"
+            }
+            else{$true}
+        })]
         [string[]]$NodeLocations,
 
         [boolean]$Paused,
@@ -151,6 +157,12 @@ function New-StatusCakeHelperTest
 
         [boolean]$RealBrowser,
 
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperStatusCode)){
+                Throw "HTTP Status Code invalid [$_]"
+            }
+            else{$true}
+        })]
         [int[]]$StatusCodes,
 
         [Alias('TestTags')]
@@ -208,19 +220,6 @@ function New-StatusCakeHelperTest
     if($convertTestURL -and $TestURL)
     {
         $TestURL = $TestURL | ConvertTo-StatusCakeHelperDomainName
-    }
-
-    if($NodeLocations)
-    {
-        foreach($node in $NodeLocations)
-        {
-            Write-Verbose "Validating node location [$node]"
-            if(!$($node | Test-StatusCakeHelperNodeLocation))
-            {
-                Write-Error "Node Location Server code invalid [$node]"
-                Return $null
-            }
-        }
     }
 
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters

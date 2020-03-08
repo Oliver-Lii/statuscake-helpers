@@ -32,7 +32,12 @@ function Remove-StatusCakeHelperTestStatusCode
 
         [Parameter(ParameterSetName='ByTestName',Mandatory=$true)]
         [Parameter(ParameterSetName='ByTestID',Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperStatusCode)){
+                Throw "HTTP Status Code invalid [$_]"
+            }
+            else{$true}
+        })]
         [int[]]$StatusCodes,
 
         [Parameter(ParameterSetName='ByTestName')]

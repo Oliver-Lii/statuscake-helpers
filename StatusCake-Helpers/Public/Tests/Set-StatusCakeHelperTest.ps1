@@ -195,6 +195,12 @@ function Set-StatusCakeHelperTest
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperNodeLocation)){
+                Throw "Node Location Server code invalid [$_]"
+            }
+            else{$true}
+        })]
         [string[]]$NodeLocations,
 
         [Parameter(ParameterSetName='SetByTestName')]
@@ -232,6 +238,12 @@ function Set-StatusCakeHelperTest
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperStatusCode)){
+                Throw "HTTP Status Code invalid [$_]"
+            }
+            else{$true}
+        })]
         [string[]]$StatusCodes,
 
         [Parameter(ParameterSetName='SetByTestName')]
@@ -343,19 +355,6 @@ function Set-StatusCakeHelperTest
     if($convertTestURL -and $TestURL)
     {
         $TestURL = $TestURL | ConvertTo-StatusCakeHelperDomainName
-    }
-
-    if($NodeLocations)
-    {
-        foreach($node in $NodeLocations)
-        {
-            Write-Verbose "Validating node location [$node]"
-            if(!$($node | Test-StatusCakeHelperNodeLocation))
-            {
-                Write-Error "Node Location Server code invalid [$node]"
-                Return $null
-            }
-        }
     }
 
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters

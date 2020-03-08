@@ -35,7 +35,12 @@ function Remove-StatusCakeHelperTestNodeLocation
 
         [Parameter(ParameterSetName='ByTestName',Mandatory=$true)]
         [Parameter(ParameterSetName='ByTestID',Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperNodeLocation)){
+                Throw "Node Location Server code invalid [$_]"
+            }
+            else{$true}
+        })]
         [string[]]$NodeLocations,
 
         [Parameter(ParameterSetName='ByTestName')]
