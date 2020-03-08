@@ -74,7 +74,7 @@ function New-StatusCakeHelperPageSpeedTest
         [string]$private_name
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Test") )
     {

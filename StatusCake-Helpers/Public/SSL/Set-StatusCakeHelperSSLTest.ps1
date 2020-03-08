@@ -8,7 +8,7 @@
     baseSSLTestURL - Base URL endpoint of the statuscake ContactGroup API
     Username - Username associated with the API key
     ApiKey - APIKey to access the StatusCake API
-    
+
     Domain - URL to check SSL certificate, must begin with https://
     CheckRate - Checkrate in seconds.
     Contact_Groups - Array containing contact IDs to alert.
@@ -98,7 +98,7 @@ function Set-StatusCakeHelperSSLTest
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if($Alert_At -and $Alert_At.count -ne 3)
     {
         Write-Error "Only three values must be specified for Alert_At parameter"
@@ -113,7 +113,7 @@ function Set-StatusCakeHelperSSLTest
             if(!$sslTest)
             {
                 Write-Error "No SSL test with Specified Domain Exists [$Domain]"
-                Return $null 
+                Return $null
             }
             elseif($sslTest.GetType().Name -eq 'Object[]')
             {
@@ -136,7 +136,7 @@ function Set-StatusCakeHelperSSLTest
             $id = $sslTest.id
         }
     }
-    else 
+    else
     {   #Setup a test with the supplied detiails
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL tests") )
         {
@@ -173,7 +173,7 @@ function Set-StatusCakeHelperSSLTest
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake SSL Test") )

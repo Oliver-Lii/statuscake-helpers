@@ -13,20 +13,20 @@
     Minutes - Specify the number of minute(s) that the test(s) has been paused
     IncludeNotTested - If set tests that have never been tested will be included
     ExcludeTested - If set tests that have been tested will be excluded
-.OUTPUTS    
+.OUTPUTS
     Returns an object with the StatusCake Detailed Test data
 .FUNCTIONALITY
     Retrieves all the tests from StatusCake that are paused and have been tested longer than
     the supplied parameters. Defaults to returning tests that have been paused more than 24 hours.
-   
+
 #>
 function Get-StatusCakeHelperPausedTests
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false)]
     Param(
         [Parameter(ParameterSetName='Days')]
         [Parameter(ParameterSetName='Hours')]
-        [Parameter(ParameterSetName='Minutes')]                         
+        [Parameter(ParameterSetName='Minutes')]
         $baseTestURL = "https://app.statuscake.com/API/Tests/",
 
         [Parameter(ParameterSetName='Days')]
@@ -34,55 +34,55 @@ function Get-StatusCakeHelperPausedTests
         [Parameter(ParameterSetName='Minutes')]
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-      
+
         [Parameter(ParameterSetName='Days')]
         [Parameter(ParameterSetName='Hours')]
-        [Parameter(ParameterSetName='Minutes')]        
-        [ValidateNotNullOrEmpty()]        
+        [Parameter(ParameterSetName='Minutes')]
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
-        [Parameter(ParameterSetName='Days')]     
+        [Parameter(ParameterSetName='Days')]
         [int]$Days=1,
-        
-        [Parameter(ParameterSetName='Hours')]        
+
+        [Parameter(ParameterSetName='Hours')]
         [int]$Hours,
-       
-        [Parameter(ParameterSetName='Minutes')]       
+
+        [Parameter(ParameterSetName='Minutes')]
         [int]$Minutes,
- 
+
         [Parameter(ParameterSetName='Days')]
         [Parameter(ParameterSetName='Hours')]
-        [Parameter(ParameterSetName='Minutes')]         
+        [Parameter(ParameterSetName='Minutes')]
         [switch]$IncludeNotTested,
 
         [Parameter(ParameterSetName='Days')]
         [Parameter(ParameterSetName='Hours')]
-        [Parameter(ParameterSetName='Minutes')]         
+        [Parameter(ParameterSetName='Minutes')]
         [switch]$ExcludeTested
     )
     $statusCakeAuth = @{"Username"=$Username;"APIKey"=$ApiKey}
     $statusCakePausedTests = Get-StatusCakeHelperAllTests @statusCakeAuth
 
     $statusCakePausedTests = $StatusCakePausedTests | Where-Object{$_.Paused -eq "True"}
-
+    Write-Warning -Message "Add-StatusCakeHelperPausedTests will be renamed to Add-StatusCakeHelperPausedTest in the next release"
     $matchingTests=@()
     Foreach($sctest in $statusCakePausedTests)
     {
         $detailedTestData = Get-StatusCakeHelperDetailedTestData @StatusCakeAuth -TestID $sctest.TestID
         if($detailedTestData.LastTested -eq "0000-00-00 00:00:00")
-        {   
+        {
             Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] has never been tested"
             if($IncludeNotTested)
-            {                   
-                $matchingTests += $sctest   
+            {
+                $matchingTests += $sctest
             }
             continue
         }
 
-        if($ExcludeTested) 
+        if($ExcludeTested)
         {
-            Write-Verbose "Skipping test [$($sctest.TestID) / $($sctest.WebsiteName)] as ExcludeTested flag set"            
-            continue            
+            Write-Verbose "Skipping test [$($sctest.TestID) / $($sctest.WebsiteName)] as ExcludeTested flag set"
+            continue
         }
 
         $testLastTestTimeSpan = New-TimeSpan -Start $detailedTestData.LastTested
@@ -95,14 +95,14 @@ function Get-StatusCakeHelperPausedTests
         }
         elseif($testLastTestTimeSpan.Totalhours -ge $Hours -and $minutes -eq 0)
         {
-            Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] paused for [$([int]$($testLastTestTimeSpan.totalhours))] hours"                
-            $matchingTests += $detailedTestData                
+            Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] paused for [$([int]$($testLastTestTimeSpan.totalhours))] hours"
+            $matchingTests += $detailedTestData
         }
         elseif($testLastTestTimeSpan.Totalminutes -ge $Minutes)
         {
-            Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] paused for [$([int]$($testLastTestTimeSpan.totalminutes))] minutes"                 
-            $matchingTests += $detailedTestData                
-        }  
+            Write-Verbose "Test [$($sctest.TestID) / $($sctest.WebsiteName)] paused for [$([int]$($testLastTestTimeSpan.totalminutes))] minutes"
+            $matchingTests += $detailedTestData
+        }
     }
     Return $matchingTests
 }

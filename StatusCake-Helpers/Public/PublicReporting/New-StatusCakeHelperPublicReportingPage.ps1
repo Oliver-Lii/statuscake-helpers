@@ -94,7 +94,7 @@ function New-StatusCakeHelperPublicReportingPage
             Return $null
         }
     }
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
     $ParamsToIgnore = @("baseAPIURL","Username","ApiKey")

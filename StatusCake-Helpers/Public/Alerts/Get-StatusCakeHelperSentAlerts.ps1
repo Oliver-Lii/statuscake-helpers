@@ -43,6 +43,7 @@ function Get-StatusCakeHelperSentAlerts
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
+    Write-Warning "This function will be renamed to Get-StatusCakeHelperSentAlert in the next release"
 
     if($TestName)
     {
@@ -87,7 +88,7 @@ function Get-StatusCakeHelperSentAlerts
         UseBasicParsing = $true
         method = "Get"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Sent Alerts") )

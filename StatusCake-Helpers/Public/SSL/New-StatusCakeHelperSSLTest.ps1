@@ -8,7 +8,7 @@
     baseSSLTestURL - Base URL endpoint of the statuscake ContactGroup API
     Username - Username associated with the API key
     ApiKey - APIKey to access the StatusCake API
-    
+
     Domain - URL to check SSL certificate, must begin with https://
     CheckRate - Checkrate in seconds.
     Contact_Groups - Array containing contact IDs to alert.
@@ -32,15 +32,15 @@ function New-StatusCakeHelperSSLTest
         [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
-        [Parameter(Mandatory=$true)] 
+        [Parameter(Mandatory=$true)]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         $domain,
 
         #Contact_Groups must be supplied
-        [ValidateScript({$_ -match '^[\d]+$'})] 
+        [ValidateScript({$_ -match '^[\d]+$'})]
         [object]$contact_groups="0",
 
-        [Parameter(Mandatory=$true)] 
+        [Parameter(Mandatory=$true)]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
         $checkrate,
 
@@ -62,7 +62,7 @@ function New-StatusCakeHelperSSLTest
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
- 
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if($Alert_At.count -ne 3)
     {
         Write-Error "Only three values must be specified for Alert_At parameter"
@@ -75,9 +75,9 @@ function New-StatusCakeHelperSSLTest
         if($sslTest)
         {
             Write-Error "SSL Check with specified domain already exists [$domain] [$($sslTest.id)]"
-            Return $null 
+            Return $null
         }
-    }    
+    }
 
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
@@ -85,14 +85,14 @@ function New-StatusCakeHelperSSLTest
     foreach ($key in $ParameterList.keys)
     {
         $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-        
+
         if($ParamsToIgnore -contains $var.Name)
         {
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {   
-            $psParams.Add($var.name,$var.value)                  
+        {
+            $psParams.Add($var.name,$var.value)
         }
     }
 
@@ -104,7 +104,7 @@ function New-StatusCakeHelperSSLTest
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake SSL Test") )
@@ -115,7 +115,7 @@ function New-StatusCakeHelperSSLTest
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
-        }         
+        }
         Return $response
     }
 

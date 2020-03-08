@@ -28,7 +28,7 @@ function Get-StatusCakeHelperAllContactGroups
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-
+    Write-Warning "Get-StatusCakeHelperAllContactGroups will be deprecated in the next release"
     $requestParams = @{
         uri = $baseContactGroups
         Headers = $authenticationHeader

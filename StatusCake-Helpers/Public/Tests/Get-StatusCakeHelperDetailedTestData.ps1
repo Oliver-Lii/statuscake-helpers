@@ -10,11 +10,11 @@
     ApiKey - APIKey to access the StatusCake API
     TestID - ID of the Test to retrieve the detailed information for
     TestName - Name of the Test to retrieve the detailed information for
-.OUTPUTS    
+.OUTPUTS
     Returns all the StatusCake Tests as an object
 .FUNCTIONALITY
     Retrieves the detailed StatusCake Test data for a specific Test ID or Test Name
-   
+
 #>
 function Get-StatusCakeHelperDetailedTestData
 {
@@ -24,21 +24,21 @@ function Get-StatusCakeHelperDetailedTestData
 
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "Test ID")]
-        [ValidateNotNullOrEmpty()]            
-        [int]$TestID,        
+        [ValidateNotNullOrEmpty()]
+        [int]$TestID,
         [Parameter(ParameterSetName = "Test Name")]
-        [ValidateNotNullOrEmpty()]            
+        [ValidateNotNullOrEmpty()]
         [string]$TestName
 
     )
 
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
-
+    Write-Warning -Message "Get-StatusCakeHelperDetailedTestData will be renamed to Get-StatusCakeHelperTestDetail in the next release"
     if($TestName)
     {
         $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
@@ -46,7 +46,7 @@ function Get-StatusCakeHelperDetailedTestData
         {
             $TestID = $testCheck.TestID
         }
-        else 
+        else
         {
             Write-Error "Unable to find Test with name [$TestName]"
             Return $null

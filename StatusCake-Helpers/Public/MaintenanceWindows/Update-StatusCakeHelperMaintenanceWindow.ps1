@@ -95,7 +95,7 @@ function Update-StatusCakeHelperMaintenanceWindow
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
-
+    Write-Warning -Message "The output from this function will be changed in the next release"
     if($SetByName -and $name)
     {   #If setting test by name verify if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))

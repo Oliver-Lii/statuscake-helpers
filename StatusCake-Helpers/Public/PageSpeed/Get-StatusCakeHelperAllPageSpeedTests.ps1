@@ -28,7 +28,7 @@ function Get-StatusCakeHelperAllPageSpeedTests
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-
+    Write-Warning -Message "Get-StatusCakeHelperAllPageSpeedTests will be deprecated in the next release"
     $requestParams = @{
         uri = $basePageSpeedTestURL
         Headers = $authenticationHeader

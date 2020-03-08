@@ -28,6 +28,7 @@ function Set-StatusCakeHelperAPIAuth
         {
             New-Item "$env:userprofile\$moduleName" -ItemType Directory | Out-Null
         }
+        Write-Warning "The location of the credentials file will be changed in the next release"
         $Credentials | Export-CliXml -Path "$env:userprofile\$moduleName\$moduleName-Credentials.xml"
     }
     Catch

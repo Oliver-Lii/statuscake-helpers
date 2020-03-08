@@ -15,4 +15,7 @@ Foreach($import in @($Public + $Private))
     }
 }
 
+Write-Warning -Message "The Username and ApiKey parameters will be replaced for all functions in the next release"
+Write-Warning -Message "The baseURL parameter will be deprecated for all functions in the next release"
+
 Export-ModuleMember -Function $Public.Basename

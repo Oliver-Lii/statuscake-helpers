@@ -33,7 +33,7 @@ function Get-StatusCakeHelperAllMaintenanceWindows
         [string]$state="ALL"
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-
+    Write-Warning -Message "Get-StatusCakeHelperAllMaintenanceWindows will be deprecated in the next release"
     $psParams = @{}
     $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
     $ParamsToIgnore = @("baseMaintenanceWindowURL","Username","ApiKey")

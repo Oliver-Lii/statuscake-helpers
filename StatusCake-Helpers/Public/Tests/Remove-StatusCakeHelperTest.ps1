@@ -10,11 +10,11 @@
     Username - Username associated with the API key
     ApiKey - APIKey to access the StatusCake API
     TestID - ID of the Test to be removed
-.OUTPUTS    
+.OUTPUTS
     Returns the result of the test removal as an object
 .FUNCTIONALITY
     Removes the StatusCake test via it's Test ID
-   
+
 #>
 function Remove-StatusCakeHelperTest
 {
@@ -24,7 +24,7 @@ function Remove-StatusCakeHelperTest
 
 		[ValidateNotNullOrEmpty()]
         $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName = "Test ID")]
@@ -32,13 +32,13 @@ function Remove-StatusCakeHelperTest
         [int]$TestID,
         [Parameter(ParameterSetName = "Test Name")]
         [ValidateNotNullOrEmpty()]
-        [string]$TestName,        
+        [string]$TestName,
         [switch]$PassThru
     )
 
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
-    
+    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
+    Write-Warning -Message "Remove-StatusCakeHelperTestNodeLocations will be renamed to Add-StatusCakeHelperTestNodeLocation in the next release"
     if($TestName)
     {
         $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
@@ -47,11 +47,11 @@ function Remove-StatusCakeHelperTest
             if($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests found with name [$TestName]. Please remove the test by TestID"
-                Return $null            
+                Return $null
             }
             $TestID = $testCheck.TestID
         }
-        else 
+        else
         {
             Write-Error "Unable to find Test with name [$TestName]"
             Return $null
@@ -78,7 +78,7 @@ function Remove-StatusCakeHelperTest
         {
             Return
         }
-        Return $response        
+        Return $response
     }
 }
 

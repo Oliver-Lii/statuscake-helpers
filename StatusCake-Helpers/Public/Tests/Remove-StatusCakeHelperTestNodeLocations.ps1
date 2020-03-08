@@ -15,14 +15,14 @@
 
 .FUNCTIONALITY
     Remove node location(s) to a existing test. The supplied node location is tested against a list of the node location server codes to determine if it is valid
-   
+
 #>
 function Remove-StatusCakeHelperTestNodeLocations
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         [Parameter(ParameterSetName='RemoveByTestName')]
-        [Parameter(ParameterSetName='RemoveByTestID')]      
+        [Parameter(ParameterSetName='RemoveByTestID')]
         $baseTestURL = "https://app.statuscake.com/API/Tests/Update",
 
         [Parameter(ParameterSetName='RemoveByTestName')]
@@ -32,58 +32,59 @@ function Remove-StatusCakeHelperTestNodeLocations
 
         [Parameter(ParameterSetName='RemoveByTestName')]
         [Parameter(ParameterSetName='RemoveByTestID')]
-        [ValidateNotNullOrEmpty()]        
+        [ValidateNotNullOrEmpty()]
         $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
 
         [Parameter(ParameterSetName='RemoveByTestID',Mandatory=$true)]
-        [ValidatePattern('^\d{1,}$')]           
+        [ValidatePattern('^\d{1,}$')]
         $TestID,
 
         [Parameter(ParameterSetName='RemoveByTestName',Mandatory=$true)]
         [switch]$RemoveByTestName,
 
         [Parameter(ParameterSetName='RemoveByTestName',Mandatory=$true)]
-        [Parameter(ParameterSetName='RemoveByTestID')]           
-        [ValidateNotNullOrEmpty()] 
+        [Parameter(ParameterSetName='RemoveByTestID')]
+        [ValidateNotNullOrEmpty()]
         $TestName,
 
         [Parameter(ParameterSetName='RemoveByTestName')]
         [Parameter(ParameterSetName='RemoveByTestID')]
-        [ValidateNotNullOrEmpty()]         
+        [ValidateNotNullOrEmpty()]
         [object]$NodeLocations
 
     )
     $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
     $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
+    Write-Warning -Message "Remove-StatusCakeHelperTestNodeLocations will be renamed to Remove-StatusCakeHelperTestNodeLocation in the next release"
     if($RemoveByTestName -and $TestName)
     {   #If setting test by name check if a test or tests with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests"))
-        {      
+        {
             $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestName $TestName
             if(!$testCheck)
             {
                 Write-Error "No Test with Specified Name Exists [$TestName]"
-                Return $null 
+                Return $null
             }
             elseif($testCheck.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Tests with the same name [$TestName] [$($testCheck.TestID)]"
-                Return $null          
-            }            
+                Return $null
+            }
             $TestID = $testCheck.TestID
         }
     }
     elseif($TestID)
     {   #If setting by TestID verify that TestID already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Tests"))
-        {      
+        {
             $testCheck = Get-StatusCakeHelperTest @statusCakeFunctionAuth -TestID $TestID
             if(!$testCheck)
             {
                 Write-Error "No Test with Specified ID Exists [$TestID]"
-                Return $null 
-            }            
+                Return $null
+            }
             $TestID = $testCheck.TestID
         }
     }
@@ -99,7 +100,7 @@ function Remove-StatusCakeHelperTestNodeLocations
         if(!$($node | Test-StatusCakeHelperNodeLocation))
         {
             Write-Error "Node Location Server code invalid [$node]"
-            Return $null           
+            Return $null
         }
     }
     if(!$detailedTestData.NodeLocations)
@@ -107,7 +108,7 @@ function Remove-StatusCakeHelperTestNodeLocations
         Write-Verbose "Test currently contains no specific node locations"
         $detailedTestData.NodeLocations = ""
     }
-    $NodeLocations = $NodeLocations | Select-Object -Unique        
+    $NodeLocations = $NodeLocations | Select-Object -Unique
     $differentNodeLocations = Compare-Object $detailedTestData.NodeLocations $NodeLocations -IncludeEqual
     $NodeLocations = $differentNodeLocations | Where-Object {$_.SideIndicator -eq "<="} | Select-Object -ExpandProperty InputObject
     $RemovedNodeLocations = $differentNodeLocations | Where-Object {$_.SideIndicator -eq "=="} | Select-Object -ExpandProperty InputObject
@@ -127,10 +128,10 @@ function Remove-StatusCakeHelperTestNodeLocations
             continue
         }
         elseif($var.value -or $var.value -eq 0)
-        {        
-            $psParams.Add($var.name,$var.value)                  
+        {
+            $psParams.Add($var.name,$var.value)
         }
-    }     
+    }
 
     $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
 
@@ -140,7 +141,7 @@ function Remove-StatusCakeHelperTestNodeLocations
         UseBasicParsing = $true
         method = "Put"
         ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams 
+        body = $statusCakeAPIParams
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake Test") )
@@ -151,7 +152,7 @@ function Remove-StatusCakeHelperTestNodeLocations
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
-        }        
+        }
         Return $response
     }
 

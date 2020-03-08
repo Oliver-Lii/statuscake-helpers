@@ -12,11 +12,11 @@
 #>
 function Get-StatusCakeHelperProbes
 {
-    Param(  
+    Param(
         $StatusCakeXMLURL = 'https://app.statuscake.com/Workfloor/Locations.php?format=xml'
     )
     $StatusCakeProbesXML = ([xml](Invoke-WebRequest -uri $StatusCakeXMLURL -UseBasicParsing).Content).rss.channel
-
+    Write-Warning -Message "Get-StatusCakeHelperProbes will be renamed to Get-StatusCakeHelperProbe in the next release"
     $StatusCakeProbes = @()
     ForEach ($msg in $StatusCakeProbesXML.Item)
     {
@@ -32,8 +32,8 @@ function Get-StatusCakeHelperProbes
             'servercode' = $msg.servercode
             'Country' = $Country.trim()
             'CountryISO' = $msg.countryiso
-            'City' = $City.trim()        
-            'Status' = $msg.status    
+            'City' = $City.trim()
+            'Status' = $msg.status
         }
         $Matches = ""
     }
