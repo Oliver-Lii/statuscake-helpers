@@ -37,6 +37,12 @@ function New-StatusCakeHelperContactGroup
         #Optional parameters
         [boolean]$DesktopAlert,
 
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperEmailAddress)){
+                Throw "Invalid email address format supplied [$_]"
+            }
+            else{$true}
+        })]
         [string[]]$Email,
 
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
@@ -48,6 +54,12 @@ function New-StatusCakeHelperContactGroup
         [ValidateNotNullOrEmpty()]
         [string]$Pushover,
 
+        [ValidateScript({
+            if(!($_ | Test-StatusCakeHelperMobileNumber)){
+                Throw "Mobile number is not in E.164 format [$_]"
+            }
+            else{$true}
+        })]
         [string[]]$Mobile
     )
 
@@ -58,32 +70,6 @@ function New-StatusCakeHelperContactGroup
         {
             Write-Error "ContactGroup with specified name already exists [$ContactGroupCheck]"
             Return $null
-        }
-    }
-
-    if($Email)
-    {
-        foreach($emailAddress in $Email)
-        {
-            Write-Verbose "Validating email address [$emailAddress]"
-            if(!$($emailAddress | Test-StatusCakeHelperEmailAddress))
-            {
-                Write-Error "Invalid email address supplied [$emailAddress]"
-                Return $null
-            }
-        }
-    }
-
-    if($Mobile)
-    {
-        foreach($mobileNumber in $Mobile)
-        {
-            Write-Verbose "Validating mobile number [$mobileNumber]"
-            if(!$($mobileNumber | Test-StatusCakeHelperMobileNumber))
-            {
-                Write-Error "Mobile number is not in E.164 format [$mobileNumber]"
-                Return $null
-            }
         }
     }
 
