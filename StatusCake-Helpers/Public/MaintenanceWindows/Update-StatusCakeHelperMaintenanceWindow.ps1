@@ -44,12 +44,12 @@ function Update-StatusCakeHelperMaintenanceWindow
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
-        [Alias('start_unix')]
+        [Alias('start_unix','start_date')]
         [datetime]$StartDate,
 
         [Parameter(ParameterSetName='SetByID')]
         [Parameter(ParameterSetName='SetByName')]
-        [Alias('end_unix')]
+        [Alias('end_unix','end_date')]
         [datetime]$EndDate,
 
         [Parameter(ParameterSetName='SetByID')]

@@ -39,12 +39,12 @@ function New-StatusCakeHelperMaintenanceWindow
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
-        [Alias('start_unix')]
+        [Alias('start_unix','start_date')]
         [datetime]$StartDate,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
-        [Alias('end_unix')]
+        [Alias('end_unix','end_date')]
         [datetime]$EndDate,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
