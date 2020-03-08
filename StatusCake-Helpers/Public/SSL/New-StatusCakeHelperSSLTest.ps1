@@ -47,6 +47,7 @@ function New-StatusCakeHelperSSLTest
         [int]$Checkrate,
 
         [Alias('alert_at')]
+        [ValidateCount(3,3)]
         [int[]]$AlertAt=@("7","14","30"),
 
         [Alias('alert_expiry')]
@@ -62,12 +63,6 @@ function New-StatusCakeHelperSSLTest
         [boolean]$AlertMixed=$true
 
     )
-
-    if($Alert_At -and $Alert_At.count -ne 3)
-    {
-        Write-Error "Only three values must be specified for Alert_At parameter"
-        Return
-    }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Checks") )
     {

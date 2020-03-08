@@ -64,6 +64,7 @@ function Set-StatusCakeHelperSSLTest
         [Parameter(ParameterSetName='SetByDomain')]
         [Parameter(ParameterSetName='NewSSLTest',Mandatory=$true)]
         [Alias('alert_at')]
+        [ValidateCount(3,3)]
         [Int[]]$AlertAt,
 
         [Parameter(ParameterSetName='SetByID')]
@@ -91,12 +92,6 @@ function Set-StatusCakeHelperSSLTest
         [boolean]$AlertMixed
 
     )
-
-    if($AlertAt -and $AlertAt.count -ne 3)
-    {
-        Write-Error "Only three values must be specified for Alert_At parameter"
-        Return
-    }
 
     if($SetByDomain -and $Domain)
     {   #If setting test by domain verify if a test or tests with that name exists
