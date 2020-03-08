@@ -199,6 +199,7 @@ function Set-StatusCakeHelperPublicReportingPage
     {
         $response = Invoke-RestMethod @requestParams
         $requestParams=@{}
+        $statusCakeAPIParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"

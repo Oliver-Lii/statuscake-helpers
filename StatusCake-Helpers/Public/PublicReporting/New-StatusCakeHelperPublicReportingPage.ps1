@@ -41,7 +41,7 @@
 #>
 function New-StatusCakeHelperPublicReportingPage
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true,DefaultParameterSetName='Title')]
     Param(
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
@@ -129,12 +129,6 @@ function New-StatusCakeHelperPublicReportingPage
     $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter @apiParameterParams -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-    if($statusCakeAPIParams.Password)
-    {
-        $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList "UserName", $statusCakeAPIParams.Password
-        $statusCakeAPIParams.Password = $Credentials.GetNetworkCredential().Password
-    }
-
     $requestParams = @{
         uri = "https://app.statuscake.com/API/PublicReporting/Update"
         Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
@@ -148,6 +142,7 @@ function New-StatusCakeHelperPublicReportingPage
     {
         $response = Invoke-RestMethod @requestParams
         $requestParams=@{}
+        $statusCakeAPIParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
