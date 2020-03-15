@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Sets the configuration of a StatusCake ContactGroup
+.SYNOPSIS
+    Sets the configuration of a StatusCake ContactGroup
+.DESCRIPTION
+    Sets a StatusCake ContactGroup using the supplied parameters. Values supplied overwrite existing values.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER GroupName
     Name of the Contact Group to be created
 .PARAMETER ContactID
@@ -23,9 +25,8 @@
 .PARAMETER SetByGroupName
     Flag to set to allow Contact Group to be set by Group Name
 .EXAMPLE
-   Set-StatusCakeHelperContactGroup -GroupName "Example" -email @(test@example.com)
-.FUNCTIONALITY
-   Sets a StatusCake ContactGroup using the supplied parameters. Values supplied overwrite existing values
+    C:\PS>Set-StatusCakeHelperContactGroup -GroupName "Example" -email @(test@example.com)
+    Set the contact group name "Example" with email address "test@example.com"
 #>
 function Set-StatusCakeHelperContactGroup
 {

@@ -1,10 +1,12 @@
 
 
 <#
-.Synopsis
-   Removes the specified StatusCake ContactGroup
+.SYNOPSIS
+    Removes the specified StatusCake ContactGroup
+.DESCRIPTION
+    Removes the StatusCake ContactGroup via it's ContactID or GroupName.
 .PARAMETER APICredential
-   Username and APIKey Credentials to access StatusCake API
+    Username and APIKey Credentials to access StatusCake API
 .PARAMETER ContactID
     ID of the ContactGroup to be removed
 .PARAMETER GroupName
@@ -14,11 +16,11 @@
 .PARAMETER Passthru
     Return the object to be deleted
 .EXAMPLE
-   Remove-StatusCakeHelperContactGroup -contactID 123456
+    C:\PS>Remove-StatusCakeHelperContactGroup -ContactID 123456
+    Remove contact group with ID 123456
 .OUTPUTS
     Returns the result of the ContactGroup removal as an object
-.FUNCTIONALITY
-    Removes the StatusCake ContactGroup via it's ContactID or GroupName
+
 
 #>
 function Remove-StatusCakeHelperContactGroup

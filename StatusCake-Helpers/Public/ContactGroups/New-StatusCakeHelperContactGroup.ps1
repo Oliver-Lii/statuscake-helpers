@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Create a StatusCake ContactGroup
+.SYNOPSIS
+    Create a StatusCake ContactGroup
+.DESCRIPTION
+    Creates a new StatusCake ContactGroup using the supplied parameters. The name of the contact group must be unique for the contact group to be created.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER GroupName
     Name of the Contact Group to be created
 .PARAMETER DesktopAlert
@@ -17,11 +19,10 @@
 .PARAMETER PingURL
     URL To Send a POST alert
 .PARAMETER Mobile
-    Array of mobile number in International Format E.164 notation
+    Array of mobile numbers in International Format E.164 notation
 .EXAMPLE
-   New-StatusCakeHelperContactGroup -GroupName "Example" -email @(test@example.com)
-.FUNCTIONALITY
-   Creates a new StatusCake ContactGroup using the supplied parameters.
+    C:\PS>New-StatusCakeHelperContactGroup -GroupName "Example" -email @(test@example.com)
+    Create contact group called "Example" using email address "test@example.com"
 #>
 function New-StatusCakeHelperContactGroup
 {

@@ -1,19 +1,22 @@
 
 <#
-.Synopsis
-   Copies the settings of a StatusCake ContactGroup
+.SYNOPSIS
+    Copies the settings of a StatusCake ContactGroup
+.DESCRIPTION
+    Creates a copy of a contact group which can be specified by name or id. The new name of the contact group must not already exist for the command to be successful
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER GroupName
-   Name of the Contact Group to be copied
+    Name of the Contact Group to be copied
 .PARAMETER ContactID
-   ID of the Contact Group to be copied
+    ID of the Contact Group to be copied
 .PARAMETER NewGroupName
-   Name of the Contact Group copy
+    Name of the Contact Group copy
 .EXAMPLE
-   Copy-StatusCakeHelperContactGroup -GroupName "Example" -NewGroupName "Example - Copy"
-.FUNCTIONALITY
-   Creates a copy of a contact group
+    C:\PS> Copy-StatusCakeHelperContactGroup -GroupName "Example" -NewGroupName "Example - Copy"
+    Create a copy of a contact group called "Example" with name "Example - Copy"
+.OUTPUTS
+
 #>
 function Copy-StatusCakeHelperContactGroup
 {

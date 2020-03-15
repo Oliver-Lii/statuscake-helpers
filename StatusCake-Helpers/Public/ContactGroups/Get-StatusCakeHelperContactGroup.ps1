@@ -1,19 +1,23 @@
 
 <#
-.Synopsis
-   Retrieves a StatusCake Contact Group with a specific name or Test ID
+.SYNOPSIS
+    Retrieves a StatusCake Contact Group with a specific name or Test ID
+.DESCRIPTION
+    Retrieves StatusCake Test via the test name of the test or Test ID. If no group name or id supplied all contact groups will be returned
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER GroupName
     Name of the Contact Group
 .PARAMETER ContactID
     ID of the Contact Group to be copied
 .EXAMPLE
-   Get-StatusCakeHelperContactGroup -ContactID 123456
+    C:\PS>Get-StatusCakeHelperContactGroup
+    Retrieve all contact groups
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperContactGroup -ContactID 123456
+    Retrieve contact group with ID 123456
 .OUTPUTS
-    Returns the details of the test which exists returning $null if no matching test
-.FUNCTIONALITY
-    Retrieves StatusCake Test via the test name of the test or Test ID
+    Returns the contact group(s) returning $null if no matching contact groups
 
 #>
 function Get-StatusCakeHelperContactGroup
