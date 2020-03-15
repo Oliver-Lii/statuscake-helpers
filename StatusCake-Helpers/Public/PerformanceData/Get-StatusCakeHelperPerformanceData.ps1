@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
-   Retrieves the tests that have been carried out on a given check
+.SYNOPSIS
+    Retrieves the tests that have been carried out on a given check
+.DESCRIPTION
+    Retrieves the performance details of a test that have been carried out for a uptime test. At any one time this will return a days worth of results and you are able to cycle through each of the results using the start parameter. The latest tests are shown first.
 .PARAMETER APICredential
    Credentials to access StatusCake API
 .PARAMETER TestID
@@ -15,12 +17,10 @@
 .PARAMETER Limit
     Limits to a subset of results - maximum of 1000
 .EXAMPLE
-   Get-StatusCakeHelperPerformanceData -TestID 123456 -start "2018-01-07 10:14:00"
+    C:\PS>Get-StatusCakeHelperPerformanceData -TestID 123456 -Start "2018-01-07 10:14:00"
+    Retrieve test performance data for test id 123456 from the 7th January 2018 10:14:00
 .OUTPUTS
     Returns an object with the details on the tests that have been carried out on a given check
-.FUNCTIONALITY
-    Retrieves the tests that have been carried out on a given check
-
 #>
 function Get-StatusCakeHelperPerformanceData
 {

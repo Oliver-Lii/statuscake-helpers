@@ -11,7 +11,7 @@ TestID      : 123456
 Time        : 1577836800
 Status      : 200
 Location    : FREE2
-Date        : 2020-01-01T00:00:00+00:00
+Human       : 2020-01-01T00:00:00+00:00
 Headers     :
 Performance : 5626
 
