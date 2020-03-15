@@ -1,9 +1,12 @@
 
 <#
-.Synopsis
-   Gets a StatusCake PageSpeed Test
+.SYNOPSIS
+    Gets a StatusCake PageSpeed Test
+.DESCRIPTION
+    Retrieves a StatusCake PageSpeed Test. If no name or id is supplied all tests are returned.
+    By default only standard information about a test is returned and more detailed information can be retrieved by using detailed switch.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the PageSpeed test
 .PARAMETER ID
@@ -11,13 +14,11 @@
 .PARAMETER Detailed
     Retrieve detailed test data
 .EXAMPLE
-    # Retrieve all page speed tests
-    Get-StatusCakeHelperPageSpeedTest
+    C:\PS>Get-StatusCakeHelperPageSpeedTest
+    Retrieve all page speed tests
 .EXAMPLE
-    # Retrieve detailed page speed test information for a test
-    Get-StatusCakeHelperPageSpeedTest -Name "Example Page Speed Test" -Detailed
-.FUNCTIONALITY
-    Retrieves a specific StatusCake PageSpeed Test
+    C:\PS>Get-StatusCakeHelperPageSpeedTest -Name "Example Page Speed Test" -Detailed
+    Retrieve detailed page speed test information for a test called "Example Page Speed Test"
 
 #>
 function Get-StatusCakeHelperPageSpeedTest

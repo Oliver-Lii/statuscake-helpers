@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Create a StatusCake PageSpeed Test
+.SYNOPSIS
+    Create a StatusCake PageSpeed Test
+.DESCRIPTION
+    Creates a new StatusCake PageSpeed Test using the supplied parameters.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name for PageSpeed test
 .PARAMETER WebsiteURL
@@ -23,9 +25,11 @@
 .PARAMETER AlertSlower
     Time in ms, will alert to Contact Groups if actual time is slower
 .EXAMPLE
-   New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 3600 -LocationISO UK
-.FUNCTIONALITY
-   Creates a new StatusCake PageSpeed Test using the supplied parameters.
+    C:\PS>New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -LocationISO UK -AlertSlower 10000
+    Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page speed load time is slower than 10000ms
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -LocationISO UK -AlertSmaller 500
+    Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page load is less than 500kb
 #>
 function New-StatusCakeHelperPageSpeedTest
 {

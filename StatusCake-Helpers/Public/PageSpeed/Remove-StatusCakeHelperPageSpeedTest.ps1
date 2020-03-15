@@ -1,19 +1,20 @@
 
 <#
-.Synopsis
-   Remove a StatusCake PageSpeed Test
+.SYNOPSIS
+    Remove a StatusCake PageSpeed Test
+.DESCRIPTION
+    Deletes a StatusCake PageSpeed Test using the supplied ID or name.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name for PageSpeed test
 .PARAMETER ID
     ID of the PageSpeed Test to remove
 .PARAMETER Passthru
-    2-letter ISO code of the location. Valid values: AU, CA, DE, IN, NL, SG, UK, US, PRIVATE
+    Switch to return the deleted object.
 .EXAMPLE
-   Remove-StatusCakeHelperPageSpeedTest -ID 123456
-.FUNCTIONALITY
-   Deletes a StatusCake PageSpeed Test using the supplied ID.
+    C:\PS>Remove-StatusCakeHelperPageSpeedTest -ID 123456
+    Remove page speed test with id 123456
 #>
 function Remove-StatusCakeHelperPageSpeedTest
 {

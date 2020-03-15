@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Gets the history of a StatusCake PageSpeed Test
+.SYNOPSIS
+    Gets the history of a StatusCake PageSpeed Test
+.DESCRIPTION
+    Retrieves the history for a StatusCake PageSpeed Test. Use the Days parameter to specify the number of days which should be retrieved.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the PageSpeed test
 .PARAMETER ID
@@ -11,12 +13,13 @@
 .PARAMETER Days
     Amount of days to look up
 .EXAMPLE
-   Get-StatusCakeHelperPageSpeedTestHistory -id 123456
+    C:\PS>Get-StatusCakeHelperPageSpeedTestHistory -ID 123456
+    Retrieve the page speed test history for page speed test with id 123456
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperPageSpeedTestHistory -ID 123456 -Days 14
+    Retrieve 14 days page speed test history for page speed test with id 123456
 .OUTPUTS
     Returns a StatusCake PageSpeed Tests History as an object
-.FUNCTIONALITY
-    Retrieves the history for a StatusCake PageSpeed Test
-
 #>
 function Get-StatusCakeHelperPageSpeedTestHistory
 {

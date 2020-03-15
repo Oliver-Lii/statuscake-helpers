@@ -1,17 +1,19 @@
 
 <#
-.Synopsis
-   Retrieves the details of a StatusCake Page Speed Test
+.SYNOPSIS
+    Retrieves the details of a StatusCake Page Speed Test
+.DESCRIPTION
+    Retrieves StatusCake Detailed Page Speed Test Data via the Test ID
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER ID
     Test ID to retrieve detailed test data
 .EXAMPLE
-   Get-StatusCakeHelperPageSpeedTestDetail -ID 123456
+    C:\PS>Get-StatusCakeHelperPageSpeedTestDetail -ID 123456
+    Retrieve detailed page speed test data by ID 123456
 .OUTPUTS
     Returns the details of the page speed test
-.FUNCTIONALITY
-    Retrieves StatusCake Detailed Page Speed Test Data via the Test ID
+
 #>
 function Get-StatusCakeHelperPageSpeedTestDetail
 {

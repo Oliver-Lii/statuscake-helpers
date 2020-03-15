@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Copies the settings of a StatusCake Page Speed Test
+.SYNOPSIS
+    Copies the settings of a StatusCake Page Speed Test
+.DESCRIPTION
+    Creates a copy of a Page Speed Test. Supply a value for the WebsiteURL parameter to override the source URL.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the Page Speed Test to be copied
 .PARAMETER Id
@@ -13,9 +15,11 @@
 .PARAMETER WebsiteURL
     Name of the URL to be used in the copy of the test
 .EXAMPLE
-   Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy"
-.FUNCTIONALITY
-   Creates a copy of a Page Speed Test. Supply a value for the website_url parameter to override the source URL.
+    C:\PS>Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy"
+    Creates a copy of a page speed test called "Example" with name "Example - Copy"
+.EXAMPLE
+    C:\PS>Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy" -WebsiteURL "https://www.example.org"
+    Creates a copy of a page speed test called "Example" with name "Example - Copy" using the URL "https://www.example.org"
 #>
 function Copy-StatusCakeHelperPageSpeedTest
 {

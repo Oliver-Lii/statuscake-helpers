@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Updates a StatusCake PageSpeed Test
+.SYNOPSIS
+    Updates a StatusCake PageSpeed Test
+.DESCRIPTION
+    Set the details of a StatusCake PageSpeed Test using the supplied parameters. Values supplied overwrite existing values.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name for Page Speed test
 .PARAMETER Id
@@ -27,9 +29,8 @@
 .PARAMETER AlertSlower
     Time in ms, will alert to Contact Groups if actual time is slower
 .EXAMPLE
-   Set-StatusCakeHelperPageSpeedTest -ID 123456 -Checkrate 3600
-.FUNCTIONALITY
-   Set the details of a StatusCake PageSpeed Test using the supplied parameters.
+    C:\PS>Set-StatusCakeHelperPageSpeedTest -ID 123456 -Checkrate 1440
+    Modify the page speed test with id 123456 to be checked every 1440 minutes
 #>
 function Set-StatusCakeHelperPageSpeedTest
 {
