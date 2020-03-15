@@ -1,12 +1,13 @@
 <#
-.Synopsis
+.SYNOPSIS
    Retrieve the details of the StatusCake Probes from StatusCake's RSS feed
+.DESCRIPTION
+   Retrieves details of StatusCake probes from StatusCake's RSS feed sorted by Title
 .EXAMPLE
-   Get-StatusCakeHelperProbe
+   C:\PS>Get-StatusCakeHelperProbe
+   Retrieve all StatusCake probes
 .OUTPUTS
    StatusCakeProbes - Object containing details of the Status Cake probes
-.FUNCTIONALITY
-   Retrieves details of StatusCake probes from StatusCake's RSS feed sorted by Title
 #>
 function Get-StatusCakeHelperProbe
 {

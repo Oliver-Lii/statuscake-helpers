@@ -1,16 +1,24 @@
 
 <#
-.Synopsis
-   Retrieve the StatusCake Probe by AWS region
+.SYNOPSIS
+    Retrieve the StatusCake Probe by AWS region
+.DESCRIPTION
+    Retrieves the details of StatusCake probes nearest to a specific AWS region. If no object for StatusCake probe data is supplied the probe data is retrieved from StatusCake's RSS feed.
+    Probes can be filtered to probes which are up, down or either
+.PARAMETER AWSRegion
+    AWSRegion to retrieve probes for
+.PARAMETER StatusCakeProbeData
+    Supply StatusCakeProbeData if you wish to limit the probe data which should be searched
+.PARAMETER Status
+    Filter the probe status include probes which are up or down. Default will return both.
 .EXAMPLE
-   Get-StatusCakeHelperRegionProbe -AWSRegion "eu-west-1"
+    C:\PS>Get-StatusCakeHelperRegionProbe -AWSRegion "eu-west-1"
+    Retrieve StatusCake probes nearest to AWS Region eu-west-1
 .INPUTS
    AWSRegion - AWS region for which to retrieve StatusCake probes
    StatusCakeProbeData - (optional) Object containing data about the StatusCake probes
    Status - (optional) The status of the Probes you wish to retrieve
-.FUNCTIONALITY
-   Retrieves the deetails of StatusCake probes for a specific region from an object containing StatusCake Probe data
-   If no object for StatusCake probe data is supplied the probe data is retrieved from StatusCake's RSS feed
+
 #>
 function Get-StatusCakeHelperRegionProbe
 {
