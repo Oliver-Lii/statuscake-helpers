@@ -1,22 +1,26 @@
 
 <#
-.Synopsis
-   Retrieves alerts that have been sent in relation to tests setup on the account
+.SYNOPSIS
+    Retrieves alerts that have been sent in relation to tests setup on the account
+.DESCRIPTION
+    Returns alerts that have been sent for tests. The return order is newest alerts are shown first.
+    Alerts to be returned can be filtered by test using the TestID or TestName parameter and filtered by date using the Since parameter.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER TestID
-   ID of the Test to retrieve the sent alerts for
+    ID of the Test to retrieve the sent alerts for
 .PARAMETER TestName
-   Name of the Test to retrieve the sent alerts for
+    Name of the Test to retrieve the sent alerts for
 .PARAMETER Since
-   Supply to include results only since the specified date
+    Supply to include results only since the specified date
 .OUTPUTS
     Returns an object with the details on the Alerts Sent
 .EXAMPLE
-   Get-StatusCakeHelperSentAlerts -TestID 123456 -since "2017-08-19 13:29:49"
-.FUNCTIONALITY
-    Retrieves alerts that have been sent in regards to tests setup on the account
-
+   C:\PS> Get-StatusCakeHelperSentAlert
+   Return all the alerts sent for any test
+.EXAMPLE
+   C:\PS> Get-StatusCakeHelperSentAlert -TestID 123456 -since "2017-08-19 13:29:49"
+   Return all the alerts sent for test ID 123456 since the 19th August 2017 13:29:49
 #>
 function Get-StatusCakeHelperSentAlert
 {
