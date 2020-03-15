@@ -15,6 +15,9 @@
 .EXAMPLE
     C:\PS>Get-StatusCakeHelperPeriodOfData -TestID 123456
     Retrieve period of data for uptime test 123456
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperPeriodOfData -TestID 123456 -Additional
+    Retrieve period of data for uptime test 123456 including information about the downtime.
 .OUTPUTS
     Returns an object with the details the periods of data
 #>
