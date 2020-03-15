@@ -1,13 +1,14 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Tests whether StatusCake API Credentials have been configured
+.DESCRIPTION
+   Returns a boolean value depending on whether StatusCake API Credentials file for the module exists
 .EXAMPLE
-   Test-StatusCakeHelperAPIAuthSet
+   C:\PS> Test-StatusCakeHelperAPIAuthSet
+   Test whether the credential file exists
 .OUTPUTS
    Returns a boolean value
-.FUNCTIONALITY
-   Returns a boolean value depending on whether StatusCake API Credentials file for the module exists
 
 #>
 function Test-StatusCakeHelperAPIAuthSet
