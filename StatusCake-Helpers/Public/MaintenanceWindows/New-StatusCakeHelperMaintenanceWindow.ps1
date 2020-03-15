@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Create a StatusCake Maintenance Window
+.DESCRIPTION
+   Creates a new StatusCake Maintenance Window using the supplied parameters. Tests can be included in the maintenance window by either supplying the test IDs or test tags.
 .PARAMETER APICredential
    Credentials to access StatusCake API
 .PARAMETER Name
@@ -21,9 +23,14 @@
 .PARAMETER FollowDST
     Whether DST should be followed or not
 .EXAMPLE
-   New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestIDs @("123456")
-.FUNCTIONALITY
-   Creates a new StatusCake Maintenance Window using the supplied parameters. The raw_tests or raw_tags value must be provided to create a new maintenance window.
+   C:\PS>New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestIDs @("123456")
+   Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone for test ID 123456
+.EXAMPLE
+   C:\PS>New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestTags @("Tag1","Tag2")
+   Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone including tests which have tags "Tag1" and "Tag2"
+.EXAMPLE
+   C:\PS>New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestIDs @("123456") -RecurEvery 7
+   Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone for test ID 123456 recurring every 7 days
 #>
 function New-StatusCakeHelperMaintenanceWindow
 {

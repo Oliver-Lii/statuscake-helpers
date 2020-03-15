@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Updates a StatusCake Maintenance Window
+.DESCRIPTION
+   Updates the configuration of StatusCake Maintenance Window using the supplied parameters. You can only update a window which is in a pending state.
 .PARAMETER APICredential
    Credentials to access StatusCake API
 .PARAMETER Name
@@ -23,9 +25,9 @@
 .PARAMETER FollowDST
     Whether DST should be followed or not
 .EXAMPLE
-   Update-StatusCakeHelperMaintenanceWindow -ID 123456 -RecurEvery 30
-.FUNCTIONALITY
-   Updates the configuration of StatusCake Maintenance Window using the supplied parameters. You can only update a window which is in a pending state.
+   C:PS>Update-StatusCakeHelperMaintenanceWindow -ID 123456 -RecurEvery 30
+   Modify the maintenance window with ID 123456 to recur every 30 days
+
 #>
 function Update-StatusCakeHelperMaintenanceWindow
 {

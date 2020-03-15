@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Clears the tests associated with a StatusCake Maintenance Window
+.DESCRIPTION
+   Clears the tests and/or tags associated with a pending StatusCake Maintenance Window. You can only clear the test IDs/tags for a window which is in a pending state.
 .PARAMETER APICredential
    Credentials to access StatusCake API
 .PARAMETER Name
@@ -13,10 +15,11 @@
 .PARAMETER TestTags
     Flag to clear all tags of the tests to be included in a maintenance window
 .EXAMPLE
-    # Clear all test IDs associated with maintenance window 123456
-    Clear-StatusCakeHelperMaintenanceWindow -ID 123456 -TestIDs
-.FUNCTIONALITY
-   Clears the tests and/or tags associated with a pending StatusCake Maintenance Window. You can only clear the tests for a window which is in a pending state.
+    C:\PS>Clear-StatusCakeHelperMaintenanceWindow -ID 123456 -TestIDs
+    Clear all test IDs associated with maintenance window 123456
+.EXAMPLE
+    C:\PS>Clear-StatusCakeHelperMaintenanceWindow -ID 123456 -TestTags
+    Clear all test tags associated with maintenance window 123456
 #>
 function Clear-StatusCakeHelperMaintenanceWindow
 {

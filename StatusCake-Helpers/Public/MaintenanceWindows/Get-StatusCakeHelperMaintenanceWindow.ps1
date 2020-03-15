@@ -1,26 +1,25 @@
 
 <#
-.Synopsis
-   Gets a StatusCake Maintenance Window
+.SYNOPSIS
+    Gets a StatusCake Maintenance Window
+.DESCRIPTION
+    Retrieves StatusCake Maintenance Windows. If no id or name is supplied all maintenance windows are returned. Results can be filtered by maintenance window state.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the maintenance window to retrieve
 .PARAMETER ID
     ID of the maintenance window to retrieve
 .PARAMETER State
-    Filter results based on state
+    Filter results based on state. PND - Pending, ACT - Active, END - Ended, CNC - Cancelled
 .EXAMPLE
-    # Get all maintenance windows
-    Get-StatusCakeHelperMaintenanceWindow
+    C:\PS>Get-StatusCakeHelperMaintenanceWindow
+    Get all maintenance windows
 .EXAMPLE
-    # Get all pending maintenance windows
-    Get-StatusCakeHelperMaintenanceWindow -State PND
+    C:\PS>Get-StatusCakeHelperMaintenanceWindow -State PND
+    Get all maintenance windows in a pending state
 .OUTPUTS
     Returns StatusCake Maintenance Windows as an object
-.FUNCTIONALITY
-    Retrieves StatusCake Maintenance Windows by id or state.
-
 #>
 function Get-StatusCakeHelperMaintenanceWindow
 {

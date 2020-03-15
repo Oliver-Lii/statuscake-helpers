@@ -1,9 +1,12 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Remove a StatusCake Maintenance Window
+.DESCRIPTION
+    Deletes a StatusCake Maintenance Window using the supplied ID or name. If the series switch is not provided then the next window scheduled under the ID will be removed.
+    The entire series of windows can be removed if the series switch is provided.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     A descriptive name for the maintenance window
 .PARAMETER ID
@@ -15,13 +18,12 @@
 .PARAMETER Passthru
     Return the object to be deleted
 .EXAMPLE
-    # Remove the next pending maintenance window under id 123456
-    Remove-StatusCakeHelperMaintenanceWindow -ID 123456
+    C:\PS>Remove-StatusCakeHelperMaintenanceWindow -ID 123456
+    Remove the next pending maintenance window under id 123456
 .EXAMPLE
-    # Remove the series of maintenance windows scheduled under id 123456
-    Remove-StatusCakeHelperMaintenanceWindow -ID 123456 -Series
-.FUNCTIONALITY
-    Deletes a StatusCake Maintenance Window using the supplied ID.
+    C:\PS>Remove-StatusCakeHelperMaintenanceWindow -ID 123456 -Series
+    Remove the series of maintenance windows scheduled under id 123456
+
 #>
 function Remove-StatusCakeHelperMaintenanceWindow
 {
