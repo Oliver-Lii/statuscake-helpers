@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Retrieves a list of each period of data.
+.SYNOPSIS
+    Retrieves a list of each period of data.
+.DESCRIPTION
+    Retrieves a list of each period of data. A period of data is two time stamps in which status has remained the same, such as a period of downtime or uptime.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER TestID
     ID of the Test to retrieve the period of data for
 .PARAMETER TestName
@@ -11,13 +13,10 @@
 .PARAMETER Additional
     Flag to set to return information about the downtime. NOTE: This will slow down the query considerably.
 .EXAMPLE
-   Get-StatusCakeHelperPeriodOfData -TestID 123456
+    C:\PS>Get-StatusCakeHelperPeriodOfData -TestID 123456
+    Retrieve period of data for uptime test 123456
 .OUTPUTS
     Returns an object with the details the periods of data
-.FUNCTIONALITY
-    Retrieves a list of each period of data. A period of data is two time stamps
-    in which status has remained the same, such as a period of downtime or uptime.
-
 #>
 function Get-StatusCakeHelperPeriodOfData
 {
