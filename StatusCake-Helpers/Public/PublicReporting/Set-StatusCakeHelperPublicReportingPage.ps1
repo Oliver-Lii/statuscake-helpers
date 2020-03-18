@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Updates a StatusCake Public Reporting Page
+.SYNOPSIS
+    Updates a StatusCake Public Reporting Page
+.DESCRIPTION
+    Sets the configuration of StatusCake Public Reporting Page using the supplied parameters.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Title
     The title of the Public Reporting Page
 .PARAMETER CName
@@ -18,7 +20,7 @@
     Set to true to display uptime as colored orbs
 .PARAMETER SearchIndexing
     Set to false to disable search engine indexing
-.PARAMETER Sort_Alphabetical
+.PARAMETER SortAlphabetical
     Set to true to order tests by alphabetical name
 .PARAMETER TestTags
     Set to true to select tests by their tag, rather than ID
@@ -35,9 +37,8 @@
 .PARAMETER TitleColor
     HEX value for the header text colour
 .EXAMPLE
-   Set-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5 -DisplayOrbs $false
-.FUNCTIONALITY
-   Sets the configuration of StatusCake Public Reporting Page using the supplied parameters.
+    C:\PS>Set-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5 -DisplayOrbs $false
+    Update the public reporting page to display uptime figures instead of orbs
 #>
 function Set-StatusCakeHelperPublicReportingPage
 {

@@ -1,18 +1,18 @@
 
 <#
-.Synopsis
-   Retrieves a StatusCake Public Reporting Page
+.SYNOPSIS
+    Retrieves a StatusCake Public Reporting Page
+.DESCRIPTION
+    Retrieves StatusCake Detailed Public Reporting Page Data via the ID
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER ID
     ID of the public reporting page
 .EXAMPLE
-   Get-StatusCakeHelperPublicReportingPageDetail -ID a1b2c3d4
+    C:\PS>Get-StatusCakeHelperPublicReportingPageDetail -ID a1B2c3D4e5
+    Retrieve detailed information about the public reporting page with ID a1B2c3D4e5
 .OUTPUTS
     Returns the details of a StatusCake Public Reporting page
-.FUNCTIONALITY
-    Retrieves StatusCake Detailed Public Reporting Page Data via the ID
-
 #>
 function Get-StatusCakeHelperPublicReportingPageDetail
 {

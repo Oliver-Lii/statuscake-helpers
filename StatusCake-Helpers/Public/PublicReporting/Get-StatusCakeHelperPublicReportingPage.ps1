@@ -1,9 +1,12 @@
 
 <#
-.Synopsis
-   Retrieves a StatusCake Public Reporting Page
+.SYNOPSIS
+    Retrieves a StatusCake Public Reporting Page
+.DESCRIPTION
+    Retrieves all StatusCake Public Reporting Pages if no parameters supplied otherwise returns the specified public reporting page.
+    By default only standard information about a public reporting page is returned and more detailed information can be retrieved by using the detailed switch.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER ID
     ID of the public reporting page
 .PARAMETER Title
@@ -11,11 +14,13 @@
 .PARAMETER Detailed
     Retrieve detailed public reporting page data
 .EXAMPLE
-   Get-StatusCakeHelperPublicReportingPage -ID 123456
+    C:\PS>Get-StatusCakeHelperPublicReportingPage
+    Retrieve all public reporting pages
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5
+    Retrieve the public reporting page with ID a1B2c3D4e5
 .OUTPUTS
     Returns StatusCake Public Reporting Pages as an object
-.FUNCTIONALITY
-    Retrieves all StatusCake Public Reporting Pages if no parameters supplied otherwise returns the specified public reporting page.
 
 #>
 function Get-StatusCakeHelperPublicReportingPage

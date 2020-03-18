@@ -1,19 +1,23 @@
 
 <#
-.Synopsis
-   Copies the settings of a StatusCake Public Reporting Page
+.SYNOPSIS
+    Copies the settings of a StatusCake Public Reporting Page
+.DESCRIPTION
+    Creates a copy of a Public Reporting Page.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
-.PARAMETER Id
+    Credentials to access StatusCake API
+.PARAMETER ID
     ID of the Public Reporting Page to be copied
 .PARAMETER Title
     Name of the Public Reporting Page to be copied
 .PARAMETER NewTitle
     Name of the new Public Reporting Page
 .EXAMPLE
-   Copy-StatusCakeHelperPublicReportingPage -Name "Example" -NewTitle "Example - Copy"
-.FUNCTIONALITY
-   Creates a copy of a Public Reporting Page.
+    C:\PS>Copy-StatusCakeHelperPublicReportingPage -Name "Example" -NewTitle "Example - Copy"
+    Creates a copy of a public reporting page called "Example" with name "Example - Copy"
+.EXAMPLE
+    C:\PS>Copy-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5 -NewTitle "Example - Copy"
+    Creates a copy of a public reporting page with ID a1B2c3D4e5 with name "Example - Copy"
 #>
 function Copy-StatusCakeHelperPublicReportingPage
 {

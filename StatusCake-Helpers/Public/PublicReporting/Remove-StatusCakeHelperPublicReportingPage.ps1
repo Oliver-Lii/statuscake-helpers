@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Remove a StatusCake Public Reporting Page
+.DESCRIPTION
+   Deletes a StatusCake Public Reporting page using the supplied ID.
 .PARAMETER APICredential
    Credentials to access StatusCake API
 .PARAMETER ID
@@ -11,9 +13,12 @@
 .PARAMETER Passthru
     Return the object to be deleted
 .EXAMPLE
-   Remove-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5
-.FUNCTIONALITY
-   Deletes a StatusCake Public Reporting page using the supplied ID.
+   C:\PS>Remove-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5
+   Delete the public reporting page with ID a1B2c3D4e5
+.EXAMPLE
+   C:\PS>Remove-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page"
+   Delete the public reporting page called "Example.com Public Reporting Page"
+
 #>
 function Remove-StatusCakeHelperPublicReportingPage
 {

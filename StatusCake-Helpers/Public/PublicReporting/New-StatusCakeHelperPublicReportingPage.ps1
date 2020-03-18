@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Create a StatusCake Public Reporting Page
+.SYNOPSIS
+    Create a StatusCake Public Reporting Page
+.DESCRIPTION
+    Creates a new StatusCake Public Reporting Page using the supplied parameters.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Title
     The title of the Public Reporting Page
 .PARAMETER CName
@@ -35,9 +37,17 @@
 .PARAMETER TitleColor
     HEX value for the header text colour
 .EXAMPLE
-   New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page"
-.FUNCTIONALITY
-   Creates a new StatusCake Public Reporting Page using the supplied parameters.
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page"
+    Create a public reporting page called "Example.com Public Reporting Page" with no associated tests
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page" -TestIDs @(123456)
+    Create a public reporting page called "Example.com Public Reporting Page" for test ID 123456
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page" -TestTags @("Example","Example Page")
+    Create a public reporting page called "Example.com Public Reporting Page" for tests which have the tags "Example" and "Example Page"
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page" -TestTags @("Example","Example Page") -TagsInclusive
+    Create a public reporting page called "Example.com Public Reporting Page" for tests which have one or more of the tags "Example" or "Example Page"
 #>
 function New-StatusCakeHelperPublicReportingPage
 {
