@@ -14,11 +14,6 @@
 .EXAMPLE
     C:\PS>Get-StatusCakeHelperRegionProbe -AWSRegion "eu-west-1"
     Retrieve StatusCake probes nearest to AWS Region eu-west-1
-.INPUTS
-   AWSRegion - AWS region for which to retrieve StatusCake probes
-   StatusCakeProbeData - (optional) Object containing data about the StatusCake probes
-   Status - (optional) The status of the Probes you wish to retrieve
-
 #>
 function Get-StatusCakeHelperRegionProbe
 {
