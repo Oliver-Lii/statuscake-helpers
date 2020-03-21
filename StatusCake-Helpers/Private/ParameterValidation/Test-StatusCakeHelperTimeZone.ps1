@@ -1,16 +1,18 @@
 
 <#
-.Synopsis
-   Tests to confirm that a supplied TimeZone is valid
+.SYNOPSIS
+    Tests to confirm that a supplied TimeZone is valid
+.DESCRIPTION
+    Tests to confirm that a supplied TimeZone is valid
+.PARAMETER TimeZone
+    TimeZone string to test is valid
+.PARAMETER TimeZoneFile
+    Path to JSON file containing valid timezones
 .EXAMPLE
-   Test-StatusCakeHelperTimeZone
-.INPUTS
-    StatusCode - String containing the TimeZone
+    C:\PS>"UTC" | Test-StatusCakeHelperTimeZone
+    Test if UTC is a valid time zone
 .OUTPUTS
     Returns true if Time Zone is valid
-.FUNCTIONALITY
-   Tests to confirm that a supplied TimeZone is valid
-
 #>
 function Test-StatusCakeHelperTimeZone
 {

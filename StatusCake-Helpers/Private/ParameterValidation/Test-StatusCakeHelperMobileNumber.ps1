@@ -1,16 +1,16 @@
 
 <#
-.Synopsis
-   Tests to confirm that a supplied mobile number is valid
+.SYNOPSIS
+    Tests to confirm that a supplied phone number has a valid phone number format
+.DESCRIPTION
+    Tests to confirm that a supplied phone number is in the E.164 phone number format
+.PARAMETER MobileNumber
+    String containing phone number
 .EXAMPLE
-   Test-StatusCakeHelperMobileNo "test@example.com"
-.INPUTS
-    MobileNumber - String containing mobile number
+    C:\PS>"+1023456789" | Test-StatusCakeHelperMobileNumber
+    Test to confirm that "+1023456789" is in E.164 phone number format
 .OUTPUTS
     Returns true if mobile number is valid
-.FUNCTIONALITY
-   Tests to confirm that a supplied mobile number meets the E.164 number formatting
-
 #>
 function Test-StatusCakeHelperMobileNumber
 {

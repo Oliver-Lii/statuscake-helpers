@@ -1,16 +1,16 @@
 
 <#
-.Synopsis
-   Tests to confirm that a supplied HTTP Status Code is valid
+.SYNOPSIS
+    Tests to confirm that a supplied HTTP Status Code is valid
+.DESCRIPTION
+    Tests to confirm that a supplied HTTP Status Code is valid
+.PARAMETER StatusCode
+    StatusCode to test is valid
 .EXAMPLE
-   Test-StatusCakeHelperStatusCode [string]
-.INPUTS
-    StatusCode - String containing the HTTP StatusCode
+    C:\PS>"404" | Test-StatusCakeHelperStatusCode
+    Test if the value 404 is a valid status code
 .OUTPUTS
     Returns true if HTTP Status Code code is valid
-.FUNCTIONALITY
-   Tests to confirm that a supplied HTTP Status Code is valid
-
 #>
 function Test-StatusCakeHelperStatusCode
 {

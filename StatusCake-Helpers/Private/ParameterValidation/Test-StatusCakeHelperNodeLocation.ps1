@@ -1,16 +1,16 @@
 
 <#
-.Synopsis
-   Tests to confirm that a supplied node location is valid
+.SYNOPSIS
+    Tests to confirm that a supplied node location is valid
+.DESCRIPTION
+    Tests to confirm that a supplied node location server code is valid. Test is carried out by retrieving the list of all probes and verifying the string is present in the list.
+.PARAMETER NodeLocation
+    Node location server code to validate
 .EXAMPLE
-   Test-StatusCakeHelperNodeLocation [string]
-.INPUTS
-    NodeLocations - String containing the node location server code
+    C:\PS>"EU1" | Test-StatusCakeHelperNodeLocation
+    Test if "EU1" is a valid StatusCake node location
 .OUTPUTS
     Returns true if node location server code is valid
-.FUNCTIONALITY
-   Tests to confirm that a supplied node location server code is valid
-
 #>
 function Test-StatusCakeHelperNodeLocation
 {
