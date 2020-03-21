@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Set the configuration of a StatusCake test
+.DESCRIPTION
+    Sets the test based on the supplied values.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestName
@@ -71,9 +73,8 @@
 .PARAMETER WebsiteHost
     Used internally by StatusCake. Company which hosts the site being tested.
 .EXAMPLE
-    Set-StatusCakeHelperTest -TestID "123456" -TestName "http://www.example.com"
-.FUNCTIONALITY
-    Sets the test based on the supplied values
+    C:\PS>Set-StatusCakeHelperTest -TestID "123456" -TestName "http://www.example.com"
+    Change the name of test ID 123456 to "http://www.example.com"
 #>
 function Set-StatusCakeHelperTest
 {

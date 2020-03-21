@@ -1,7 +1,10 @@
 
 <#
-.Synopsis
-   Retrieves all the StatusCake Tests that have been paused more than the specified time unit
+.SYNOPSIS
+    Retrieves all the StatusCake Tests that have been paused more than the specified time unit
+.DESCRIPTION
+    Retrieves all the tests from StatusCake that are paused and have been tested longer than
+    the supplied parameters. Defaults to returning tests that have been paused more than 24 hours.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER Days
@@ -15,12 +18,10 @@
 .PARAMETER ExcludeTested
     If set tests that have been tested will be excluded
 .EXAMPLE
-   Get-StatusCakeHelperPausedTest
+    C:\PS>Get-StatusCakeHelperPausedTest
+    Get all tests paused longer than a day
 .OUTPUTS
     Returns an object with the StatusCake Detailed Test data
-.FUNCTIONALITY
-    Retrieves all the tests from StatusCake that are paused and have been tested longer than
-    the supplied parameters. Defaults to returning tests that have been paused more than 24 hours.
 
 #>
 function Get-StatusCakeHelperPausedTest

@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
-   Remove HTTP status codes from a StatusCake test
+.SYNOPSIS
+    Remove HTTP status codes from a StatusCake test
+.DESCRIPTION
+    Remove HTTP Status Codes from an existing test.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
@@ -11,9 +13,8 @@
 .PARAMETER StatusCodes
     Array of status codes to be removed
 .EXAMPLE
-   Remove-StatusCakeHelperTestStatusCodes -TestID "123456" -StatusCodes @("401","404")
-.FUNCTIONALITY
-    Remove HTTP Status Codes from an existing test.
+    C:\PS>Remove-StatusCakeHelperTestStatusCodes -TestID "123456" -StatusCodes @("401","404")
+    Remove status codes 401 and 404 from test with ID 123456
 
 #>
 function Remove-StatusCakeHelperTestStatusCode

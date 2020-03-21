@@ -1,8 +1,10 @@
 
 
 <#
-.Synopsis
-   Removes the specified StatusCake Test
+.SYNOPSIS
+    Removes the specified StatusCake Test
+.DESCRIPTION
+    Removes the StatusCake test via it's Test ID or name
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
@@ -12,11 +14,11 @@
 .PARAMETER PassThru
     Return the object that is removed
 .EXAMPLE
-   Remove-StatusCakeHelperTest -TestID 123456
+    C:\PS>Remove-StatusCakeHelperTest -TestID 123456
+    Delete the StatusCake test with ID 123456
 .OUTPUTS
     Returns the result of the test removal as an object
-.FUNCTIONALITY
-    Removes the StatusCake test via it's Test ID or name
+
 
 #>
 function Remove-StatusCakeHelperTest

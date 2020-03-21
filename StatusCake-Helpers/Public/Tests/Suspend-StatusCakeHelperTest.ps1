@@ -1,19 +1,18 @@
 
 <#
-.Synopsis
-   Pauses a StatusCake test check
+.SYNOPSIS
+    Pauses a StatusCake test check
+.DESCRIPTION
+    Pauses a test.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
     ID of the Test to be removed from StatusCake
 .PARAMETER TestName
     Name of the Test to be removed from StatusCake
-.PARAMETER TestTags
-    Array of tags to be removed
 .EXAMPLE
-   Suspend-StatusCakeHelperTest -TestName "Example"
-.FUNCTIONALITY
-   Pauses a test.
+    C:\PS>Suspend-StatusCakeHelperTest -TestName "Example"
+    Pauses the test called "Example"
 #>
 function Suspend-StatusCakeHelperTest
 {

@@ -1,6 +1,9 @@
 <#
-.Synopsis
-   Create a StatusCake test check
+.SYNOPSIS
+    Create a StatusCake test check
+.DESCRIPTION
+    Creates a new StatusCake Test using the supplied parameters. Only parameters which have been supplied values are set
+    and the defaults for a particular test type are used otherwise.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestName
@@ -8,7 +11,7 @@
 .PARAMETER TestURL
     Test location, either an IP (for TCP and Ping) or a fully qualified URL for other TestTypes
 .PARAMETER CheckRate
-    The interval in seconds between checks
+    The interval in seconds between checks. Default is 300 seconds. Valid values are between 0 and 24000 seconds
 .PARAMETER TestType
     The type of test to create. Valid options are "HTTP","TCP","PING","DNS"
 .PARAMETER BasicUser
@@ -58,9 +61,9 @@
 .PARAMETER Tags
     Array of tags to assign to a test
 .PARAMETER Timeout
-    Time in seconds before a test times out
+    Time in seconds before a test times out. Valid values are between 5 and 100 seconds
 .PARAMETER TriggerRate
-    How many minutes to wait before sending an alert
+    How many minutes to wait before sending an alert. Valid values are between 0 and 60 minutes
 .PARAMETER UseJar
     Set to 1 to enable the Cookie Jar. Required for some redirects.
 .PARAMETER UserAgent
@@ -70,10 +73,8 @@
 .PARAMETER WebsiteHost
     Used internally by StatusCake. Company which hosts the site being tested.
 .EXAMPLE
-   New-StatusCakeHelperTest -TestName "Example" -TestURL "http://www.example.com" -TestType HTTP -CheckRate 300
-.FUNCTIONALITY
-   Creates a new StatusCake Test using the supplied parameters. Only parameters which have been supplied values are set
-   and the defaults for a particular test type are used otherwise.
+    C:\PS>New-StatusCakeHelperTest -TestName "Example" -TestURL "http://www.example.com" -TestType HTTP -CheckRate 300
+    Create a HTTP test called "Example" with URL http://www.example.com checking every 300 seconds
 #>
 function New-StatusCakeHelperTest
 {

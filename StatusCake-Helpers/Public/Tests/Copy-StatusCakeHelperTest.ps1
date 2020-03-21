@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
-   Copies the settings of a StatusCake test check
+.SYNOPSIS
+    Copies the settings of a StatusCake test check
+.DESCRIPTION
+    Creates a copy of a test. Supply the TestURL or Paused parameter to override the original values in the source test.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestName
@@ -15,9 +17,8 @@
 .PARAMETER Paused
     If supplied sets the state of the test should be after it is copied.
 .EXAMPLE
-   Copy-StatusCakeHelperTest -TestName "Example" -NewTestName "Example - Copy"
-.FUNCTIONALITY
-   Creates a copy of a test. Supply the TestURL or Paused parameter to override the original values in the source test.
+    C:\PS>Copy-StatusCakeHelperTest -TestName "Example" -NewTestName "Example - Copy"
+    Create a copy of test "Example" with name "Example - Copy"
 #>
 function Copy-StatusCakeHelperTest
 {

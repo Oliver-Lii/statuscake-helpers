@@ -1,19 +1,18 @@
 
 <#
-.Synopsis
-   Resumes a StatusCake test check
+.SYNOPSIS
+    Resumes a StatusCake test check
+.DESCRIPTION
+    Resumes a test
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
     ID of the Test to be removed from StatusCake
 .PARAMETER TestName
     Name of the Test to be removed from StatusCake
-.PARAMETER TestTags
-    Array of tags to be removed
 .EXAMPLE
-   Resumes-StatusCakeHelperTest -TestName "Example"
-.FUNCTIONALITY
-   Resumes a test.
+    C:\PS>Resume-StatusCakeHelperTest -TestName "Example"
+    Unpause the test called "Example"
 #>
 function Resume-StatusCakeHelperTest
 {

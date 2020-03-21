@@ -1,7 +1,10 @@
 
 <#
-.Synopsis
-   Remove node locations from a StatusCake test
+.SYNOPSIS
+    Remove node locations from a StatusCake test
+.DESCRIPTION
+    Remove node location(s) to a existing test. The supplied node location is tested against a list of the node location server codes to determine if it is valid.
+    Server codes can be retrieved via the Get-StatusCakeHelperProbe command and checking the servercode property of the returned objects.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
@@ -13,9 +16,8 @@
 .PARAMETER PassThru
     Return the object that is removed
 .EXAMPLE
-   Remove-StatusCakeHelperTestNodeLocation -TestID "123456" -NodeLocations @("EU1","EU2")
-.FUNCTIONALITY
-    Remove node location(s) to a existing test. The supplied node location is tested against a list of the node location server codes to determine if it is valid
+    C:\PS>Remove-StatusCakeHelperTestNodeLocation -TestID "123456" -NodeLocations @("EU1","EU2")
+    Remove node locations EU1 and EU2 from test with ID 123456
 
 #>
 function Remove-StatusCakeHelperTestNodeLocation

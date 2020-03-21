@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
-   Retrieves a StatusCake Test with a specific name or Test ID
+.SYNOPSIS
+    Retrieves a StatusCake Test with a specific name or Test ID
+.DESCRIPTION
+    Retrieves StatusCake Test via the test name of the test or Test ID
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestName
@@ -19,11 +21,13 @@
 .PARAMETER MatchAny
     Match tests which have any of the supplied tags (true) or all of the supplied tags (false)
 .EXAMPLE
-   Get-StatusCakeHelperTest -testID 123456
+    C:\PS>Get-StatusCakeHelperTest
+    Retrieve all tests
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperTest -testID 123456
+    Retrieve the test with ID 123456
 .OUTPUTS
-    Returns the details of the test which exists returning $null if no matching test
-.FUNCTIONALITY
-    Retrieves StatusCake Test via the test name of the test or Test ID
+    Returns the test which exists returning $null if no matching test
 #>
 function Get-StatusCakeHelperTest
 {

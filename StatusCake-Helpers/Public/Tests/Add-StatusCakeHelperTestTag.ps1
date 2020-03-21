@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
-   Add tags to a StatusCake test
+.SYNOPSIS
+    Add tags to a StatusCake test
+.DESCRIPTION
+    Add tag(s) to a existing test.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
@@ -13,10 +15,8 @@
 .PARAMETER TestTags
     Array of tags to add
 .EXAMPLE
-   Add-StatusCakeHelperTestTags -TestID "123456" -TestTags @("Tag1","Tag2")
-.FUNCTIONALITY
-    Add tag(s) to a existing test.
-
+    C:\PS>Add-StatusCakeHelperTestTags -TestID "123456" -Tags @("Tag1","Tag2")
+    Add tags Tag1 and Tag2 to test with ID 123456
 #>
 function Add-StatusCakeHelperTestTag
 {

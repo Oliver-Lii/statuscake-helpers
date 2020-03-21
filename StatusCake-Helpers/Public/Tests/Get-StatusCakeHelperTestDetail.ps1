@@ -1,17 +1,19 @@
 
 <#
-.Synopsis
-   Retrieves a StatusCake Test with a Test ID
+.SYNOPSIS
+    Retrieves a StatusCake Test with a Test ID
+.DESCRIPTION
+    Retrieves StatusCake Detailed Test Data via the Test ID
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
     Test ID to retrieve detailed test data
 .EXAMPLE
-   Get-StatusCakeHelperTestDetail -testID 123456
+    C:\PS>Get-StatusCakeHelperTestDetail -testID 123456
+    Retrieve detailed test information for test with ID 123456
 .OUTPUTS
-    Returns the details of the test
-.FUNCTIONALITY
-    Retrieves StatusCake Detailed Test Data via the Test ID
+    Returns detailed test information
+
 #>
 function Get-StatusCakeHelperTestDetail
 {

@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
-   Add additional HTTP status codes to alert on to a StatusCake test
+.SYNOPSIS
+    Add additional HTTP status codes to alert on to a StatusCake test
+.DESCRIPTION
+    Add additional HTTP StatusCodes to alert on to an existing test.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
@@ -11,10 +13,8 @@
 .PARAMETER StatusCodes
     Array of status codes to be added.
 .EXAMPLE
-   Add-StatusCakeHelperTestStatusCode -TestID "123456" -StatusCodes @(206,207)
-.FUNCTIONALITY
-    Add additional HTTP StatusCodes to alert on to an existing test.
-
+    C:\PS>Add-StatusCakeHelperTestStatusCode -TestID "123456" -StatusCodes @(206,207)
+    Add status codes 206 and 207 to test with ID 123456
 #>
 function Add-StatusCakeHelperTestStatusCode
 {

@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Remove tag(s) from a StatusCake test
+.DESCRIPTION
+    Remove tag(s) from an existing test.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
@@ -11,9 +13,8 @@
 .PARAMETER TestTags
     Array of tags to be removed
 .EXAMPLE
-   Remove-StatusCakeHelperTestTags -TestID "123456" -TestTags @("Tag1","Tag2")
-.FUNCTIONALITY
-    Add tag(s) to a existing test.
+    C:\PS>Remove-StatusCakeHelperTestTags -TestID "123456" -TestTags @("Tag1","Tag2")
+    Remove tags Tag1 and Tag2 from test with ID 123456
 
 #>
 function Remove-StatusCakeHelperTestTag

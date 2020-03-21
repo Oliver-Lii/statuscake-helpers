@@ -1,7 +1,10 @@
 
 <#
-.Synopsis
-   Add node locations to a StatusCake test
+.SYNOPSIS
+    Add node locations to a StatusCake test
+.DESCRIPTION
+    Add node location(s) to a existing test. The supplied node location is tested against a list of the node location server codes to determine if it is valid.
+    Server codes can be retrieved via the Get-StatusCakeHelperProbe command and checking the servercode property of the returned objects.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER TestID
@@ -13,9 +16,8 @@
 .PARAMETER NodeLocations
     Array of test locations to be added. Test location servercodes are required
 .EXAMPLE
-   Add-StatusCakeHelperTestNodeLocation -TestID "123456" -NodeLocations @("EU1","EU2")
-.FUNCTIONALITY
-    Add node location(s) to a existing test. The supplied node location is tested against a list of the node location server codes to determine if it is valid
+    C:\PS>Add-StatusCakeHelperTestNodeLocation -TestID "123456" -NodeLocations @("EU1","EU2")
+    Add node locations EU1 and EU2 to test with ID 123456
 
 #>
 function Add-StatusCakeHelperTestNodeLocation
