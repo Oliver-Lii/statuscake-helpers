@@ -1,13 +1,14 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Gets the StatusCake API Username and API Key
+.DESCRIPTION
+   Returns a PSCredential object containing the StatusCake API Credential
 .PARAMETER Credential
    Credential object should not be passed to function but set using Set-StatusCakeHelperAPIAuth
 .EXAMPLE
-   Get-StatusCakeHelperAPIAuth
-.FUNCTIONALITY
-   Returns a PSCredential object containing the StatusCake API Credential
+   C:\PS>Get-StatusCakeHelperAPIAuth
+   Retrieve the credential from the session if available or from the credential file if credentials have not been set for the session.
 
 #>
 function Get-StatusCakeHelperAPIAuth

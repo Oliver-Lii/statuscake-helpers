@@ -1,15 +1,16 @@
 
 <#
-.Synopsis
-   Converts a PSCustomObject to a hashtable
+.SYNOPSIS
+    Converts a PSCustomObject to a hashtable
+.DESCRIPTION
+    Converts a PSCustomObject to a hashtable.
 .PARAMETER PSCustomObject
     PSCustomObject to be converted
 .PARAMETER IncludeNull
     Flag to include properties with null values in returned hashtable
 .EXAMPLE
-   $PSCustomObject | ConvertTo-StatusCakeHelperHashtableFromPSCustomObject
-.FUNCTIONALITY
-   Converts a PSCustomObject to a hashtable
+    C:\PS>$PSCustomObject | ConvertTo-StatusCakeHelperHashtableFromPSCustomObject
+    Convert a PSCustomObject into a hashtable
 #>
 function ConvertTo-StatusCakeHelperHashtableFromPSCustomObject
 {

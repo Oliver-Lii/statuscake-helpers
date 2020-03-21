@@ -1,13 +1,14 @@
 
 <#
-.Synopsis
-   Converts a string parameter to a domain name
+.SYNOPSIS
+    Converts a string parameter to a domain name
+.DESCRIPTION
+    Converts a string parameters to a domain name.
+.PARAMETER InputString
+    String containing the URL to convert to a domain name
 .EXAMPLE
-   ConvertTo-StatusCakeHelperDomainName -InputString [string]
-.INPUTS
-    InputString - String containing the value to convert to a domain name
-.FUNCTIONALITY
-   Converts a string parameters to a domain name.
+    C:\PS>"https://www.example.com" | ConvertTo-StatusCakeHelperDomainName
+    Convert the URL https://www.example.com into domain www.example.com
 #>
 function ConvertTo-StatusCakeHelperDomainName
 {

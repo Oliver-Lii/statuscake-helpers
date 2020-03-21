@@ -1,13 +1,13 @@
 <#
-.Synopsis
+.SYNOPSIS
+   Converts a hashtable of parameters to the format expected by the StatusCake API
+.DESCRIPTION
    Converts a hashtable of parameters to the format expected by the StatusCake API
 .PARAMETER InputHashTable
    Hashtable containing the values to pass to the StatusCake API
 .EXAMPLE
-   ConvertTo-StatusCakeHelperAPIParameter -InputHashTable [hashtable]
-
-.FUNCTIONALITY
-   Converts a hashtable of parameters to the format expected by the StatusCake API
+   C:\PS>$inputHashtable | ConvertTo-StatusCakeHelperAPIParameter
+   Convert values of a hashtable into values expected by StatusCake API
 #>
 function ConvertTo-StatusCakeHelperAPIParameter
 {

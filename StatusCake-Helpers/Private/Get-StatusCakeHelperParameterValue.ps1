@@ -1,12 +1,15 @@
 <#
-.Synopsis
-   Combines the default parameter values with the parameters from bound parameters
+.SYNOPSIS
+    Get the all the parameter which have values
+.DESCRIPTION
+    Combines the default parameter values with the parameters from bound parameters excluding any null parameters
 .PARAMETER InvocationInfo
-   InvocationInfo object supplied by the calling function
+    InvocationInfo object supplied by the calling function
 .PARAMETER BoundParameters
-   The $PSBoundParameters hashtable supplied by the calling function
+    The $PSBoundParameters hashtable supplied by the calling function
 .EXAMPLE
-   $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    C:\PS>$MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    Get all the parameters which values from $MyInvocation and $PSBoundParameter objects
 .OUTPUTS
     Returns a hashtable with all parameters which are bound or have non-null defaults
 #>

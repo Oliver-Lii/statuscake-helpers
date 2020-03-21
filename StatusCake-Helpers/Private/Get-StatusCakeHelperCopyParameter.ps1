@@ -1,15 +1,17 @@
 
 <#
-.Synopsis
+.SYNOPSIS
     Returns the parameters which can be copied from an object
+.DESCRIPTION
+    Returns the properties and values of a StatusCake object which be set via the API. Not all parameters returned by StatusCake can by set via the API.
+    The properties of the statuscake object are compared against the parameter names and aliases on the supplied function name.
 .PARAMETER InputObject
     StatusCake Object to be copied
 .PARAMETER FunctionName
     Name of the function for which the parameters need to be copied
 .EXAMPLE
-    $statusCakeObject | Get-StatusCakeHelperCopyParameter -FunctionName "Get-StatusCakeHelperTest"
-.FUNCTIONALITY
-    Returns the properties and values of a StatusCake object which be set via the API. Not all parameters returned by StatusCake can by set via the API.
+    C:\PS>$statusCakeObject | Get-StatusCakeHelperCopyParameter -FunctionName "New-StatusCakeHelperSSLTest"
+    Return a hashtable of available parameters from the New-StatusCakeHelperSSLTest function
 #>
 function Get-StatusCakeHelperCopyParameter
 {

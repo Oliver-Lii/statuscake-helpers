@@ -1,18 +1,21 @@
 <#
-.Synopsis
-   Retrieves the StatusCake API parameters modifying specified parameters
+.SYNOPSIS
+    Retrieves the StatusCake API parameters
+.DESCRIPTION
+    Retrieves the StatusCake API parameter names from the parameter aliases defined in the function
 .PARAMETER InputHashTable
-   Hashtable containing the values to pass to the StatusCake API
+    Hashtable containing the values to pass to the StatusCake API
 .PARAMETER InvocationInfo
-   InvocationInfo object from the calling function
+    InvocationInfo object from the calling function
 .PARAMETER Clear
-   Array of values which should be sent empty to StatusCake API
+    Array of values which should be sent empty to StatusCake API
 .PARAMETER Join
-   Hashtable containing values which need to be joined by specific separator
-.PARAMETER Rename
-   Hashtable containing values which need to be renamed to the expected values by StatusCake API
+    Hashtable containing values which need to be joined by specific separator
 .PARAMETER ToLowerName
-   Parameter names not aliased which need to be lower case
+    Parameter names not aliased which need to be lower case
+.EXAMPLE
+    C:\PS>$allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation
+    Retrieve the StatusCake API parameter names from the supplied invocation object
 #>
 Function Get-StatusCakeHelperAPIParameter
 {
