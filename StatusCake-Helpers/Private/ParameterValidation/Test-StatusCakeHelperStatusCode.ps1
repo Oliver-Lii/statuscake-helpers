@@ -22,7 +22,7 @@ function Test-StatusCakeHelperStatusCode
         [string] $StatusCode
     )
 
-    if($StatusCode -match '^[1-5]{1}[0-5]{1}[0-9]{1}$')
+    if($StatusCode -match '^[1-5]{1}[0-9]{1}[0-9]{1}$')
     {
         Return $true
     }
