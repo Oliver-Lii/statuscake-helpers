@@ -1,7 +1,9 @@
 
 <#
-.Synopsis
-   Remove a StatusCake SSL Test
+.SYNOPSIS
+    Remove a StatusCake SSL Test
+.DESCRIPTION
+    Deletes a StatusCake SSL Test using the supplied ID.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER Domain
@@ -11,9 +13,9 @@
 .PARAMETER PassThru
     Return the object that is removed
 .EXAMPLE
-   Remove-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -ID 123456
-.FUNCTIONALITY
-   Deletes a StatusCake SSL Test using the supplied ID.
+    C:\PS>Remove-StatusCakeHelperSSLTest -ID 123456
+    Remove the SSL Test with ID 123456
+
 #>
 function Remove-StatusCakeHelperSSLTest
 {

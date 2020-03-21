@@ -1,19 +1,21 @@
 
 <#
-.Synopsis
-   Create a StatusCake SSL Test
+.SYNOPSIS
+    Create a StatusCake SSL Test
+.DESCRIPTION
+    Creates a new StatusCake SSL Test using the supplied parameters. Default settings for a SSL test will check a URL every day with alerts sent at 7, 14 and 30 days.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER Domain
-    Name of the test to retrieve
+    URL to check
 .PARAMETER ID
     Test ID to retrieve
 .PARAMETER Checkrate
-    Checkrate in seconds
+    Checkrate in seconds. Default is 86400 seconds (1 day). Options are 300 (5 minutes), 600 (10 minutes), 1800 (30 minutes), 3600 (1 hour), 86400 (1 day), 2073600 (24 days)
 .PARAMETER ContactIDs
     Array containing contact IDs to alert.
 .PARAMETER AlertAt
-    Number of days before expiration when reminders will be sent. Defaults to reminders at 60, 30 and 7 days. Must be 3 numeric values.
+    Number of days before expiration when reminders will be sent. Defaults to reminders at 30, 14 and 7 days. Must be 3 numeric values.
 .PARAMETER AlertExpiry
     Set to true to enable expiration alerts. False to disable
 .PARAMETER AlertReminder
@@ -23,9 +25,11 @@
 .PARAMETER AlertMixed
     Set to true to enable mixed content alerts. False to disable
 .EXAMPLE
-   New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -checkrate 3600
-.FUNCTIONALITY
-   Creates a new StatusCake SSL Test using the supplied parameters.
+    C:\PS>New-StatusCakeHelperSSLTest -Domain "https://www.example.com"
+    Create a new SSL Test to check https://www.example.com every day
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -AlertAt ("14","30","60")
+    Create a new SSL Test to check https://www.example.com every day with alerts sent at 14, 30 and 60 days.
 #>
 function New-StatusCakeHelperSSLTest
 {
@@ -38,13 +42,11 @@ function New-StatusCakeHelperSSLTest
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         [string]$Domain,
 
-        #Contact_Groups must be supplied
         [Alias('contact_groups')]
         [int[]]$ContactIDs,
 
-        [Parameter(Mandatory=$true)]
         [ValidateSet("300","600","1800","3600","86400","2073600")]
-        [int]$Checkrate,
+        [int]$Checkrate=86400,
 
         [Alias('alert_at')]
         [ValidateCount(3,3)]

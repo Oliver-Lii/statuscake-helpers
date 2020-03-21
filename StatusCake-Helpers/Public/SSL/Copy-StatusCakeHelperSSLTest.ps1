@@ -1,9 +1,11 @@
 
 <#
-.Synopsis
-   Copies the settings of a StatusCake SSL Test
+.SYNOPSIS
+    Copies the settings of a StatusCake SSL Test
+.DESCRIPTION
+    Creates a copy of a SSL Test.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Id
     ID of the SSL Test to be copied
 .PARAMETER Domain
@@ -13,9 +15,8 @@
 .PARAMETER Checkrate
     Checkrate in seconds. Default is one day.
 .EXAMPLE
-   Copy-StatusCakeHelperSSLTest -Name "Example" -NewName "Example - Copy"
-.FUNCTIONALITY
-   Creates a copy of a SSL Test. The check rate is not returned when retrieving a test and a copy defaults to check the SSL test once a day.
+    C:\PS>Copy-StatusCakeHelperSSLTest -Domain "https://www.example.com" -NewDomain "https://www.example.org"
+    Create a copy of the SSL test with domain "https://www.example.com" for domain "https://www.example.org"
 #>
 function Copy-StatusCakeHelperSSLTest
 {

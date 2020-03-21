@@ -1,20 +1,23 @@
 
 <#
-.Synopsis
+.SYNOPSIS
     Gets a StatusCake SSL Test
-.EXAMPLE
-    Get-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -id 123456
+.DESCRIPTION
+    Retrieves a StatusCake SSL Test. If no domain or id is supplied all tests are returned.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER Domain
     Name of the test to retrieve
 .PARAMETER ID
     Test ID to retrieve
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperSSLTest
+    Retrieve all SSL tests
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperSSLTest -ID 123456
+    Retrieve SSL test with ID 123456
 .OUTPUTS
     Returns a StatusCake SSL Tests as an object
-.FUNCTIONALITY
-    Retrieves a specific StatusCake SSL Test
-
 #>
 function Get-StatusCakeHelperSSLTest
 {
