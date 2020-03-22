@@ -1,11 +1,11 @@
 
 <#
 .SYNOPSIS
-   Clears the tests associated with a StatusCake Maintenance Window
+    Clears the tests associated with a StatusCake Maintenance Window
 .DESCRIPTION
-   Clears the tests and/or tags associated with a pending StatusCake Maintenance Window. You can only clear the test IDs/tags for a window which is in a pending state.
+    Clears the tests and/or tags associated with a pending StatusCake Maintenance Window. You can only clear the test IDs/tags for a window which is in a pending state.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name of the maintenance window to clear the tests from
 .PARAMETER ID
@@ -25,25 +25,30 @@ function Clear-StatusCakeHelperMaintenanceWindow
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        [Parameter(ParameterSetName='ByID')]
-        [Parameter(ParameterSetName='ByName')]
-		[ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(ParameterSetName='ByID')]
+        [Parameter(ParameterSetName='ByID',Mandatory=$true)]
+        [Parameter(ParameterSetName='TestIDs',Mandatory=$true)]
+        [Parameter(ParameterSetName='TestTags',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$ID,
 
-        [Parameter(ParameterSetName='ByName')]
+        [Parameter(ParameterSetName='ByName',Mandatory=$true)]
+        [Parameter(ParameterSetName='TestIDs',Mandatory=$true)]
+        [Parameter(ParameterSetName='TestTags',Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
         [string]$Name,
 
-        [Parameter(ParameterSetName='ByID')]
-        [Parameter(ParameterSetName='ByName')]
+        [Parameter(ParameterSetName='TestIDs',Mandatory=$true)]
+        [Parameter(ParameterSetName='ByID',Mandatory=$true)]
+        [Parameter(ParameterSetName='ByName',Mandatory=$true)]
         [Alias('raw_tests')]
         [switch]$TestIDs,
 
-        [Parameter(ParameterSetName='ByID')]
-        [Parameter(ParameterSetName='ByName')]
+        [Parameter(ParameterSetName='TestTags',Mandatory=$true)]
+        [Parameter(ParameterSetName='ByID',Mandatory=$true)]
+        [Parameter(ParameterSetName='ByName',Mandatory=$true)]
         [Alias('raw_tags')]
         [switch]$TestTags
     )
@@ -78,12 +83,6 @@ function Clear-StatusCakeHelperMaintenanceWindow
             }
             $ID = $maintenanceWindow.id
         }
-    }
-
-    If(!$TestIDs -and !$TestTags)
-    {
-        Write-Error "Please set the switch to clear tests or tags from the maintenance window"
-        Return
     }
 
     $exclude = @("Name")

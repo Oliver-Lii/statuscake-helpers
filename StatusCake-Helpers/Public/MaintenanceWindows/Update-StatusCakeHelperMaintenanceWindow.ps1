@@ -1,11 +1,11 @@
 
 <#
 .SYNOPSIS
-   Updates a StatusCake Maintenance Window
+    Updates a StatusCake Maintenance Window
 .DESCRIPTION
-   Updates the configuration of StatusCake Maintenance Window using the supplied parameters. You can only update a window which is in a pending state.
+    Updates the configuration of StatusCake Maintenance Window using the supplied parameters. You can only update a window which is in a pending state.
 .PARAMETER APICredential
-   Credentials to access StatusCake API
+    Credentials to access StatusCake API
 .PARAMETER Name
     A descriptive name for the maintenance window
 .PARAMETER ID
@@ -25,9 +25,8 @@
 .PARAMETER FollowDST
     Whether DST should be followed or not
 .EXAMPLE
-   C:PS>Update-StatusCakeHelperMaintenanceWindow -ID 123456 -RecurEvery 30
-   Modify the maintenance window with ID 123456 to recur every 30 days
-
+    C:PS>Update-StatusCakeHelperMaintenanceWindow -ID 123456 -RecurEvery 30
+    Modify the maintenance window with ID 123456 to recur every 30 days
 #>
 function Update-StatusCakeHelperMaintenanceWindow
 {
@@ -36,11 +35,11 @@ function Update-StatusCakeHelperMaintenanceWindow
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(ParameterSetName='SetByID')]
+        [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$ID,
 
-        [Parameter(ParameterSetName='SetByName')]
+        [Parameter(ParameterSetName='SetByName',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$Name,
 
