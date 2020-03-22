@@ -41,14 +41,14 @@ function Clear-StatusCakeHelperMaintenanceWindow
         [string]$Name,
 
         [Parameter(ParameterSetName='TestIDs',Mandatory=$true)]
-        [Parameter(ParameterSetName='ByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='ByName',Mandatory=$true)]
+        [Parameter(ParameterSetName='ByID')]
+        [Parameter(ParameterSetName='ByName')]
         [Alias('raw_tests')]
         [switch]$TestIDs,
 
         [Parameter(ParameterSetName='TestTags',Mandatory=$true)]
-        [Parameter(ParameterSetName='ByID',Mandatory=$true)]
-        [Parameter(ParameterSetName='ByName',Mandatory=$true)]
+        [Parameter(ParameterSetName='ByID')]
+        [Parameter(ParameterSetName='ByName')]
         [Alias('raw_tags')]
         [switch]$TestTags
     )
