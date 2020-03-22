@@ -8,6 +8,8 @@
     Credentials to access StatusCake API
 .PARAMETER TestID
     ID of the Test
+.PARAMETER SetByTestName
+    Switch to configure test by name
 .PARAMETER TestName
     Name of the Test to be displayed in StatusCake
 .PARAMETER TestURL
@@ -60,7 +62,7 @@
     Use 1 to TURN OFF real browser testing
 .PARAMETER StatusCodes
     Comma Separated List of StatusCodes to Trigger Error on (on Update will replace, so send full list each time)
-.PARAMETER TestTags
+.PARAMETER Tags
     Array of tags to assign to a test
 .PARAMETER Timeout
     Time in seconds before a test times out
