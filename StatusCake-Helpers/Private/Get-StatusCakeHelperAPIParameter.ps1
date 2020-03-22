@@ -11,6 +11,8 @@
     Array of values which should be sent empty to StatusCake API
 .PARAMETER Join
     Hashtable containing values which need to be joined by specific separator
+.PARAMETER Exclude
+    Array of parameter names which should be excluded from the output hashtable
 .PARAMETER ToLowerName
     Parameter names not aliased which need to be lower case
 .EXAMPLE
