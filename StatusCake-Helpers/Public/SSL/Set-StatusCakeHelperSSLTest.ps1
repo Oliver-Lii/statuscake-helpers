@@ -2,12 +2,16 @@
 <#
 .SYNOPSIS
     Updates a StatusCake SSL Test
+.DESCRIPTION
+    Sets the configuration of a StatusCake SSL Test using the supplied parameters.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER Domain
     URL domain to update
 .PARAMETER ID
     Test ID to retrieve
+.PARAMETER SetByDomain
+    Switch to update SSL test by domain name
 .PARAMETER CheckRate
     Checkrate in seconds. Options are 300 (5 minutes), 600 (10 minutes), 1800 (30 minutes), 3600 (1 hour), 86400 (1 day), 2073600 (24 days)
 .PARAMETER ContactIDs
@@ -23,9 +27,8 @@
 .PARAMETER AlertMixed
     Set to true to enable mixed content alerts. False to disable
 .EXAMPLE
-    Set-StatusCakeHelperSSLTest -id 123456 -checkrate 3600
-.DESCRIPTION
-    Creates a new StatusCake SSL Test using the supplied parameters.
+    C:\PS>Set-StatusCakeHelperSSLTest -id 123456 -checkrate 3600
+    Change the checkrate of test with ID 123456 to 3600 seconds
 #>
 function Set-StatusCakeHelperSSLTest
 {
