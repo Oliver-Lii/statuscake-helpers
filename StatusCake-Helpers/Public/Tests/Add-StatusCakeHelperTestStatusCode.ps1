@@ -12,6 +12,8 @@
     Name of the Test displayed in StatusCake
 .PARAMETER StatusCodes
     Array of status codes to be added.
+.PARAMETER PassThru
+    Returns the object which this function modifies. By default, this function does not return any output.
 .EXAMPLE
     C:\PS>Add-StatusCakeHelperTestStatusCode -TestID "123456" -StatusCodes @(206,207)
     Add status codes 206 and 207 to test with ID 123456

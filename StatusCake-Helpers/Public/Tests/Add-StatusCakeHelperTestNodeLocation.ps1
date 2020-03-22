@@ -15,6 +15,8 @@
     Name of the Test displayed in StatusCake
 .PARAMETER NodeLocations
     Array of test locations to be added. Test location servercodes are required
+.PARAMETER PassThru
+    Returns the object which this function modifies. By default, this function does not return any output.
 .EXAMPLE
     C:\PS>Add-StatusCakeHelperTestNodeLocation -TestID "123456" -NodeLocations @("EU1","EU2")
     Add node locations EU1 and EU2 to test with ID 123456

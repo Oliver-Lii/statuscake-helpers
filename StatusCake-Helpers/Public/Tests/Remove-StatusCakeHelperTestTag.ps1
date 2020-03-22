@@ -10,8 +10,10 @@
     ID of the Test to be removed from StatusCake
 .PARAMETER TestName
     Name of the Test to be removed from StatusCake
-.PARAMETER TestTags
+.PARAMETER Tags
     Array of tags to be removed
+.PARAMETER PassThru
+    Return the object that is removed
 .EXAMPLE
     C:\PS>Remove-StatusCakeHelperTestTags -TestID "123456" -TestTags @("Tag1","Tag2")
     Remove tags Tag1 and Tag2 from test with ID 123456

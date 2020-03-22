@@ -12,8 +12,10 @@
     Switch to add status codes to a test via test name
 .PARAMETER TestName
     Name of the Test displayed in StatusCake
-.PARAMETER TestTags
+.PARAMETER Tags
     Array of tags to add
+.PARAMETER PassThru
+    Returns the object which this function modifies. By default, this function does not return any output.
 .EXAMPLE
     C:\PS>Add-StatusCakeHelperTestTags -TestID "123456" -Tags @("Tag1","Tag2")
     Add tags Tag1 and Tag2 to test with ID 123456
