@@ -6,6 +6,10 @@
     Sets the configuration of StatusCake Public Reporting Page using the supplied parameters.
 .PARAMETER APICredential
     Credentials to access StatusCake API
+.PARAMETER ID
+    ID of the StatusCake Public Reporting Page
+.PARAMETER SetByTitle
+    Switch to update the public reporting page by title
 .PARAMETER Title
     The title of the Public Reporting Page
 .PARAMETER CName
