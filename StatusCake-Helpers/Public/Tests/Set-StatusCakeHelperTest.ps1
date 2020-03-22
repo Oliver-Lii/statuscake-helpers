@@ -6,6 +6,8 @@
     Sets the test based on the supplied values.
 .PARAMETER APICredential
     Credentials to access StatusCake API
+.PARAMETER TestID
+    ID of the Test
 .PARAMETER TestName
     Name of the Test to be displayed in StatusCake
 .PARAMETER TestURL

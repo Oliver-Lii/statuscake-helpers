@@ -12,6 +12,8 @@
     Name of the Test to be removed from StatusCake
 .PARAMETER StatusCodes
     Array of status codes to be removed
+.PARAMETER PassThru
+    Return the object that is removed
 .EXAMPLE
     C:\PS>Remove-StatusCakeHelperTestStatusCodes -TestID "123456" -StatusCodes @("401","404")
     Remove status codes 401 and 404 from test with ID 123456
