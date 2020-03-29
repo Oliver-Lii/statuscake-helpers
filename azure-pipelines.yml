@@ -89,6 +89,7 @@ steps:
     env:
       PSGalleryAPIKey: $(PSGALLERY_API_KEY)
       ModuleChildPath: Staging\StatusCake-Helpers
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   # To publish to Azure Devops Artifact Feed
   #- task: PowerShell@2
