@@ -104,7 +104,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/Oliver-Lii/statuscake-helpers'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        #IconUri = ''
 
         # ReleaseNotes of this module
         # ReleaseNotes = ''
