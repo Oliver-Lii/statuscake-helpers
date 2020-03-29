@@ -36,7 +36,7 @@ function Set-StatusCakeHelperAPIAuth
 
     if($Session)
     {
-        $PSDefaultParameterValues.Add("Get-StatusCakeHelperAPIAuth:Credential",$Credential)
+        $PSDefaultParameterValues["Get-StatusCakeHelperAPIAuth:Credential"] = $Credential
     }
     else
     {
