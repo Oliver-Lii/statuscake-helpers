@@ -1,100 +1,105 @@
 
 <#
-.Synopsis
-   Copies the settings of a StatusCake Public Reporting Page
+.SYNOPSIS
+    Copies the settings of a StatusCake Public Reporting Page
+.DESCRIPTION
+    Creates a copy of a Public Reporting Page.
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER ID
+    ID of the Public Reporting Page to be copied
+.PARAMETER Title
+    Name of the Public Reporting Page to be copied
+.PARAMETER NewTitle
+    Name of the new Public Reporting Page
 .EXAMPLE
-   Copy-StatusCakeHelperPublicReportingPage -Name "Example" -NewName "Example - Copy"
-.INPUTS
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-
-    Name - Name of the Public Reporting Page to be copied
-    ID - ID of the Public Reporting Page to be copied
-    NewTitle - Name of the new Public Reporting Page
-    Checkrate - Checkrate in seconds. Default is one day.
-.FUNCTIONALITY
-   Creates a copy of a Public Reporting Page.
+    C:\PS>Copy-StatusCakeHelperPublicReportingPage -Name "Example" -NewTitle "Example - Copy"
+    Creates a copy of a public reporting page called "Example" with name "Example - Copy"
+.EXAMPLE
+    C:\PS>Copy-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5 -NewTitle "Example - Copy"
+    Creates a copy of a public reporting page with ID a1B2c3D4e5 with name "Example - Copy"
 #>
 function Copy-StatusCakeHelperPublicReportingPage
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         [Parameter(ParameterSetName='CopyByTitle')]
         [Parameter(ParameterSetName='CopyById')]
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-
-        [Parameter(ParameterSetName='CopyByTitle')]
-        [Parameter(ParameterSetName='CopyById')]
-        [ValidateNotNullOrEmpty()]        
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        $Id,
+        [string]$Id,
 
-        [Parameter(ParameterSetName='CopyByTitle',Mandatory=$true)]       
+        [Parameter(ParameterSetName='CopyByTitle',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        $Title,
+        [string]$Title,
 
         [Parameter(ParameterSetName='CopyByTitle',Mandatory=$true)]
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        $NewTitle
+        [string]$NewTitle
     )
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($Name)
     {   #If copying by name check if resource with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
-        {      
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -Title $Title
+        {
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -Title $Title
             if(!$statusCakeItem)
             {
                 Write-Error "No Public Reporting Page with Specified Title Exists [$Title]"
-                Return $null 
+                Return $null
             }
             elseif($statusCakeItem.GetType().Name -eq 'Object[]')
             {
                 Write-Error "Multiple Public Reporting Pages with the same title [$Title] [$($statusCakeItem.ID)]"
-                Return $null          
-            }            
+                Return $null
+            }
         }
     }
     elseif($ID)
     {   #If copying by ID verify that a resource with the Id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages"))
-        {      
-            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -id $ID
+        {
+            $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -id $ID
             if(!$statusCakeItem)
             {
                 Write-Error "No Public Reporting Page with Specified ID Exists [$ID]"
-                Return $null 
-            }            
+                Return $null
+            }
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name New-StatusCakeHelperPublicReportingPage).Parameters
-
-    $paramsToUse = $statusCakeItem | Get-Member | Select-Object Name
-    $paramsToUse = Compare-Object $paramsToUse.Name @($ParameterList.keys) -IncludeEqual -ExcludeDifferent
-    $paramsToUse = $paramsToUse | Select-Object -ExpandProperty InputObject
-
-    foreach ($key in $paramsToUse)
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve Detailed StatusCake Public Reporting Page Data"))
     {
-        $value = $statusCakeItem.$key
-        if($value -or $value -eq 0)
-        {   
-            $psParams.Add($key,$value)                  
-        }
+        $statusCakeItem = Get-StatusCakeHelperPublicReportingPageDetail -APICredential $APICredential -Id $statusCakeItem.Id
     }
 
+    $psParams = $statusCakeItem | Get-StatusCakeHelperCopyParameter -FunctionName "New-StatusCakeHelperPublicReportingPage"
     $psParams.Title = $NewTitle
 
+    if(!([string]::IsNullOrEmpty($statusCakeItem.tests_or_tags)))
+    {
+        #Work out whether tests_or_tags property contain test IDs or tags
+        if($statusCakeItem.use_tags -eq "true")
+        {
+            $tags = $statusCakeItem.tests_or_tags -split ","
+            $psParams.Add("TestTags",$tags)
+        }
+        else
+        {
+            $testIDs = [int[]]$statusCakeItem.tests_or_tags -split ","
+            $psParams.Add("TestIDs",$testIDs)
+            #Tags_inclusive will always be returned with a value and function only requires this value if tags are used to setup public reporting page
+            $psParams.Remove("tags_inclusive")
+        }
+    }
+
     if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake Public Reporting Page"))
-    { 
-        $result = New-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth @psParams
+    {
+        $result = New-StatusCakeHelperPublicReportingPage -APICredential $APICredential @psParams
     }
     Return $result
 }

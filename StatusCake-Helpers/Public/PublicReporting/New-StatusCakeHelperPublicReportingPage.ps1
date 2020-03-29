@@ -1,128 +1,147 @@
 
 <#
-.Synopsis
-   Create a StatusCake Public Reporting Page
+.SYNOPSIS
+    Create a StatusCake Public Reporting Page
+.DESCRIPTION
+    Creates a new StatusCake Public Reporting Page using the supplied parameters.
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER Title
+    The title of the Public Reporting Page
+.PARAMETER CName
+    CName record for a custom domain
+.PARAMETER Password
+    Password protection for the page. Leave empty to disable
+.PARAMETER Twitter
+    Twitter handle to display with the @. Leave empty to disable
+.PARAMETER DisplayAnnotations
+    Set to true to show annotations for status periods
+.PARAMETER DisplayOrbs
+    Set to true to display uptime as colored orbs
+.PARAMETER SearchIndexing
+    Set to false to disable search engine indexing
+.PARAMETER SortAlphabetical
+    Set to true to order tests by alphabetical name
+.PARAMETER TestTags
+    Array of tags which a test must contain to be included on the Public Reporting Page
+.PARAMETER TagsInclusive
+    Set to true to select all tests that include one or more of the provided tags
+.PARAMETER TestIDs
+    Array of TestIDs to be associated with Public Reporting page
+.PARAMETER Announcement
+    Free text field that will appear as an announcement on the page
+.PARAMETER BgColor
+    HEX value for the background colour
+.PARAMETER HeaderColor
+    HEX value for the header colour
+.PARAMETER TitleColor
+    HEX value for the header text colour
 .EXAMPLE
-   New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page"
-.INPUTS
-    baseAPIURL - Base URL endpoint of the statuscake Public Report API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-
-    title - The title of the Public Reporting Page
-    cname - Cname record for a custom domain
-    password - Password protection for the page. Leave empty to disable
-    twitter - Twitter handle to display with the @. Leave empty to disable
-    display_annotations - 	Set to true to show annotations for status periods
-    display_orbs - Set to true to display uptime as colored orbs
-    search_indexing - Set to false to disable search engine indexing
-    sort_alphabetical - Set to true to order tests by alphabetical name
-    use_tags - Set to true to select tests by their tag, rather than ID
-    tests_or_tags - Array of TestIDs or Tags, depends on previous value
-    tags_inclusive - Set to true to select all tests that include one or more of the provided tags
-    announcement - Free text field that will appear as an announcement on the page.
-    bg_color - HEX value for the background colour
-    header_color - HEX value for the header colour
-    title_color - HEX value for the header text colour
-
-.FUNCTIONALITY
-   Creates a new StatusCake Public Reporting Page using the supplied parameters.
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page"
+    Create a public reporting page called "Example.com Public Reporting Page" with no associated tests
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page" -TestIDs @(123456)
+    Create a public reporting page called "Example.com Public Reporting Page" for test ID 123456
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page" -TestTags @("Example","Example Page")
+    Create a public reporting page called "Example.com Public Reporting Page" for tests which have the tags "Example" and "Example Page"
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page" -TestTags @("Example","Example Page") -TagsInclusive
+    Create a public reporting page called "Example.com Public Reporting Page" for tests which have one or more of the tags "Example" or "Example Page"
 #>
 function New-StatusCakeHelperPublicReportingPage
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true,DefaultParameterSetName='Title')]
     Param(
-        $baseAPIURL = "https://app.statuscake.com/API/PublicReporting/Update",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        $title,
+        [string]$Title,
 
         [ValidatePattern('^([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+)$')]
-        $cname,
+        [string]$CName,
 
-        [securestring]$password,
+        [securestring]$Password,
 
-        [string]$twitter,
+        [string]$Twitter,
 
-        [ValidateRange(0,1)]
-        $display_annotations,
+        [Alias('display_annotations')]
+        [boolean]$DisplayAnnotations,
 
-        [ValidateRange(0,1)]
-        $display_orbs,
+        [Alias('display_orbs')]
+        [boolean]$DisplayOrbs,
 
-        [ValidateRange(0,1)]
-        $search_indexing,
+        [Alias('search_indexing')]
+        [boolean]$SearchIndexing,
 
-        [ValidateRange(0,1)]
-        $sort_alphabetical,
+        [Alias('sort_alphabetical')]
+        [boolean]$SortAlphabetical,
 
-        [ValidateRange(0,1)]
-        $use_tags,
+        [Parameter(ParameterSetName='UseTags')]
+        [string[]]$TestTags,
 
-        [object]$tests_or_tags,
+        [Parameter(ParameterSetName='UseTags')]
+        [Alias('tags_inclusive')]
+        [boolean]$TagsInclusive,
 
-        [ValidateRange(0,1)]
-        $tags_inclusive,
+        [Parameter(ParameterSetName='UseTestIDs')]
+        [int[]]$TestIDs,
 
-        [string]$announcement,
+        [string]$Announcement,
 
-        [ValidatePattern('^\#([A-F0-9])+$')]
-        [string]$bg_color,
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
+        [Alias('bg_color')]
+        [string]$BGColor,
 
-        [ValidatePattern('^\#([A-F0-9])+$')]
-        [string]$header_color,
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
+        [Alias('header_color')]
+        [string]$HeaderColor,
 
-        [ValidatePattern('^\#([A-F0-9])+$')]
-        [string]$title_color
+        [ValidatePattern('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')]
+        [Alias('title_color')]
+        [string]$TitleColor
 
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Public Reporting Pages") )
     {
-        $statusCakeItem = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -title $title
+        $statusCakeItem = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -Title $Title
         if($statusCakeItem)
         {
-            Write-Error "Public Reporting Page with specified domain already exists [$title] [$($statusCakeItem.id)]"
+            Write-Error "Public Reporting Page with specified domain already exists [$Title] [$($statusCakeItem.id)]"
             Return $null
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseAPIURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $apiParameterParams =@{"InvocationInfo" = $MyInvocation}
+    If($TestTags -or $TestIDs)
     {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
-
-        if($ParamsToIgnore -contains $var.Name)
+        if($TestTags)
         {
-            continue
+            $tests_or_tags = $TestTags
+            $allParameterValues.Add("use_tags","true")
         }
-        elseif($var.value -or $var.value -eq 0)
+        elseif($TestIDs)
         {
-            $psParams.Add($var.name,$var.value)
+            $tests_or_tags = $TestIDs
+            $allParameterValues.Add("use_tags","false")
         }
+        $join = @{"Tests_or_Tags" = "|"} #Tags and tests for public reporting are separated by pipe symbol "|"
+        $exclude = @("TestTags","TestIDs")
+        $allParameterValues.Add("tests_or_tags",$tests_or_tags)
+        $apiParameterParams.Add("join",$join)
+        $apiParameterParams.Add("exclude",$exclude)
     }
+    $lower = @('Title','CName','Password','Twitter','Announcement')
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter @apiParameterParams -ToLowerName $lower
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    if($statusCakeAPIParams.Password)
-    {
-        $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList "UserName", $statusCakeAPIParams.Password
-        $statusCakeAPIParams.Password = $Credentials.GetNetworkCredential().Password
-    }
-
-    $webRequestParams = @{
-        uri = $baseAPIURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/PublicReporting/Update"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Post"
         ContentType = "application/x-www-form-urlencoded"
@@ -131,13 +150,15 @@ function New-StatusCakeHelperPublicReportingPage
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake Public Reporting Page") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
+        $statusCakeAPIParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }
+        $response = Get-StatusCakeHelperPublicReportingPageDetail -APICredential $APICredential -id $response.data.new_id
         Return $response
     }
 

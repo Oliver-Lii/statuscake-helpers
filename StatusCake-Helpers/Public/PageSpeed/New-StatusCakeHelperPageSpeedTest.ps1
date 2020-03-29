@@ -1,129 +1,121 @@
 
 <#
-.Synopsis
-   Create a StatusCake PageSpeed Test
-.PARAMETER basePageSpeedTestURL
-    Base URL endpoint of the statuscake PageSpeed Test API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.SYNOPSIS
+    Create a StatusCake PageSpeed Test
+.DESCRIPTION
+    Creates a new StatusCake PageSpeed Test using the supplied parameters.
+.PARAMETER APICredential
+    Credentials to access StatusCake API
 .PARAMETER Name
     Name for PageSpeed test
-.PARAMETER Website_Url
+.PARAMETER WebsiteURL
     URL that should be checked
-.PARAMETER Location_iso
+.PARAMETER LocationISO
     2-letter ISO code of the location. Valid values: AU, CA, DE, IN, NL, SG, UK, US, PRIVATE
-.PARAMETER Private_Name
+.PARAMETER PrivateName
     Must select PRIVATE in location_iso. Name of private server [NOT YET IMPLEMENTED]
 .PARAMETER Checkrate
     Frequency in minutes with which the page speed test should be run
-.PARAMETER Contact_Groups
+.PARAMETER ContactIDs
     IDs of selected Contact Groups to alert
-.PARAMETER Alert_Smaller
+.PARAMETER AlertSmaller
     Size in kb, will alert to Contact Groups if actual size is smaller
-.PARAMETER Alert_Bigger
+.PARAMETER AlertBigger
     Size in kb, will alert to Contact Groups if actual size is bigger
-.PARAMETER Alert_Slower
+.PARAMETER AlertSlower
     Time in ms, will alert to Contact Groups if actual time is slower
 .EXAMPLE
-   New-StatusCakeHelperPageSpeedTest -Username "Username" -ApiKey "APIKEY" -website_url "https://www.example.com" -checkrate 3600 -location_iso UK
-.FUNCTIONALITY
-   Creates a new StatusCake PageSpeed Test using the supplied parameters.
+    C:\PS>New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -LocationISO UK -AlertSlower 10000
+    Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page speed load time is slower than 10000ms
+.EXAMPLE
+    C:\PS>New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -LocationISO UK -AlertSmaller 500
+    Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page load is less than 500kb
 #>
 function New-StatusCakeHelperPageSpeedTest
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $basePageSpeedTestURL = "https://app.statuscake.com/API/Pagespeed/Update",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$name,
+        [string]$Name,
 
         [Parameter(Mandatory=$true)]
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$website_url,
+        [Alias('website_url')]
+        [string]$WebsiteURL,
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("AU","CA","DE","IN","NL","SG","UK","US","PRIVATE")]
-        $location_iso,
+        [Alias('location_iso')]
+        [string]$LocationISO,
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("1","5","10","15","30","60","1440")]
-        [int]$checkrate,
+        [int]$Checkrate,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [int]$alert_bigger=0,
+        [Alias('alert_bigger')]
+        [int]$AlertBigger=0,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [int]$alert_slower=0,
+        [Alias('alert_slower')]
+        [int]$AlertSlower=0,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [int]$alert_smaller=0,
+        [Alias('alert_smaller')]
+        [int]$AlertSmaller=0,
 
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [object]$contact_groups,
+        [Alias('contact_groups')]
+        [int[]]$ContactIDs,
 
         [ValidateNotNullOrEmpty()]
-        [string]$private_name
+        [Alias('private_name')]
+        [string]$PrivateName
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
-
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed Test") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake PageSpeed tests") )
     {
-        $PageSpeedTest = Get-StatusCakeHelperPageSpeedTest -Username $username -apikey $ApiKey -name $name
-        if($PageSpeedTest)
+        $pageSpeedTest = Get-StatusCakeHelperPageSpeedTest -APICredential $APICredential -name $name
+        if($pageSpeedTest)
         {
-            Write-Error "PageSpeed Check with specified name already exists [$name] [$($PageSpeedTest.id)]"
+            Write-Error "PageSpeed test with specified name already exists [$name] [$($pageSpeedTest.id)]"
             Return $null
         }
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("basePageSpeedTestURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
+    $lower =@('Name','Checkrate')
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
-
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $webRequestParams = @{
-        uri = $basePageSpeedTestURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Pagespeed/Update/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Post"
         ContentType = "application/x-www-form-urlencoded"
         body = $statusCakeAPIParams
     }
 
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake PageSpeed Test") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake PageSpeed Test") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams = @{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }
-        Return $response
+        else
+        {   # If there are no changes no id is returned
+            if($response.data.new_id)
+            {
+                $id = $response.data.new_id
+            }
+            $result = Get-StatusCakeHelperPageSpeedTestDetail -APICredential $APICredential -id $id
+        }
+        Return $result
     }
+
 
 }

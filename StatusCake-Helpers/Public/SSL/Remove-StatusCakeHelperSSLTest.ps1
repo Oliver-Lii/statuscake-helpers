@@ -1,83 +1,83 @@
 
 <#
-.Synopsis
-   Remove a StatusCake SSL Test
+.SYNOPSIS
+    Remove a StatusCake SSL Test
+.DESCRIPTION
+    Deletes a StatusCake SSL Test using the supplied ID.
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER Domain
+    Name of the test to retrieve
+.PARAMETER ID
+    Test ID to retrieve
+.PARAMETER PassThru
+    Return the object that is removed
 .EXAMPLE
-   Remove-StatusCakeHelperSSLTest -Username "Username" -ApiKey "APIKEY" -ID 123456
-.INPUTS
-    baseSSLTestURL - Base URL endpoint of the statuscake ContactGroup API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    
-    ID - ID of the SSL Test to remove
-    Domain - The URL of the SSL Test to remove
-.FUNCTIONALITY
-   Deletes a StatusCake SSL Test using the supplied ID.
+    C:\PS>Remove-StatusCakeHelperSSLTest -ID 123456
+    Remove the SSL Test with ID 123456
+
 #>
 function Remove-StatusCakeHelperSSLTest
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]    
+    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $baseSSLTestURL = "https://app.statuscake.com/API/SSL/Update?id=",
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,       
+        [Parameter(ParameterSetName = "ID")]
+        [int]$ID,
 
-        [ValidateNotNullOrEmpty()]        
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [Parameter(ParameterSetName = "Domain")]
+        [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
+        [string]$Domain,
 
-        [Parameter(ParameterSetName = "ID")]             
-        [int]$id,
-
-        [Parameter(ParameterSetName = "domain")]
-        [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]                 
-        [string]$domain,        
-
-        [switch]$PassThru        
+        [switch]$PassThru
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}    
- 
-    if($domain)
+
+    $checkParams = @{}
+    if($Domain)
     {
-        $sslTest = Get-StatusCakeHelperSSLTest @statusCakeFunctionAuth -domain $domain
-        if($sslTest)
-        {
-            if($sslTest.GetType().Name -eq 'Object[]')
-            {
-                Write-Error "Multiple SSL Tests found with domain [$domain]. Please remove the SSL test by ID"
-                Return $null            
-            }
-            $id = $sslTest.id
-        }
-        else 
-        {
-            Write-Error "Unable to find SSL Test with name [$domain]"
-            Return $null
-        }
+        $checkParams.Add("Domain",$Domain)
+    }
+    else
+    {
+        $checkParams.Add("ID",$ID)
     }
 
-    $putRequestParams = @{
-        uri = "$baseSSLTestURL$id"
-        Headers = $authenticationHeader
+    $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential @checkParams
+    if($sslTest)
+    {
+        if($sslTest.GetType().Name -eq 'Object[]')
+        {
+            Write-Error "Multiple SSL Tests found with domain [$Domain]. Please remove the SSL test by ID"
+            Return $null
+        }
+        $ID = $sslTest.id
+    }
+    else
+    {
+        Write-Error "Unable to find SSL Test with name [$Domain]"
+        Return $null
+    }
+
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/SSL/Update?id=$ID"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Delete"
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Remove StatusCake SSL Test") )
     {
-        $jsonResponse = Invoke-WebRequest @putRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams = @{}
         if($response.Success -ne "True")
         {
-            Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
-        }         
-        if(!$PassThru)
-        {
-            Return
         }
-        Return $response     
+        elseif($PassThru)
+        {
+            Return $sslTest
+        }
     }
-
 }

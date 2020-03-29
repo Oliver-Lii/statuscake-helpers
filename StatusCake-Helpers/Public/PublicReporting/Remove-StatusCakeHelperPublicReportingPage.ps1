@@ -1,82 +1,85 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Remove a StatusCake Public Reporting Page
-.EXAMPLE
-   Remove-StatusCakeHelperPublicReportingPage -ID 123456
-.INPUTS
-    baseAPIURL - Base URL endpoint of the statuscake ContactGroup API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    
-    ID - ID of the Public Reporting page to remove
-    Title - The URL of the Public Reporting page to remove
-.FUNCTIONALITY
+.DESCRIPTION
    Deletes a StatusCake Public Reporting page using the supplied ID.
+.PARAMETER APICredential
+   Credentials to access StatusCake API
+.PARAMETER ID
+    ID of the public reporting page
+.PARAMETER Title
+    Title of the public reporting page
+.PARAMETER Passthru
+    Return the object to be deleted
+.EXAMPLE
+   C:\PS>Remove-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5
+   Delete the public reporting page with ID a1B2c3D4e5
+.EXAMPLE
+   C:\PS>Remove-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page"
+   Delete the public reporting page called "Example.com Public Reporting Page"
+
 #>
 function Remove-StatusCakeHelperPublicReportingPage
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        $baseAPIURL = "https://app.statuscake.com/API/PublicReporting/Update/?id=",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName = "ID")]
-        [string]$id,
+        [string]$ID,
 
-        [Parameter(ParameterSetName = "title")]
-        [string]$title,
+        [Parameter(ParameterSetName = "Title")]
+        [string]$Title,
 
         [switch]$PassThru
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
-    if($title)
+    $checkParams = @{}
+    if($Title)
     {
-        $publicReportingPage = Get-StatusCakeHelperPublicReportingPage @statusCakeFunctionAuth -title $title
-        if($publicReportingPage)
-        {
-            if($publicReportingPage.GetType().Name -eq 'Object[]')
-            {
-                Write-Error "Multiple Public Reporting pages found with title [$title]. Please remove the Public Reporting page by ID"
-                Return $null
-            }
-            $id = $publicReportingPage.id
-        }
-        else
-        {
-            Write-Error "Unable to find Public Reporting page with name [$title]"
-            Return $null
-        }
+        $checkParams.Add("title",$Title)
+    }
+    else
+    {
+        $checkParams.Add("id",$ID)
     }
 
-    $webRequestParams = @{
-        uri = "$baseAPIURL$id"
-        Headers = $authenticationHeader
+    $publicReportingPage = Get-StatusCakeHelperPublicReportingPage -APICredential $APICredential -Detailed @checkParams
+    if($publicReportingPage)
+    {
+        if($publicReportingPage.GetType().Name -eq 'Object[]')
+        {
+            Write-Error "Multiple Public Reporting pages found with title [$Title]. Please remove the Public Reporting page by ID"
+            Return $null
+        }
+        $ID = $publicReportingPage.id
+    }
+    else
+    {
+        Write-Error "Unable to find Public Reporting page with name [$Title]"
+        Return $null
+    }
+
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/PublicReporting/Update/?id=$ID"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Delete"
     }
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Remove StatusCake Public Reporting page") )
     {
-        $jsonResponse = Invoke-WebRequest @webRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
-            Write-Verbose $response
             Write-Error "$($response.Message) [$($response.Issues)]"
         }
-        if(!$PassThru)
+        elseif($PassThru)
         {
-            Return
+            Return $publicReportingPage
         }
-        Return $response
     }
-
 }

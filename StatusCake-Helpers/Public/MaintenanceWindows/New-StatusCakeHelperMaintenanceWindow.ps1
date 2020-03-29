@@ -1,125 +1,110 @@
 
 <#
-.Synopsis
+.SYNOPSIS
    Create a StatusCake Maintenance Window
-.PARAMETER baseMaintenanceWindowURL
-    Base URL endpoint of the statuscake Maintenance Window API
-.PARAMETER Username
-    Username associated with the API key
-.PARAMETER ApiKey
-    APIKey to access the StatusCake API
+.DESCRIPTION
+   Creates a new StatusCake Maintenance Window using the supplied parameters. Tests can be included in the maintenance window by either supplying the test IDs or test tags.
+.PARAMETER APICredential
+   Credentials to access StatusCake API
 .PARAMETER Name
     A descriptive name for the maintenance window
-.PARAMETER start_date
+.PARAMETER StartDate
     Start date of your window. Can be slightly in the past
-.PARAMETER end_date
+.PARAMETER EndDate
     End time of your window. Must be in the future
-.PARAMETER timezone
+.PARAMETER Timezone
     Must be a valid timezone, or UTC
-.PARAMETER raw_tests
+.PARAMETER TestIDs
     Individual tests that should be included
-.PARAMETER raw_tags
+.PARAMETER TestTags
     Tests with these tags will be included
-.PARAMETER recur_every
+.PARAMETER RecurEvery
     How often in days this window should recur. 0 disables this
-.PARAMETER follow_dst
+.PARAMETER FollowDST
     Whether DST should be followed or not
 .EXAMPLE
-   New-StatusCakeHelperMaintenanceWindow -name "Example Maintenance Window" -start_date $(Get-Date) -end_date $((Get-Date).AddHours(1)) -timezone "Europe/London" -raw_tests @("123456") -verbose
-.FUNCTIONALITY
-   Creates a new StatusCake Maintenance Window using the supplied parameters. The raw_tests or raw_tags value must be provided to create a new maintenance window.
+   C:\PS>New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestIDs @("123456")
+   Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone for test ID 123456
+.EXAMPLE
+   C:\PS>New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestTags @("Tag1","Tag2")
+   Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone including tests which have tags "Tag1" and "Tag2"
+.EXAMPLE
+   C:\PS>New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestIDs @("123456") -RecurEvery 7
+   Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone for test ID 123456 recurring every 7 days
 #>
 function New-StatusCakeHelperMaintenanceWindow
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
-        [Parameter(ParameterSetName='SetByTestTags')]
-        [Parameter(ParameterSetName='SetByTestIDs')]
-        $baseMaintenanceWindowURL = "https://app.statuscake.com/API/Maintenance/Update",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$name,
+        [string]$Name,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
-        [datetime]$start_date,
+        [Alias('start_unix','start_date')]
+        [datetime]$StartDate,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
-        [datetime]$end_date,
+        [Alias('end_unix','end_date')]
+        [datetime]$EndDate,
 
         [Parameter(ParameterSetName='SetByTestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='SetByTestIDs',Mandatory=$true)]
         [ValidateScript({$_ | Test-StatusCakeHelperTimeZone})]
-        [string]$timezone,
+        [string]$Timezone,
 
         [Parameter(ParameterSetName='SetByTestIDs')]
-        [ValidateScript({$_ -match '^[\d]+$'})]
-        [object]$raw_tests,
+        [Alias('raw_tests')]
+        [int[]]$TestIDs,
 
         [Parameter(ParameterSetName='SetByTestTags')]
-        [object]$raw_tags,
+        [Alias('raw_tags')]
+        [string[]]$TestTags,
 
         [Parameter(ParameterSetName='SetByTestIDs')]
         [Parameter(ParameterSetName='SetByTestTags')]
         [ValidateSet("0","1","7","14","30")]
-        $recur_every,
+        [Alias('recur_every')]
+        [int]$RecurEvery,
 
         [Parameter(ParameterSetName='SetByTestIDs')]
         [Parameter(ParameterSetName='SetByTestTags')]
-        [ValidateRange(0,1)]
-        $follow_dst
+        [Alias('follow_dst')]
+        [boolean]$FollowDST
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
-    $statusCakeFunctionAuth = @{"Username"=$Username;"Apikey"=$ApiKey}
 
     if($pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
     {
-        $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow @statusCakeFunctionAuth -name $name -state "PND"
+        $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -Name $Name -State "PND"
         if($maintenanceWindow)
         {
             if($maintenanceWindow.GetType().Name -eq 'Object[]')
             {
-                Write-Error "Multiple Pending Maintenance Windows with the same name [$name] [$($maintenanceWindow.id)]"
+                Write-Error "Multiple Pending Maintenance Windows with the same name [$Name] [$($maintenanceWindow.id)]"
             }
             else
             {
-                Write-Error "Pending Maintenance Window with specified name already exists [$name]"
+                Write-Error "Pending Maintenance Window with specified name already exists [$Name]"
             }
             Return $null
         }
 
     }
 
-    $psParams = @{}
-    $ParameterList = (Get-Command -Name $MyInvocation.InvocationName).Parameters
-    $ParamsToIgnore = @("baseMaintenanceWindowURL","Username","ApiKey")
-    foreach ($key in $ParameterList.keys)
-    {
-        $var = Get-Variable -Name $key -ErrorAction SilentlyContinue;
+    $lower=@("Timezone","Name")
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
+    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
 
-        if($ParamsToIgnore -contains $var.Name)
-        {
-            continue
-        }
-        elseif($var.value -or $var.value -eq 0)
-        {
-            $psParams.Add($var.name,$var.value)
-        }
-    }
-
-    $statusCakeAPIParams = $psParams | ConvertTo-StatusCakeHelperAPIParams
-
-    $postRequestParams = @{
-        uri = $baseMaintenanceWindowURL
-        Headers = $authenticationHeader
+    $requestParams = @{
+        uri = "https://app.statuscake.com/API/Maintenance/Update"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
         method = "Post"
         ContentType = "application/x-www-form-urlencoded"
@@ -128,14 +113,18 @@ function New-StatusCakeHelperMaintenanceWindow
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake Maintenance Window") )
     {
-        $jsonResponse = Invoke-WebRequest @postRequestParams
-        $response = $jsonResponse | ConvertFrom-Json
+        $response = Invoke-RestMethod @requestParams
+        $requestParams=@{}
         if($response.Success -ne "True")
         {
             Write-Error "$($response.Message) [$($response.Issues)]"
             Return $null
         }
-        Return $response
+        else
+        {
+            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -id $response.data.new_id
+        }
+        Return $maintenanceWindow
     }
 
 }

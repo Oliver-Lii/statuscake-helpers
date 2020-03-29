@@ -1,50 +1,91 @@
 
 <#
-.Synopsis
-   Retrieves a StatusCake Test with a specific name or Test ID
-.EXAMPLE
-   Get-StatusCakeHelperTest -Username "Username" -ApiKey "APIKEY" -testID 123456
-.INPUTS
-    baseTestURL - Base URL endpoint of the statuscake auth API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    TestName - Name of the test to retrieve
-    TestID - Test ID to retrieve
-.OUTPUTS    
-    Returns the details of the test which exists returning $null if no matching test
-.FUNCTIONALITY
+.SYNOPSIS
+    Retrieves a StatusCake Test with a specific name or Test ID
+.DESCRIPTION
     Retrieves StatusCake Test via the test name of the test or Test ID
-   
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER TestName
+    Name of the test to retrieve
+.PARAMETER TestID
+    Test ID to retrieve
+.PARAMETER Detailed
+    Retrieve detailed test data
+.PARAMETER ContactID
+    Filter tests using a specific Contact Group ID
+.PARAMETER Status
+    Filter tests to a specific status
+.PARAMETER Tags
+    Match tests with tags
+.PARAMETER MatchAny
+    Match tests which have any of the supplied tags (true) or all of the supplied tags (false)
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperTest
+    Retrieve all tests
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperTest -testID 123456
+    Retrieve the test with ID 123456
+.OUTPUTS
+    Returns the test which exists returning $null if no matching test
 #>
 function Get-StatusCakeHelperTest
 {
-    [CmdletBinding(PositionalBinding=$false)]    
+    [CmdletBinding(PositionalBinding=$false,DefaultParameterSetName='MatchTag')]
     Param(
-        $baseTestURL = "https://app.statuscake.com/API/Tests/",
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
-        [ValidateNotNullOrEmpty()]        
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
-
-        [Parameter(ParameterSetName = "Test Name")]
-        [ValidateNotNullOrEmpty()]            
+        [Parameter(ParameterSetName = "ByTestName")]
+        [ValidateNotNullOrEmpty()]
         [string]$TestName,
-        [Parameter(ParameterSetName = "Test ID")]
-        [ValidateNotNullOrEmpty()]            
-        [int]$TestID        
+
+        [Parameter(ParameterSetName = "ByTestID")]
+        [ValidateNotNullOrEmpty()]
+        [int]$TestID,
+
+        [Parameter(ParameterSetName = "ByTestName")]
+        [Parameter(ParameterSetName = "ByTestID")]
+        [switch]$Detailed,
+
+        [Alias('CUID')]
+        [Parameter(Mandatory=$false,ParameterSetName='MatchTag')]
+        [Parameter(Mandatory=$false,ParameterSetName='MatchAnyTag')]
+        [ValidateNotNullOrEmpty()]
+        [int]$ContactID,
+
+        [Parameter(Mandatory=$false,ParameterSetName='MatchTag')]
+        [Parameter(Mandatory=$false,ParameterSetName='MatchAnyTag')]
+        [ValidateSet("Down","Up")]
+        [string]$Status,
+
+        [Parameter(Mandatory=$false,ParameterSetName='MatchTag')]
+        [Parameter(Mandatory=$true,ParameterSetName='MatchAnyTag')]
+        [string[]]$Tags,
+
+        [Parameter(Mandatory=$false,ParameterSetName='MatchAnyTag')]
+        [boolean]$MatchAny
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
-        uri = $baseTestURL
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/Tests/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
     }
 
-    $jsonResponse = Invoke-WebRequest @requestParams
-    $response = $jsonResponse | ConvertFrom-Json
+    if($PSCmdlet.ParameterSetName -eq "MatchTag" -or $PSCmdlet.ParameterSetName -eq "MatchAnyTag")
+    {
+        $lower =@('Tags','MatchAny')
+        $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+        $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
+        $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
+        $requestParams.Add("ContentType","application/x-www-form-urlencoded")
+        $requestParams.Add("body",$statusCakeAPIParams)
+        $requestParams.Add("method","Get")
+    }
 
+    $response = Invoke-RestMethod @requestParams
+    $matchingTests = $response
     if($TestName)
     {
         $matchingTests = $response | Where-Object {$_.WebsiteName -eq $TestName}
@@ -54,10 +95,18 @@ function Get-StatusCakeHelperTest
         $matchingTests = $response | Where-Object {$_.TestID -eq $TestID}
     }
 
-    if($matchingTests)
+    $result = $matchingTests
+    if($Detailed)
     {
-        Return $matchingTests
+        $detailList = [System.Collections.Generic.List[PSObject]]::new()
+        foreach($test in $matchingTests)
+        {
+            $item = Get-StatusCakeHelperTestDetail -APICredential $APICredential -TestID $test.TestID
+            $detailList.Add($item)
+        }
+        $result = $detailList
     }
-    Return $null
+    $requestParams = @{}
+    Return $result
 }
 

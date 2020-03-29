@@ -1,61 +1,75 @@
 
 <#
-.Synopsis
-   Retrieves a StatusCake Public Reporting Page
+.SYNOPSIS
+    Retrieves a StatusCake Public Reporting Page
+.DESCRIPTION
+    Retrieves all StatusCake Public Reporting Pages if no parameters supplied otherwise returns the specified public reporting page.
+    By default only standard information about a public reporting page is returned and more detailed information can be retrieved by using the detailed switch.
+.PARAMETER APICredential
+    Credentials to access StatusCake API
+.PARAMETER ID
+    ID of the public reporting page
+.PARAMETER Title
+    Title of the public reporting page
+.PARAMETER Detailed
+    Retrieve detailed public reporting page data
 .EXAMPLE
-   Get-StatusCakeHelperPublicReportingPage -id 123456
-.INPUTS
-    baseAPIURL - Base URL endpoint of the statuscake auth API
-    Username - Username associated with the API key
-    ApiKey - APIKey to access the StatusCake API
-    Title - Name of the test to retrieve
-    ID - Test ID to retrieve
+    C:\PS>Get-StatusCakeHelperPublicReportingPage
+    Retrieve all public reporting pages
+.EXAMPLE
+    C:\PS>Get-StatusCakeHelperPublicReportingPage -ID a1B2c3D4e5
+    Retrieve the public reporting page with ID a1B2c3D4e5
 .OUTPUTS
     Returns StatusCake Public Reporting Pages as an object
-.FUNCTIONALITY
-    Retrieves all StatusCake Public Reporting Pages if no parameters supplied otherwise returns the specified public reporting page.
 
 #>
 function Get-StatusCakeHelperPublicReportingPage
 {
     [CmdletBinding(PositionalBinding=$false)]
     Param(
-        $baseAPIURL = "https://app.statuscake.com/API/PublicReporting/",
-
-		[ValidateNotNullOrEmpty()]
-        $Username = (Get-StatusCakeHelperAPIAuth).Username,
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [ValidateNotNullOrEmpty()]
-        $ApiKey = (Get-StatusCakeHelperAPIAuth).GetNetworkCredential().password,
+        [string]$Title,
 
         [ValidateNotNullOrEmpty()]
-        [string]$title,
+        [string]$ID,
 
-        [ValidateNotNullOrEmpty()]
-        [string]$id
+        [switch]$Detailed
     )
-    $authenticationHeader = @{"Username"="$Username";"API"="$ApiKey"}
 
     $requestParams = @{
-        uri = $baseAPIURL
-        Headers = $authenticationHeader
+        uri = "https://app.statuscake.com/API/PublicReporting/"
+        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
         UseBasicParsing = $true
     }
 
-    $jsonResponse = Invoke-WebRequest @requestParams
-    $response = $jsonResponse | ConvertFrom-Json
-
+    $response = Invoke-RestMethod @requestParams
+    $requestParams = @{}
     $matchingItems = $response.data
-    if($title)
+    if($Title)
     {
-        $matchingItems = $response.data | Where-Object {$_.title -eq $title}
+        $matchingItems = $response.data | Where-Object {$_.title -eq $Title}
     }
-    elseif($id)
+    elseif($ID)
     {
-        $matchingItems = $response.data | Where-Object {$_.id -eq $id}
+        $matchingItems = $response.data | Where-Object {$_.id -eq $ID}
     }
 
-    Return $matchingItems
+    $result = $matchingItems
+    if($Detailed)
+    {
+        $detailList = [System.Collections.Generic.List[PSObject]]::new()
+        foreach($test in $matchingItems)
+        {
+            $item = Get-StatusCakeHelperPublicReportingPageDetail -APICredential $APICredential -Id $test.Id
+            $detailList.Add($item)
+        }
+        $result = $detailList
+    }
+    $requestParams = @{}
+    Return $result
 
 }
 
