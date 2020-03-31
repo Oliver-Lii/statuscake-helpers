@@ -12,12 +12,8 @@ trigger:
     include:
     - master
   paths:
-    exclude:
-    - /LICENSE
-    - /README.md
-    - Demo/*
-    - Documentation/*
-    - Examples/*
+    include:
+    - /StatusCake-Helpers
 
 steps:
   # Build Tasks
