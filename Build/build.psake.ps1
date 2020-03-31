@@ -230,6 +230,16 @@ Task 'CreateBuildArtifact' -Depends 'Init' {
     Write-Output "`nFINISHED: Release artifact creation."
 }
 
+Task 'PublishToPSGallery' -Depends 'Test' {
+    $lines
+
+    $Params = @{
+        Path    = "$StagingModulePath"
+        Force   = $true
+        Recurse = $false
+    }
+    Invoke-PSDeploy @Verbose @Params
+}
 
 #region NOT USED FOR THIS DEMO
 # Task 'Release' -Depends 'Clean', 'Test', 'UpdateDocumentation', 'CombineFunctionsAndStage', 'CreateBuildArtifact' #'UpdateManifest', 'UpdateTag'
@@ -249,14 +259,5 @@ Task 'Build' -Depends 'Init' {
 }
 
 
-Task 'Deploy' -Depends 'Init' {
-    $lines
 
-    $Params = @{
-        Path    = "$ProjectRoot"
-        Force   = $true
-        Recurse = $false
-    }
-    Invoke-PSDeploy @Verbose @Params
-}
 #endregion NOT USED FOR THIS DEMO
