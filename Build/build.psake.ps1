@@ -230,7 +230,7 @@ Task 'CreateBuildArtifact' -Depends 'Init' {
     Write-Output "`nFINISHED: Release artifact creation."
 }
 
-Task 'PublishToPSGallery' -Depends 'Test' {
+Task 'PublishToPSGallery' -Depends 'ImportStagingModule' {
     $lines
 
     $publishParams = @{
