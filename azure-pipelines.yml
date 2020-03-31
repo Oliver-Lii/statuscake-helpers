@@ -76,15 +76,11 @@ steps:
   - task: NuGetAuthenticate@0
     displayName: 'NuGet Authenticate'
 
-  - task: PowerShell@2
-    displayName: 'Publish Module to Powershell Gallery'
-    inputs:
-      targetType: filePath
-      filePath: './Build/Publish-PSGallery.ps1'
-      arguments: '-NuGetAPIKey $env:PSGalleryAPIKey'
+  - powershell: |
+      .\Build\build.ps1 -TaskList 'PublishToPSGallery'
     env:
-      PSGalleryAPIKey: $(PSGALLERY_API_KEY)
-      ModuleChildPath: Staging\StatusCake-Helpers
+      NugetApiKey: $(PSGALLERY_API_KEY)
+    displayName: "Publish To Powershell Gallery"
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   # To publish to Azure Devops Artifact Feed
