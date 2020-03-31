@@ -258,18 +258,15 @@ Describe "StatusCake Maintenance Windows" {
         $startDate = $(Get-Date).AddHours(1)
         $endDate = $(Get-Date).AddDays(1)
 
-        $startDateString = ($startDate | Get-Date -Format 'yyyy-MM-dd HH:mm:ss').ToString()
-        $endDateString = ($endDate | Get-Date -Format 'yyyy-MM-dd HH:mm:ss').ToString()
-        $startDateString = $startDateString.substring(0,$startDateString.length-1) + '*'
-        $endDateString = $endDateString.substring(0,$endDateString.length-1) + '*'
-
         $script:mwName = "Pester Test Maintenance Window - $($startDate.ToUniversalTime().ToString())"
         $script:SCMWTest = New-StatusCakeHelperMaintenanceWindow -Name $mwName -Timezone UTC -StartDate $startDate -EndDate $endDate -TestIDs @($SCTest.TestID)
 
         $SCMWTest.name | Should -Be "Pester Test Maintenance Window - $($startDate.ToUniversalTime().ToString())"
         $SCMWTest.timezone | Should -Be "UTC"
-        $SCMWTest.start_utc | Should -BeLike $startDateString -Because "Start time can differ by up a second from when command is sent"
-        $SCMWTest.end_utc | Should -BeLike $endDateString -Because "End time can differ by up a second from when command is sent"
+        $mwStartTimeSpan = New-TimeSpan $startDate $SCMWTest.start_utc
+        $mwEndTimeSpan = New-TimeSpan $endDate $SCMWTest.end_utc
+        $mwStartTimeSpan.Seconds | Should -BeLessOrEqual 2 -Because "Start time can differ by up a second from when command is sent"
+        $mwEndTimeSpan.Seconds | Should -BeLessOrEqual 2 -Because "End time can differ by up a second from when command is sent"
         $SCMWTest.raw_tests | Should -Contain $SCTest.TestID
     }
 
