@@ -4,17 +4,15 @@ Param(
     [ValidateNotNullOrEmpty()]
     [string]$StatusCakeAPIKey = $env:StatusCake_API_Key
 )
-Remove-Module $env:BHPROJECTNAME -ErrorAction SilentlyContinue
 
 Describe 'StatusCake Module Tests' {
 
     It "Module statuscake-helpers imports without throwing an exception" {
+        Remove-Module $env:BHPROJECTNAME -ErrorAction SilentlyContinue
         {Import-Module $env:BHPSModuleManifest -Force } | Should -Not -Throw
     }
 
 }
-
-Import-Module $env:BHPSModuleManifest -Force
 
 if(! (Test-StatusCakeHelperAPIAuthSet))
 {
