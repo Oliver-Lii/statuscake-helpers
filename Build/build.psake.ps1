@@ -233,31 +233,11 @@ Task 'CreateBuildArtifact' -Depends 'Init' {
 Task 'PublishToPSGallery' -Depends 'Test' {
     $lines
 
-    $Params = @{
-        Path    = "$StagingModulePath"
-        Force   = $true
-        Recurse = $false
+    $publishParams = @{
+        Path        = $StagingModulePath
+        NugetApiKey = $env:NugetApiKey
+        Force       = $true
+        Verbose     = $true
     }
-    Invoke-PSDeploy @Verbose @Params
+    Publish-Module @publishParams
 }
-
-#region NOT USED FOR THIS DEMO
-# Task 'Release' -Depends 'Clean', 'Test', 'UpdateDocumentation', 'CombineFunctionsAndStage', 'CreateBuildArtifact' #'UpdateManifest', 'UpdateTag'
-Task 'Build' -Depends 'Init' {
-    $lines
-
-    # Load the module, read the exported functions, update the psd1 FunctionsToExport
-    Set-ModuleFunctions -Name $env:BHPSModuleManifest
-
-    # Bump the module version
-    try {
-        $Version = Get-NextPSGalleryVersion -Name $env:BHProjectName -ErrorAction 'Stop'
-        Update-Metadata -Path $env:BHPSModuleManifest -PropertyName 'ModuleVersion' -Value $Version -ErrorAction 'Stop'
-    } catch {
-        "Failed to update version for '$env:BHProjectName': $_.`nContinuing with existing version"
-    }
-}
-
-
-
-#endregion NOT USED FOR THIS DEMO
