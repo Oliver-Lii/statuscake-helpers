@@ -73,29 +73,29 @@ $result = New-StatusCakeHelperMaintenanceWindow -Name "Example Weekly MW" -Start
 
 Below is a list of the available functions and features of the StatusCake API that are supported. Further details of each function can be found in the links below:
 
-[Alerts](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/Alerts "StatusCake Alerts")
+[Alerts](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Alerts "StatusCake Alerts")
 *  Get-StatusCakeHelperSentAlert
 
-[Authentication](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/Authentication "StatusCake API Authentication")
+[Authentication](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Authentication "StatusCake API Authentication")
 *  Remove-StatusCakeHelperAPIAuth
 *  Set-StatusCakeHelperAPIAuth
 *  Test-StatusCakeHelperAPIAuthSet
 
-[ContactGroups](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/ContactGroups "StatusCake Contact Groups")
+[ContactGroups](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/ContactGroups "StatusCake Contact Groups")
 *  Copy-StatusCakeHelperContactGroup
 *  Get-StatusCakeHelperContactGroup
 *  New-StatusCakeHelperContactGroup
 *  Remove-StatusCakeHelperContactGroup
 *  Set-StatusCakeHelperContactGroup
 
-[MaintenanceWindows](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/MaintenanceWindows "StatusCake Maintenance Windows")
+[MaintenanceWindows](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/MaintenanceWindows "StatusCake Maintenance Windows")
 *  Clear-StatusCakeHelperMaintenanceWindow
 *  Get-StatusCakeHelperMaintenanceWindow
 *  New-StatusCakeHelperMaintenanceWindow
 *  Remove-StatusCakeHelperMaintenanceWindows
 *  Update-StatusCakeHelperMaintenanceWindows
 
-[PageSpeed](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PageSpeed "StatusCake PageSpeed Tests")
+[PageSpeed](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PageSpeed "StatusCake PageSpeed Tests")
 *  Copy-StatusCakeHelperPageSpeedTest
 *  Get-StatusCakeHelperPageSpeedTest
 *  Get-StatusCakeHelperPageSpeedTestDetail
@@ -104,17 +104,17 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Remove-StatusCakeHelperPageSpeedTest
 *  Set-StatusCakeHelperPageSpeedTest
 
-[PerformanceData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PerformanceData "StatusCake Performance Data")
+[PerformanceData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PerformanceData "StatusCake Performance Data")
 *  Get-StatusCakeHelperPerformanceData
 
-[PeriodData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PeriodData "StatusCake Period of Data")
+[PeriodData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PeriodData "StatusCake Period of Data")
 *  Get-StatusCakeHelperPeriodOfData
 
-[Probes](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/Probes "StatusCake Probe Locations")
+[Probes](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Probes "StatusCake Probe Locations")
 *  Get-StatusCakeHelperProbe
 *  Get-StatusCakeHelperRegionProbe
 
-[PublicReporting](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/PublicReporting "StatusCake Public Reporting Pages")
+[PublicReporting](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PublicReporting "StatusCake Public Reporting Pages")
 *  Copy-StatusCakeHelperPublicReportingPage
 *  Get-StatusCakeHelperPublicReportingPage
 *  Get-StatusCakeHelperPublicReportingPageDetail
@@ -122,14 +122,14 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Remove-StatusCakeHelperPublicReportingPage
 *  Set-StatusCakeHelperPublicReportingPage
 
-[SSL](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/SSL "StatusCake SSL Tests")
+[SSL](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/SSL "StatusCake SSL Tests")
 *  Copy-StatusCakeHelperSSLTest
 *  Get-StatusCakeHelperSSLTest
 *  New-StatusCakeHelperSSLTest
 *  Remove-StatusCakeHelperSSLTest
 *  Set-StatusCakeHelperSSLTest
 
-[Tests](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/StatusCake-Helpers/Public/Tests "StatusCake Tests")
+[Tests](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Tests "StatusCake Tests")
 *  Add-StatusCakeHelperTestNodeLocation
 *  Add-StatusCakeHelperTestStatusCode
 *  Add-StatusCakeHelperTestTag
