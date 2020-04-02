@@ -83,15 +83,12 @@ steps:
     displayName: "Publish To Powershell Gallery"
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
-  # To publish to Azure Devops Artifact Feed
-  #- task: PowerShell@2
-  #  displayName: 'Publish Module to Azure DevOps Artifact Feed'
-  #  inputs:
-  #    targetType: filePath
-  #    filePath: './Build/Publish-AzDOArtifactFeed.ps1'
-  #    arguments: '-AzDOAccountName $env:AzDOAccountName -AzDOArtifactFeedName $env:AzDOArtifactFeedName -AzDOPat $env:AzureDevOps_PAT'
+  # Publish to Azure Devops Artifact Feed
+  #- powershell: |
+  #    .\Build\build.ps1 -TaskList 'PublishToAzDOArtifactFeed'
+  #  displayName: "Publish Module To Azure DevOps Artifact Feed"
   #  env:
   #    AzDOAccountName: oliverli0875
   #    AzDOArtifactFeedName: prod-helpers
-  #    AzureDevOps_PAT: $(AZDOPAT)
-  #    ModuleChildPath: Staging\StatusCake-Helpers
+  #    AzDOProjectID: $(System.TeamProject)
+

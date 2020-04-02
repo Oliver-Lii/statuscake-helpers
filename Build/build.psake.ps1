@@ -241,3 +241,60 @@ Task 'PublishToPSGallery' -Depends 'ImportStagingModule' {
     }
     Publish-Module @publishParams
 }
+
+Task 'PublishToAzDOArtifactFeed' -Depends 'ImportStagingModule' {
+    $lines
+
+    # Variables
+    $packageSourceUrl = "https://pkgs.dev.azure.com/$env:AzDOAccountName/$env:AzDOProjectID/_packaging/$env:AzDOArtifactFeedName/nuget/v2" # NOTE: v2 Feed
+
+    # Troubleshooting
+    # Get-ChildItem env: | Format-Table -AutoSize
+
+    # This is downloaded during Step 2, but could also be "C:\Users\USERNAME\AppData\Local\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe"
+    # if not running script as Administrator.
+    $nugetPath = (Get-Command NuGet.exe).Source
+    if (-not (Test-Path -Path $nugetPath)) {
+        # $nugetPath = 'C:\ProgramData\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe'
+        $nugetPath = Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe'
+    }
+
+    # Step 1
+    # Check NuGet is listed
+    Get-PackageProvider -Name 'NuGet' -ForceBootstrap | Format-List *
+
+    # Step 2
+    # Register NuGet Package Source
+    & $nugetPath Sources Add -Name $env:AzDOArtifactFeedName -Source $packageSourceUrl
+
+    # Check new NuGet Source is registered
+    & $nugetPath Sources List
+
+    # Step 3
+    # Register feed
+    $registerParams = @{
+        Name                      = $env:AzDOArtifactFeedName
+        ScriptSourceLocation      = $packageSourceUrl
+        SourceLocation            = $packageSourceUrl
+        PublishLocation           = $packageSourceUrl
+        InstallationPolicy        = 'Trusted'
+        PackageManagementProvider = 'Nuget'
+    }
+    Register-PSRepository @registerParams
+
+    # Check new PowerShell Repository is registered
+    Get-PSRepository -Name $env:AzDOArtifactFeedName
+
+    $publishParams = @{
+        Path        = $StagingModulePath
+        Repository  = $env:AzDOArtifactFeedName
+        NugetApiKey = 'VSTS'
+        Force       = $true
+        Verbose     = $true
+        ErrorAction = 'SilentlyContinue'
+    }
+
+    # Step 4
+    # Publish PowerShell module
+    Publish-Module @publishParams
+}
