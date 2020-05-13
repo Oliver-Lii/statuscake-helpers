@@ -3,7 +3,8 @@
 .SYNOPSIS
     Retrieves a StatusCake Contact Group with a specific name or Test ID
 .DESCRIPTION
-    Retrieves StatusCake Test via the test name of the test or Test ID. If no group name or id supplied all contact groups will be returned
+    Retrieves StatusCake Test via the test name of the test or Test ID. If no group name or id supplied all contact groups will be returned. Retrieval of mobile numbers
+    via the API for Contact Groups is not currently possible due to security reasons.
 .PARAMETER APICredential
     Credentials to access StatusCake API
 .PARAMETER GroupName
