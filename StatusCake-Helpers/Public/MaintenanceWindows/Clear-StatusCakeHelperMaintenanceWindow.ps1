@@ -85,31 +85,16 @@ function Clear-StatusCakeHelperMaintenanceWindow
         }
     }
 
-    $exclude = @("Name")
-    $clear = @()
-    if($TestIDs){$clear += "raw_tests"}
-    if($TestTags){$clear += "raw_tags"}
+    $clearItems = @{}
+    if($TestIDs){$clearItems["raw_tests"]=@()}
+    if($TestTags){$clearItems["raw_tags"]=""}
 
-    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude $exclude -Clear $clear
-    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
-
-    $requestParams = @{
-        uri = "https://app.statuscake.com/API/Maintenance/Update"
-        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
-        UseBasicParsing = $true
-        method = "Post"
-        ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams
-    }
-
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Set StatusCake Maintenance Window") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Clear Value From StatusCake Test"))
     {
-        $response = Invoke-RestMethod @requestParams
-        $requestParams=@{}
-        if($response.Success -ne "True")
+        $result = Update-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -ID $ID @clearItems
+        if($PassThru)
         {
-            Write-Error "$($response.Message) [$($response.Issues)]"
+            Return $result
         }
     }
 }
