@@ -37,7 +37,7 @@ function Update-StatusCakeHelperMaintenanceWindow
 
         [Parameter(ParameterSetName='SetByID',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$ID,
+        [int]$ID,
 
         [Parameter(ParameterSetName='SetByName',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
@@ -113,7 +113,17 @@ function Update-StatusCakeHelperMaintenanceWindow
     }
 
     $exclude = @("Name")
-    $lower = @("Timezone","Name")
+    $lower = @("Timezone","Name","ID")
+    # Start and end date need to be sent on edit
+    if(!$StartDate)
+    {
+        $StartDate = $maintenanceWindow.start_utc
+    }
+    if(!$EndDate)
+    {
+        $EndDate = $maintenanceWindow.end_utc
+    }
+
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
     $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude $exclude -ToLowerName $lower
     $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter

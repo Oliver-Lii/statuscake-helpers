@@ -273,12 +273,12 @@ Describe "StatusCake Maintenance Windows" {
         $results.count | Should -BeGreaterThan 0
     }
 
-    It "Update-StatusCakeHelperMaintenanceWindow updates the maintenance window" -Skip{
+    It "Update-StatusCakeHelperMaintenanceWindow updates the maintenance window"{
         $result = Update-StatusCakeHelperMaintenanceWindow -ID $SCMWTest.id -RecurEvery 30
-        $result.Success | Should Be "True"
+        $result.recur_every | Should Be 30
     }
 
-    It "Clear-StatusCakeHelperMaintenanceWindow clears a test associated with a maintenance window" -Skip{
+    It "Clear-StatusCakeHelperMaintenanceWindow clears a test associated with a maintenance window"{
         Clear-StatusCakeHelperMaintenanceWindow -ID $SCMWTest.id -TestIDs
         $results = Get-StatusCakeHelperMaintenanceWindow -ID $SCMWTest.id
         $results.raw_tests | Should -BeFalse
