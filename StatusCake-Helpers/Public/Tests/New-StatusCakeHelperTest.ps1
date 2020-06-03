@@ -32,7 +32,7 @@
     DNS Tests only. Hostname or IP of DNS server to use.
 .PARAMETER DoNotFind
     If the value for the FindString parameter should be found to trigger a alert. 1 = will trigger if FindString found
-.PARAMETER EnableSSLWarning
+.PARAMETER EnableSSLAlert
     HTTP Tests only. If enabled, tests will send warnings if the SSL certificate is about to expire.
 .PARAMETER FinalEndpoint
     Use to specify the expected Final URL in the testing process
@@ -124,7 +124,8 @@ function New-StatusCakeHelperTest
 
         [boolean]$DoNotFind,
 
-        [boolean]$EnableSSLWarning,
+        [Alias("EnableSSLWarning")]
+        [boolean]$EnableSSLAlert,
 
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         [string]$FinalEndpoint,

@@ -10,7 +10,7 @@ Set the configuration of a StatusCake test
 Set-StatusCakeHelperTest [-APICredential <PSCredential>] -TestName <String> -TestURL <String>
  -CheckRate <Int32> -TestType <String> [-BasicPass <SecureString>] [-BasicUser <String>] [-Branding <Boolean>]
  [-Confirmation <Int32>] [-ContactGroup <Int32[]>] [-CustomHeader <Hashtable>] [-DNSIP <String>]
- [-DNSServer <String>] [-DoNotFind <Boolean>] [-EnableSSLWarning <Boolean>] [-FinalEndpoint <String>]
+ [-DNSServer <String>] [-DoNotFind <Boolean>] [-EnableSSLAlert <Boolean>] [-FinalEndpoint <String>]
  [-FindString <String>] [-FollowRedirect <Boolean>] [-LogoImage <String>] [-NodeLocations <String[]>]
  [-Paused <Boolean>] [-PingURL <String>] [-Port <Int32>] [-PostRaw <String>] [-Public <Boolean>]
  [-RealBrowser <Boolean>] [-StatusCodes <String[]>] [-Tags <String[]>] [-Timeout <Int32>]
@@ -24,7 +24,7 @@ Set-StatusCakeHelperTest [-APICredential <PSCredential>] -TestID <Int32> [-TestN
  [-TestURL <String>] [-CheckRate <Int32>] [-TestType <String>] [-BasicPass <SecureString>]
  [-BasicUser <String>] [-Branding <Boolean>] [-Confirmation <Int32>] [-ContactGroup <Int32[]>]
  [-CustomHeader <Hashtable>] [-DNSIP <String>] [-DNSServer <String>] [-DoNotFind <Boolean>]
- [-EnableSSLWarning <Boolean>] [-FinalEndpoint <String>] [-FindString <String>] [-FollowRedirect <Boolean>]
+ [-EnableSSLAlert <Boolean>] [-FinalEndpoint <String>] [-FindString <String>] [-FollowRedirect <Boolean>]
  [-LogoImage <String>] [-NodeLocations <String[]>] [-Paused <Boolean>] [-PingURL <String>] [-Port <Int32>]
  [-PostRaw <String>] [-Public <Boolean>] [-RealBrowser <Boolean>] [-StatusCodes <String[]>] [-Tags <String[]>]
  [-Timeout <Int32>] [-TriggerRate <Int32>] [-UseJar <Boolean>] [-UserAgent <String>] [-Virus <Boolean>]
@@ -37,7 +37,7 @@ Set-StatusCakeHelperTest [-APICredential <PSCredential>] [-SetByTestName] -TestN
  [-TestURL <String>] [-CheckRate <Int32>] [-TestType <String>] [-BasicPass <SecureString>]
  [-BasicUser <String>] [-Branding <Boolean>] [-Confirmation <Int32>] [-ContactGroup <Int32[]>]
  [-CustomHeader <Hashtable>] [-DNSIP <String>] [-DNSServer <String>] [-DoNotFind <Boolean>]
- [-EnableSSLWarning <Boolean>] [-FinalEndpoint <String>] [-FindString <String>] [-FollowRedirect <Boolean>]
+ [-EnableSSLAlert <Boolean>] [-FinalEndpoint <String>] [-FindString <String>] [-FollowRedirect <Boolean>]
  [-LogoImage <String>] [-NodeLocations <String[]>] [-Paused <Boolean>] [-PingURL <String>] [-Port <Int32>]
  [-PostRaw <String>] [-Public <Boolean>] [-RealBrowser <Boolean>] [-StatusCodes <String[]>] [-Tags <String[]>]
  [-Timeout <Int32>] [-TriggerRate <Int32>] [-UseJar <Boolean>] [-UserAgent <String>] [-Virus <Boolean>]
@@ -350,7 +350,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -EnableSSLWarning
+### -EnableSSLAlert
 HTTP Tests only.
 If enabled, tests will send warnings if the SSL certificate is about to expire.
 
