@@ -9,7 +9,7 @@ Create a StatusCake test check
 New-StatusCakeHelperTest [-APICredential <PSCredential>] -TestName <String> -TestURL <String>
  -CheckRate <Int32> -TestType <String> [-BasicUser <String>] [-BasicPass <SecureString>] [-Branding <Boolean>]
  [-Confirmation <Int32>] [-ContactGroup <Int32[]>] [-CustomHeader <Hashtable>] [-DNSIP <String>]
- [-DNSServer <String>] [-DoNotFind <Boolean>] [-EnableSSLAlert <Boolean>] [-FinalEndpoint <String>]
+ [-DNSServer <String>] [-DoNotFind <Boolean>] [-EnableSSLWarning <Boolean>] [-FinalEndpoint <String>]
  [-FindString <String>] [-FollowRedirect <Boolean>] [-LogoImage <String>] [-NodeLocations <String[]>]
  [-Paused <Boolean>] [-PingURL <String>] [-Port <Int32>] [-PostRaw <String>] [-Public <Boolean>]
  [-RealBrowser <Boolean>] [-StatusCodes <Int32[]>] [-Tags <String[]>] [-Timeout <Int32>] [-TriggerRate <Int32>]
@@ -249,7 +249,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -EnableSSLAlert
+### -EnableSSLWarning
 HTTP Tests only.
 If enabled, tests will send warnings if the SSL certificate is about to expire.
 
