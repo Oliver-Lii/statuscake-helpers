@@ -124,6 +124,7 @@ function New-StatusCakeHelperTest
 
         [boolean]$DoNotFind,
 
+        [Alias("EnableSSLAlert")]
         [boolean]$EnableSSLWarning,
 
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]

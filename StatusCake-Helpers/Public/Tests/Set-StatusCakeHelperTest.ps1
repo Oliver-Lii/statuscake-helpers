@@ -173,6 +173,7 @@ function Set-StatusCakeHelperTest
         [Parameter(ParameterSetName='SetByTestName')]
         [Parameter(ParameterSetName='SetByTestID')]
         [Parameter(ParameterSetName='SetNewTest')]
+        [Alias("EnableSSLAlert")]
         [boolean]$EnableSSLWarning,
 
         [Parameter(ParameterSetName='SetByTestName')]
