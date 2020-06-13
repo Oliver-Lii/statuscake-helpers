@@ -19,7 +19,10 @@
     Retrieve contact group with ID 123456
 .OUTPUTS
     Returns the contact group(s) returning $null if no matching contact groups
-
+.LINK
+    https://www.statuscake.com/api/Contact%20Groups/List%20Contact%20Groups.md
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Get-StatusCakeHelperContactGroup.md
 #>
 function Get-StatusCakeHelperContactGroup
 {

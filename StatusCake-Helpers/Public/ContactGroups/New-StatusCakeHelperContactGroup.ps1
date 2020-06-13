@@ -23,6 +23,10 @@
 .EXAMPLE
     C:\PS>New-StatusCakeHelperContactGroup -GroupName "Example" -email @(test@example.com)
     Create contact group called "Example" using email address "test@example.com"
+.LINK
+    https://www.statuscake.com/api/Contact%20Groups/Add%20or%20Update%20Contact%20Group.md
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md
 #>
 function New-StatusCakeHelperContactGroup
 {

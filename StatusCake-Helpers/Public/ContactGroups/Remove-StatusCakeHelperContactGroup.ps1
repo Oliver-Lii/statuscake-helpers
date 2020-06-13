@@ -20,8 +20,10 @@
     Remove contact group with ID 123456
 .OUTPUTS
     Returns the result of the ContactGroup removal as an object
-
-
+.LINK
+    https://www.statuscake.com/api/Contact%20Groups/Delete%20Contact%20Group.md
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Remove-StatusCakeHelperContactGroup.md
 #>
 function Remove-StatusCakeHelperContactGroup
 {

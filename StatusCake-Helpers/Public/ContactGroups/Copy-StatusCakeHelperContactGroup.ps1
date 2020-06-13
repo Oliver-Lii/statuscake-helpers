@@ -15,8 +15,8 @@
 .EXAMPLE
     C:\PS> Copy-StatusCakeHelperContactGroup -GroupName "Example" -NewGroupName "Example - Copy"
     Create a copy of a contact group called "Example" with name "Example - Copy"
-.OUTPUTS
-
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Copy-StatusCakeHelperContactGroup.md
 #>
 function Copy-StatusCakeHelperContactGroup
 {

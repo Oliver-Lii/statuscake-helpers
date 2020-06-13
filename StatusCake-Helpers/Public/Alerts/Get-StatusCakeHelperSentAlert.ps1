@@ -16,11 +16,15 @@
 .OUTPUTS
     Returns an object with the details on the Alerts Sent
 .EXAMPLE
-   C:\PS> Get-StatusCakeHelperSentAlert
-   Return all the alerts sent for any test
+    C:\PS> Get-StatusCakeHelperSentAlert
+    Return all the alerts sent for any test
 .EXAMPLE
-   C:\PS> Get-StatusCakeHelperSentAlert -TestID 123456 -since "2017-08-19 13:29:49"
-   Return all the alerts sent for test ID 123456 since the 19th August 2017 13:29:49
+    C:\PS> Get-StatusCakeHelperSentAlert -TestID 123456 -since "2017-08-19 13:29:49"
+    Return all the alerts sent for test ID 123456 since the 19th August 2017 13:29:49
+.LINK
+    https://www.statuscake.com/api/Alerts/Get%20Sent%20Alerts.md
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Alerts/Get-StatusCakeHelperSentAlert.md
 #>
 function Get-StatusCakeHelperSentAlert
 {
