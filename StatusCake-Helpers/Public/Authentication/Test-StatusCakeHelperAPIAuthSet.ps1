@@ -9,7 +9,8 @@
    Test whether the credential file exists
 .OUTPUTS
    Returns a boolean value
-
+.LINK
+   https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Authentication/Test-StatusCakeHelperAPIAuthSet.md
 #>
 function Test-StatusCakeHelperAPIAuthSet
 {

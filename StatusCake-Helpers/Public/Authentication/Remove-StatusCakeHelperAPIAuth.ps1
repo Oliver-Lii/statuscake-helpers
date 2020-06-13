@@ -14,6 +14,8 @@
    Remove the StatusCake Authentication credential configured for the session
 .OUTPUTS
    Returns a Boolean value on whether authentication removal operation was successful
+.LINK
+   https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Authentication/Remove-StatusCakeHelperAPIAuth.md
 #>
 function Remove-StatusCakeHelperAPIAuth
 {
