@@ -208,7 +208,7 @@ Describe "StatusCake Page Speed Tests" {
 
 Describe "StatusCake SSL Tests" {
 
-    It "New-StatusCakeHelperSSLTest creates a SSL Test"{
+    It "New-StatusCakeHelperSSLTest creates a SSL Test" -skip{
         $script:SCSSLTest = New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -Checkrate 2073600
         $SCSSLTest.domain | Should -Be "https://www.example.com"
         $SCSSLTest.checkrate | Should -Be 2073600
@@ -219,29 +219,29 @@ Describe "StatusCake SSL Tests" {
         $results.count | Should -BeGreaterThan 0
     }
 
-    It "Set-StatusCakeHelperSSLTest updates the checkrate"{
+    It "Set-StatusCakeHelperSSLTest updates the checkrate" -skip{
         $result = Set-StatusCakeHelperSSLTest -ID $SCSSLTest.ID -Checkrate 86400
         $result.checkrate | Should -Be 86400
     }
 
-    It "Copy-StatusCakeHelperSSLTest copies a SSL Test"{
+    It "Copy-StatusCakeHelperSSLTest copies a SSL Test" -skip{
         $result = Copy-StatusCakeHelperSSLTest -ID $SCSSLTest.ID -NewDomain "https://www.example.org"
         $result.domain | Should -Be "https://www.example.org"
         $result.checkrate | Should -Be 86400
     }
 
-    It "Get-StatusCakeHelperSSLTest retrieves a SSL test by domain"{
+    It "Get-StatusCakeHelperSSLTest retrieves a SSL test by domain" -skip{
         $result = Get-StatusCakeHelperSSLTest -Domain "https://www.example.com"
         $result.domain | Should -Be "https://www.example.com"
     }
 
-    It "Remove-StatusCakeHelperSSLTest removes a SSL test by ID"{
+    It "Remove-StatusCakeHelperSSLTest removes a SSL test by ID" -skip{
         Remove-StatusCakeHelperSSLTest -ID $SCSSLTest.Id
         $results = Get-StatusCakeHelperSSLTest
         $results.ID | Should -Not -Contain $SCSSLTest.Id
     }
 
-    It "Remove-StatusCakeHelperSSLTest removes a SSL test by domain"{
+    It "Remove-StatusCakeHelperSSLTest removes a SSL test by domain" -skip{
         Remove-StatusCakeHelperSSLTest -Domain "https://www.example.org"
         $results = Get-StatusCakeHelperSSLTest
         $results.domain | Should -Not -Contain "https://www.example.org"
