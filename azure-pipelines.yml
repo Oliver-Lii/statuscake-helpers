@@ -1,6 +1,7 @@
 # Build Pipeline
 variables:
   psmversion: 4.0.$(Build.Buildid)
+  psmodulename: "statuscake-helpers"
 
 trigger:
   batch: true
@@ -101,7 +102,7 @@ stages:
         displayName: 'NuGet Authenticate'
 
       - powershell: |
-          $ModuleFolderPath = (Join-Path -Path $env:BUILD_STAGINGDIRECTORY -ChildPath "PSModule\$env:BUILD_REPOSITORY_NAME")
+          $ModuleFolderPath = (Join-Path -Path $env:BUILD_STAGINGDIRECTORY -ChildPath "PSModule\$env:PSModuleName")
           $publishParams = @{
               Path        = $ModuleFolderPath
               NugetApiKey = $env:NugetApiKey
@@ -111,11 +112,14 @@ stages:
           Publish-Module @publishParams
         env:
           NugetApiKey: $(PSGALLERY_API_KEY)
+          PSModuleName: $(psmodulename)
         displayName: "Publish To Powershell Gallery"
 
       - powershell: |
-          .\Build\Update-RepoMarkdownDocs.ps1
+          .\Build\Update-RepoMarkdownDocs.ps1 -ModuleName $env:PSModuleName
         displayName: 'Update Repository Markdown Documentation'
+        env:
+          PSModuleName: $(psmodulename)
 
       # Publish to Azure Devops Artifact Feed
       #- powershell: |
