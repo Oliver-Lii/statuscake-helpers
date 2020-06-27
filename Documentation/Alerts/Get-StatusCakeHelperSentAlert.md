@@ -125,8 +125,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
@@ -136,3 +135,8 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## NOTES
 
 ## RELATED LINKS
+
+[https://www.statuscake.com/api/Alerts/Get%20Sent%20Alerts.md](https://www.statuscake.com/api/Alerts/Get%20Sent%20Alerts.md)
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Alerts/Get-StatusCakeHelperSentAlert.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Alerts/Get-StatusCakeHelperSentAlert.md)
+

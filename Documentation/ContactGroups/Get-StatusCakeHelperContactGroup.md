@@ -22,7 +22,9 @@ Get-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-ContactID <In
 
 ## DESCRIPTION
 Retrieves StatusCake Test via the test name of the test or Test ID.
-If no group name or id supplied all contact groups will be returned
+If no group name or id supplied all contact groups will be returned.
+Retrieval of mobile numbers
+via the API for Contact Groups is not currently possible due to security reasons.
 
 ## EXAMPLES
 
@@ -88,8 +90,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
@@ -99,3 +100,8 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## NOTES
 
 ## RELATED LINKS
+
+[https://www.statuscake.com/api/Contact%20Groups/List%20Contact%20Groups.md](https://www.statuscake.com/api/Contact%20Groups/List%20Contact%20Groups.md)
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Get-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Get-StatusCakeHelperContactGroup.md)
+

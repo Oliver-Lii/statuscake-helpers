@@ -31,3 +31,6 @@ Test whether the credential file exists
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Authentication/Test-StatusCakeHelperAPIAuthSet.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Authentication/Test-StatusCakeHelperAPIAuthSet.md)
+

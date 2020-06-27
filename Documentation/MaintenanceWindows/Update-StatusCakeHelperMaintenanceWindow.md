@@ -7,7 +7,7 @@ Updates a StatusCake Maintenance Window
 
 ### SetByID
 ```
-Update-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] -ID <String> [-StartDate <DateTime>]
+Update-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] -ID <Int32> [-StartDate <DateTime>]
  [-EndDate <DateTime>] [-Timezone <String>] [-TestIDs <Int32[]>] [-TestTags <String[]>] [-RecurEvery <Int32>]
  [-FollowDST <Boolean>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
@@ -53,13 +53,13 @@ Accept wildcard characters: False
 The maintenance window ID
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: SetByID
 Aliases:
 
 Required: True
 Position: Named
-Default value: None
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -219,8 +219,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
