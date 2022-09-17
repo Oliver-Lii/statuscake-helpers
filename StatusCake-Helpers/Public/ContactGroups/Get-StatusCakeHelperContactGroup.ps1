@@ -1,28 +1,33 @@
-
 <#
 .SYNOPSIS
     Retrieves a StatusCake Contact Group with a specific name or Test ID
 .DESCRIPTION
-    Retrieves StatusCake Test via the test name of the test or Test ID. If no group name or id supplied all contact groups will be returned. Retrieval of mobile numbers
-    via the API for Contact Groups is not currently possible due to security reasons.
+    Retrieves a StatusCake contact group via the name or ID. If no name or id supplied all contact groups will be returned.
 .PARAMETER APICredential
     Credentials to access StatusCake API
-.PARAMETER GroupName
+.PARAMETER Name
     Name of the Contact Group
-.PARAMETER ContactID
-    ID of the Contact Group to be copied
+.PARAMETER ID
+    ID of the Contact Group to be retrieved
 .EXAMPLE
     C:\PS>Get-StatusCakeHelperContactGroup
     Retrieve all contact groups
 .EXAMPLE
-    C:\PS>Get-StatusCakeHelperContactGroup -ContactID 123456
+    C:\PS>Get-StatusCakeHelperContactGroup -ID 123456
     Retrieve contact group with ID 123456
 .OUTPUTS
-    Returns the contact group(s) returning $null if no matching contact groups
-.LINK
-    https://www.statuscake.com/api/Contact%20Groups/List%20Contact%20Groups.md
+    Returns the contact group(s)
+        id              : 123456
+        name            : Test Contact Group
+        email_addresses : {test@example.com}
+        mobile_numbers  : {}
+        integrations    : {}
 .LINK
     https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Get-StatusCakeHelperContactGroup.md
+.LINK
+    https://www.statuscake.com/api/v1/#tag/contact-groups/operation/list-contact-groups
+.LINK
+    https://www.statuscake.com/api/v1/#tag/contact-groups/operation/get-contact-group
 #>
 function Get-StatusCakeHelperContactGroup
 {
@@ -33,35 +38,25 @@ function Get-StatusCakeHelperContactGroup
 
         [Parameter(ParameterSetName = "Group Name")]
         [ValidateNotNullOrEmpty()]
-        [string]$GroupName,
+        [string]$Name,
 
         [Parameter(ParameterSetName = "Contact ID")]
+        [Alias("GroupID","ContactID")]
         [ValidateNotNullOrEmpty()]
-        [int]$ContactID
+        [int]$ID
     )
 
-    $requestParams = @{
-        uri = "https://app.statuscake.com/API/ContactGroups/"
-        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
-        UseBasicParsing = $true
-    }
-
-    $response = Invoke-RestMethod @requestParams
-
-    if($PSCmdlet.ParameterSetName -eq "all")
+    if($Name)
     {
-        $matchingGroups = $response
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "Contact-Groups" | Where-Object{$_.name -eq $Name}
     }
-    elseif($GroupName)
+    elseif($ID)
     {
-        $matchingGroups = $response | Where-Object {$_.GroupName -eq $GroupName}
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "Contact-Groups" -ID $ID
     }
-    elseif($ContactID)
+    else
     {
-        $matchingGroups = $response | Where-Object {$_.ContactID -eq $ContactID}
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "Contact-Groups"
     }
-
-    Return $matchingGroups
-
+    Return $statusCakeItem
 }
-

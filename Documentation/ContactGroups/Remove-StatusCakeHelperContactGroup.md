@@ -1,24 +1,24 @@
 # Remove-StatusCakeHelperContactGroup
 
 ## SYNOPSIS
-Removes the specified StatusCake ContactGroup
+Removes the specified StatusCake contact group
 
 ## SYNTAX
 
 ### ContactID
 ```
-Remove-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-ContactID <Int32>] [-Force] [-PassThru]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Remove-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-ID <Int32>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### GroupName
 ```
-Remove-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-GroupName <String>] [-Force] [-PassThru]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Remove-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-Name <String>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Removes the StatusCake ContactGroup via it's ContactID or GroupName.
+Removes the StatusCake contact group via its ID or Name.
 
 ## EXAMPLES
 
@@ -46,13 +46,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ContactID
-ID of the ContactGroup to be removed
+### -ID
+ID of the contact group to be removed
 
 ```yaml
 Type: Int32
 Parameter Sets: ContactID
-Aliases:
+Aliases: group_id, GroupID, ContactID
 
 Required: False
 Position: Named
@@ -61,7 +61,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -GroupName
+### -Name
 Name of the Contact Group to be removed
 
 ```yaml
@@ -72,36 +72,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Force
-Delete the contact group if it is in use
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PassThru
-Return the object to be deleted
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -144,12 +114,12 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### Returns the result of the ContactGroup removal as an object
+### Returns the result of the contact group removal as an object
 ## NOTES
 
 ## RELATED LINKS
 
-[https://www.statuscake.com/api/Contact%20Groups/Delete%20Contact%20Group.md](https://www.statuscake.com/api/Contact%20Groups/Delete%20Contact%20Group.md)
-
 [https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Remove-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Remove-StatusCakeHelperContactGroup.md)
+
+[https://www.statuscake.com/api/v1/#tag/contact-groups/operation/delete-contact-group](https://www.statuscake.com/api/v1/#tag/contact-groups/operation/delete-contact-group)
 

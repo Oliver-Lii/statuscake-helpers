@@ -1,28 +1,34 @@
-# New-StatusCakeHelperContactGroup
+# Update-StatusCakeHelperContactGroup
 
 ## SYNOPSIS
-Create a StatusCake ContactGroup
+Updates the configuration of a StatusCake ContactGroup
 
 ## SYNTAX
 
+### ID
 ```
-New-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -Name <String> [-Email <String[]>]
- [-IntegrationID <Int32[]>] [-PingURL <String>] [-Mobile <String[]>] [-Force] [-PassThru] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Update-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-ID <Int32>] [-Email <String[]>]
+ [-IntegrationID <Int32[]>] [-PingURL <String>] [-Mobile <String[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### Name
+```
+Update-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-Name <String>] [-Email <String[]>]
+ [-IntegrationID <Int32[]>] [-PingURL <String>] [-Mobile <String[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Creates a new StatusCake ContactGroup using the supplied parameters.
-The name of the contact group must be unique for the contact group to be created.
+Updates a StatusCake ContactGroup using the supplied parameters.
+Values supplied overwrite existing values.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-New-StatusCakeHelperContactGroup -GroupName "Example" -email @(test@example.com)
+Update-StatusCakeHelperContactGroup -Name "Example" -email @(test@example.com)
 ```
 
-Create contact group called "Example" using email address "test@example.com"
+Set the contact group name "Example" with email address "test@example.com"
 
 ## PARAMETERS
 
@@ -41,15 +47,30 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ID
+ID of the contact group to set
+
+```yaml
+Type: Int32
+Parameter Sets: ID
+Aliases: group_id, GroupID, ContactID
+
+Required: False
+Position: Named
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Name
 Name of the Contact Group to be created
 
 ```yaml
 Type: String
-Parameter Sets: (All)
-Aliases:
+Parameter Sets: Name
+Aliases: GroupName
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -87,8 +108,7 @@ Accept wildcard characters: False
 ```
 
 ### -PingURL
-URL or IP address of an endpoint to push uptime events.
-Currently this only supports HTTP GET endpoints
+URL To Send a POST alert
 
 ```yaml
 Type: String
@@ -103,7 +123,7 @@ Accept wildcard characters: False
 ```
 
 ### -Mobile
-Array of mobile numbers in International Format E.164 notation
+Array of mobile number in International Format E.164 notation
 
 ```yaml
 Type: String[]
@@ -113,36 +133,6 @@ Aliases: mobile_numbers
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Force
-Force creation of the contact group even if a window with the same name already exists
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PassThru
-Return the contact group details instead of the contact id
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -189,7 +179,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## RELATED LINKS
 
-[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md)
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Update-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Update-StatusCakeHelperContactGroup.md)
 
-[https://www.statuscake.com/api/v1/#tag/contact-groups/operation/create-contact-group](https://www.statuscake.com/api/v1/#tag/contact-groups/operation/create-contact-group)
+[https://www.statuscake.com/api/v1/#tag/contact-groups/operation/update-contact-group](https://www.statuscake.com/api/v1/#tag/contact-groups/operation/update-contact-group)
 
