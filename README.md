@@ -18,32 +18,29 @@ Install-Module StatusCake-Helpers -Repository PSGallery
  The following illustrates how to create uptime, SSL, Page Speed Tests and a Public Reporting page along with daily and weekly maintenance windows and two contacts
 
 ```powershell
-# Setup the StatusCake credentials
+# Setup the StatusCake API key
 # The API credentials must come from the primary account which hosts the tests and not a subaccount which was given access
-$scCredentials = Get-Credential
-Set-StatusCakeHelperAPIAuth -Credential $scCredentials
+$scAPIKey = Read-Host -AsSecureString -Prompt "Please enter the API key"
+Set-StatusCakeHelperAPIAuth -APIKey $scAPIKey
 
 $URL = "https://www.example.com"
 $team1Emails = @("alerts@example.com","alerts1@example.com")
 
-$team1Contact= New-StatusCakeHelperContactGroup -GroupName "Team 1 monitoring" -Email $team1Emails -Mobile "+14155552671"
-$team2Contact= New-StatusCakeHelperContactGroup -GroupName "Team 2 monitoring" -Email "alerts2@example.com"
+$team1Contact= New-StatusCakeHelperContactGroup -Name "Team 1 monitoring" -Email $team1Emails -Mobile "+14155552671" -Passthru
+$team2Contact= New-StatusCakeHelperContactGroup -Name "Team 2 monitoring" -Email "alerts2@example.com" -Passthru
 
-#Create uptime test to check the site every 5 minutes
-$uptimeTest = New-StatusCakeHelperTest -TestName "Example" -TestURL $URL -CheckRate 300 -TestType HTTP -ContactGroup $team1Contact.ContactID
+#Create a uptime test to check the site every 5 minutes
+$uptimeTest = New-StatusCakeHelperUptimeTest -Name "Example" -TestURL $URL -CheckRate 300 -TestType HTTP -ContactGroup $team1Contact.id
 
 #Create SSL test to check SSL certificate every day
-$sslTest = New-StatusCakeHelperSSLTest -Domain $URL -Checkrate 2073600 -ContactIDs @($team1Contact.ContactID,$team2Contact.ContactID)
+$sslTest = New-StatusCakeHelperSSLTest -Domain $URL -Checkrate 2073600 -ContactID @($team1Contact.id,$team2Contact.id)
 
 #Create Page Speed Test to monitor page speed every 30 minutes from the UK
 $pageSpeedCheckName = "Example site UK speed check"
-$pageSpeedTest = New-StatusCakeHelperPageSpeedTest -Name $pageSpeedCheckName -WebsiteURL $URL -Checkrate 30 -LocationISO UK
+$pageSpeedTest = New-StatusCakeHelperPageSpeedTest -Name $pageSpeedCheckName -WebsiteURL $URL -Checkrate 1800 -Region UK
 
-#Set the page speed test using the name of the test to alert team 2 when the page takes more than 5000ms to load
-$result = Set-StatusCakeHelperPageSpeedTest -Name $pageSpeedCheckName -SetByName -ContactIDs @($team2Contact.ContactID) -AlertSlower 5000
-
-#Create a public reporting page for the test
-$publicReportingPage = New-StatusCakeHelperPublicReportingPage -Title "Example.com Public Reporting Page" -TestIDs @($uptimeTest.TestID)
+#Update the page speed test using the name of the test to alert team 2 when the page takes more than 5000ms to load
+$result = Update-StatusCakeHelperPageSpeedTest -Name $pageSpeedCheckName -ContactID @($team2Contact.id) -AlertSlower 5000
 
 #Create a date object to start today at 20:00 and finish in an hour
 $startMWDailyTime = Get-Date "20:00"
@@ -59,14 +56,14 @@ $endMWWeeklyTime = $startMWWeeklyTime.AddHours(4)
 
 $mwParams = @{
     Timezone = "Europe/London"
-    TestIDs = @($uptimeTest.TestID)
+    UptimeID = @($uptimeTest.id)
 }
 
 #Create the daily reoccurring maintenance window
-$result = New-StatusCakeHelperMaintenanceWindow -Name "Example Daily MW" -StartDate $startMWDailyTime -EndDate $endMWDailyTime @mwParams -RecurEvery 1
+$result = New-StatusCakeHelperMaintenanceWindow -Name "Example Daily MW" -StartDate $startMWDailyTime -EndDate $endMWDailyTime @mwParams -RepeatInterval 1d
 
 #Create the weekly reoccurring maintenance window
-$result = New-StatusCakeHelperMaintenanceWindow -Name "Example Weekly MW" -StartDate $startMWWeeklyTime -EndDate $endMWWeeklyTime @mwParams -RecurEvery 7
+$result = New-StatusCakeHelperMaintenanceWindow -Name "Example Weekly MW" -StartDate $startMWWeeklyTime -EndDate $endMWWeeklyTime @mwParams -RepeatInterval 1w
 
 ```
 
@@ -74,12 +71,9 @@ $result = New-StatusCakeHelperMaintenanceWindow -Name "Example Weekly MW" -Start
 
 Below is a list of the available functions and features of the StatusCake API that are supported. Further details of each function can be found in the links below:
 
-[Alerts](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Alerts "StatusCake Alerts")
-*  Get-StatusCakeHelperSentAlert
-
 [Authentication](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Authentication "StatusCake API Authentication")
 *  Remove-StatusCakeHelperAPIAuth
-*  Set-StatusCakeHelperAPIAuth
+*  Update-StatusCakeHelperAPIAuth
 *  Test-StatusCakeHelperAPIAuthSet
 
 [ContactGroups](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/ContactGroups "StatusCake Contact Groups")
@@ -87,65 +81,44 @@ Below is a list of the available functions and features of the StatusCake API th
 *  Get-StatusCakeHelperContactGroup
 *  New-StatusCakeHelperContactGroup
 *  Remove-StatusCakeHelperContactGroup
-*  Set-StatusCakeHelperContactGroup
+*  Update-StatusCakeHelperContactGroup
+
+[Locations](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Locations "StatusCake Locations")
+*  Get-StatusCakeHelperLocation
 
 [MaintenanceWindows](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/MaintenanceWindows "StatusCake Maintenance Windows")
-*  Clear-StatusCakeHelperMaintenanceWindow
 *  Get-StatusCakeHelperMaintenanceWindow
 *  New-StatusCakeHelperMaintenanceWindow
-*  Remove-StatusCakeHelperMaintenanceWindows
-*  Update-StatusCakeHelperMaintenanceWindows
+*  Remove-StatusCakeHelperMaintenanceWindow
+*  Update-StatusCakeHelperMaintenanceWindow
 
 [PageSpeed](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PageSpeed "StatusCake PageSpeed Tests")
 *  Copy-StatusCakeHelperPageSpeedTest
 *  Get-StatusCakeHelperPageSpeedTest
-*  Get-StatusCakeHelperPageSpeedTestDetail
 *  Get-StatusCakeHelperPageSpeedTestHistory
 *  New-StatusCakeHelperPageSpeedTest
 *  Remove-StatusCakeHelperPageSpeedTest
-*  Set-StatusCakeHelperPageSpeedTest
-
-[PerformanceData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PerformanceData "StatusCake Performance Data")
-*  Get-StatusCakeHelperPerformanceData
-
-[PeriodData](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PeriodData "StatusCake Period of Data")
-*  Get-StatusCakeHelperPeriodOfData
-
-[Probes](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Probes "StatusCake Probe Locations")
-*  Get-StatusCakeHelperProbe
-*  Get-StatusCakeHelperRegionProbe
-
-[PublicReporting](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/PublicReporting "StatusCake Public Reporting Pages")
-*  Copy-StatusCakeHelperPublicReportingPage
-*  Get-StatusCakeHelperPublicReportingPage
-*  Get-StatusCakeHelperPublicReportingPageDetail
-*  New-StatusCakeHelperPublicReportingPage
-*  Remove-StatusCakeHelperPublicReportingPage
-*  Set-StatusCakeHelperPublicReportingPage
+*  Update-StatusCakeHelperPageSpeedTest
 
 [SSL](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/SSL "StatusCake SSL Tests")
 *  Copy-StatusCakeHelperSSLTest
 *  Get-StatusCakeHelperSSLTest
 *  New-StatusCakeHelperSSLTest
 *  Remove-StatusCakeHelperSSLTest
-*  Set-StatusCakeHelperSSLTest
+*  Update-StatusCakeHelperSSLTest
 
-[Tests](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Tests "StatusCake Tests")
-*  Add-StatusCakeHelperTestNodeLocation
-*  Add-StatusCakeHelperTestStatusCode
-*  Add-StatusCakeHelperTestTag
-*  Copy-StatusCakeHelperTest
-*  Get-StatusCakeHelperTest
-*  Get-StatusCakeHelperTestDetail
-*  Get-StatusCakeHelperPausedTest
-*  New-StatusCakeHelperTest
-*  Remove-StatusCakeHelperTest
-*  Remove-StatusCakeHelperTestNodeLocation
-*  Remove-StatusCakeHelperTestStatusCode
-*  Remove-StatusCakeHelperTestTag
-*  Resume-StatusCakeHelperTest
-*  Set-StatusCakeHelperTest
-*  Suspend-StatusCakeHelperTest
+[Uptime](https://github.com/Oliver-Lii/statuscake-helpers/tree/master/Documentation/Uptime "StatusCake Tests")
+*  Copy-StatusCakeHelperUptimeTest
+*  Get-StatusCakeHelperUptimeAlert
+*  Get-StatusCakeHelperUptimeHistory
+*  Get-StatusCakeHelperUptimePeriod
+*  Get-StatusCakeHelperUptimeTest
+*  Get-StatusCakeHelperUptimePausedTest
+*  New-StatusCakeHelperUptimeTest
+*  Remove-StatusCakeHelperUptimeTest
+*  Resume-StatusCakeHelperUptimeTest
+*  Update-StatusCakeHelperUptimeTest
+*  Suspend-StatusCakeHelperUptimeTest
 
 ## Tests
 
