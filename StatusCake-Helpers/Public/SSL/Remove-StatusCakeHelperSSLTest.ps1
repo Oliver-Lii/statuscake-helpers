@@ -6,16 +6,17 @@
     Deletes a StatusCake SSL Test using the supplied ID.
 .PARAMETER APICredential
     Credentials to access StatusCake API
-.PARAMETER Domain
-    Name of the test to retrieve
 .PARAMETER ID
-    Test ID to retrieve
-.PARAMETER PassThru
-    Return the object that is removed
+    Test ID to delete
+.PARAMETER WebsiteURL
+    WebsiteURL SSL test to remove
 .EXAMPLE
     C:\PS>Remove-StatusCakeHelperSSLTest -ID 123456
     Remove the SSL Test with ID 123456
-
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Remove-StatusCakeHelperSSLTest.md
+.LINK
+    https://www.statuscake.com/api/v1/#tag/ssl/operation/delete-ssl-test
 #>
 function Remove-StatusCakeHelperSSLTest
 {
@@ -29,55 +30,28 @@ function Remove-StatusCakeHelperSSLTest
 
         [Parameter(ParameterSetName = "Domain")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$Domain,
-
-        [switch]$PassThru
+        [Alias('website_url','Domain')]
+        [string]$WebsiteURL
     )
 
-    $checkParams = @{}
-    if($Domain)
+    if($WebsiteURL)
     {
-        $checkParams.Add("Domain",$Domain)
-    }
-    else
-    {
-        $checkParams.Add("ID",$ID)
-    }
-
-    $sslTest = Get-StatusCakeHelperSSLTest -APICredential $APICredential @checkParams
-    if($sslTest)
-    {
-        if($sslTest.GetType().Name -eq 'Object[]')
+        $statusCakeItem = Get-StatusCakeHelperSSLTest -APICredential $APICredential -WebsiteURL $WebsiteURL
+        if(!$statusCakeItem)
         {
-            Write-Error "Multiple SSL Tests found with domain [$Domain]. Please remove the SSL test by ID"
+                Write-Error "No SSL test(s) found with name [$Name]"
+                Return $null
+        }
+        elseif($statusCakeItem.GetType().Name -eq 'Object[]')
+        {
+            Write-Error "Multiple SSL Tests found with name [$Name]. Please delete the SSL test by ID"
             Return $null
         }
-        $ID = $sslTest.id
-    }
-    else
-    {
-        Write-Error "Unable to find SSL Test with name [$Domain]"
-        Return $null
+        $ID = $statusCakeItem.id
     }
 
-    $requestParams = @{
-        uri = "https://app.statuscake.com/API/SSL/Update?id=$ID"
-        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
-        UseBasicParsing = $true
-        method = "Delete"
-    }
-
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Remove StatusCake SSL Test") )
+    if( $pscmdlet.ShouldProcess("$ID", "Remove StatusCake SSL Test") )
     {
-        $response = Invoke-RestMethod @requestParams
-        $requestParams = @{}
-        if($response.Success -ne "True")
-        {
-            Write-Error "$($response.Message) [$($response.Issues)]"
-        }
-        elseif($PassThru)
-        {
-            Return $sslTest
-        }
+        Return (Remove-StatusCakeHelperItem -APICredential $APICredential -Type SSL -ID $ID)
     }
 }

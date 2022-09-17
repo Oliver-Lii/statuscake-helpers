@@ -7,14 +7,14 @@ Remove a StatusCake SSL Test
 
 ### ID
 ```
-Remove-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-ID <Int32>] [-PassThru] [-WhatIf] [-Confirm]
+Remove-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-ID <Int32>] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
 ### Domain
 ```
-Remove-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-Domain <String>] [-PassThru] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Remove-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-WebsiteURL <String>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -47,7 +47,7 @@ Accept wildcard characters: False
 ```
 
 ### -ID
-Test ID to retrieve
+Test ID to delete
 
 ```yaml
 Type: Int32
@@ -61,32 +61,17 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Domain
-Name of the test to retrieve
+### -WebsiteURL
+WebsiteURL SSL test to remove
 
 ```yaml
 Type: String
 Parameter Sets: Domain
-Aliases:
+Aliases: website_url, Domain
 
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PassThru
-Return the object that is removed
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -132,3 +117,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Remove-StatusCakeHelperSSLTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Remove-StatusCakeHelperSSLTest.md)
+
+[https://www.statuscake.com/api/v1/#tag/ssl/operation/delete-ssl-test](https://www.statuscake.com/api/v1/#tag/ssl/operation/delete-ssl-test)
+

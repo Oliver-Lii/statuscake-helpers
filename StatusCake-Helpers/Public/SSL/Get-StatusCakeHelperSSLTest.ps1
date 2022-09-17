@@ -6,7 +6,7 @@
     Retrieves a StatusCake SSL Test. If no domain or id is supplied all tests are returned.
 .PARAMETER APICredential
     Credentials to access StatusCake API
-.PARAMETER Domain
+.PARAMETER WebsiteURL
     Name of the test to retrieve
 .PARAMETER ID
     Test ID to retrieve
@@ -18,6 +18,12 @@
     Retrieve SSL test with ID 123456
 .OUTPUTS
     Returns a StatusCake SSL Tests as an object
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Get-StatusCakeHelperSSLTest.md
+.LINK
+    https://www.statuscake.com/api/v1/#tag/ssl/operation/list-ssl-tests
+.LINK
+    https://www.statuscake.com/api/v1/#tag/ssl/operation/get-ssl-test
 #>
 function Get-StatusCakeHelperSSLTest
 {
@@ -28,40 +34,26 @@ function Get-StatusCakeHelperSSLTest
 
         [Parameter(ParameterSetName = "Domain")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
-        [string]$Domain,
+        [Alias('website_url','Domain')]
+        [string]$WebsiteURL,
 
         [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
         [int]$ID
     )
 
-    $requestParams = @{
-        uri = "https://app.statuscake.com/API/SSL/"
-        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
-        UseBasicParsing = $true
-    }
-
-    $response = Invoke-RestMethod @requestParams
-    $requestParams = @{}
-
-    if($Domain)
+    if($WebsiteURL)
     {
-        $matchingTests = $response | Where-Object {$_.domain -eq $Domain}
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "SSL" | Where-Object{$_.website_url -eq $WebsiteURL}
     }
     elseif($ID)
     {
-        $matchingTests = $response | Where-Object {$_.id -eq $ID}
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "SSL" -ID $ID
     }
     else
     {
-        $matchingTests = $response
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "SSL"
     }
-
-    if($matchingTests)
-    {
-        Return $matchingTests
-    }
-
-    Return $null
+    Return $statusCakeItem
 }
 

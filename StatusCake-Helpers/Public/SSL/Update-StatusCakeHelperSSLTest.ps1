@@ -1,11 +1,13 @@
 
 <#
 .SYNOPSIS
-    Create a StatusCake SSL Test
+    Update a StatusCake SSL Test
 .DESCRIPTION
-    Creates a new StatusCake SSL Test using the supplied parameters. Default settings for a SSL test will check a URL every day with alerts sent at 7, 14 and 30 days.
+    Updates a new StatusCake SSL Test using the supplied parameters. Default settings for a SSL test will check a URL every day with alerts sent at 7, 14 and 30 days.
 .PARAMETER APICredential
     Credentials to access StatusCake API
+.PARAMETER ID
+    Test ID to update
 .PARAMETER WebsiteURL
     URL to check
 .PARAMETER Checkrate
@@ -22,7 +24,7 @@
     Set to true to enable reminder alerts. False to disable
 .PARAMETER ContactID
     Array containing contact IDs to alert.
-.PARAMETER FollowRedirects
+.PARAMETER FollowRedirect
     Whether to follow redirects when testing.
 .PARAMETER Hostname
     Hostname of the server under test
@@ -31,28 +33,30 @@
 .PARAMETER UserAgent
     Custom user agent string set when testing
 .PARAMETER Force
-    Create an SSL test even if one with the same website URL already exists
-.PARAMETER Passthru
-    Return the SSL test details instead of the SSL test id
+    Update an SSL test even if one with the same website URL already exists
 .EXAMPLE
-    C:\PS>New-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com"
-    Create a new SSL Test to check https://www.example.com every day
+    C:\PS>Update-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com"
+    Update a new SSL Test to check https://www.example.com every day
 .EXAMPLE
-    C:\PS>New-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com" -AlertAt ("14","30","60")
-    Create a new SSL Test to check https://www.example.com every day with alerts sent at 14, 30 and 60 days.
+    C:\PS>Update-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com" -AlertAt ("14","30","60")
+    Update a new SSL Test to check https://www.example.com every day with alerts sent at 14, 30 and 60 days.
 .LINK
-    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/New-StatusCakeHelperSSLTest.md
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Update-StatusCakeHelperSSLTest.md
 .LINK
-    https://www.statuscake.com/api/v1/#tag/ssl/operation/create-ssl-test
+    https://www.statuscake.com/api/v1/#tag/ssl/operation/update-ssl-test
 #>
-function New-StatusCakeHelperSSLTest
+function Update-StatusCakeHelperSSLTest
 {
     [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true)]
     Param(
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(ParameterSetName = "ID")]
+        [ValidateNotNullOrEmpty()]
+        [int]$ID,
+
+        [Parameter(ParameterSetName = "WebsiteURL")]
         [ValidatePattern('^((https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
         [Alias('website_url','Domain')]
         [string]$WebsiteURL,
@@ -81,7 +85,7 @@ function New-StatusCakeHelperSSLTest
         [int[]]$ContactID,
 
         [Alias('follow_redirects')]
-        [boolean]$FollowRedirects,
+        [boolean]$FollowRedirect,
 
         [string]$Hostname,
 
@@ -90,29 +94,32 @@ function New-StatusCakeHelperSSLTest
         [Alias('user_agent')]
         [string]$UserAgent,
 
-        [switch]$Force,
-
-        [switch]$PassThru
+        [switch]$Force
 
     )
 
-    #If force flag not set then check if an existing test with the same website url already exists
-    if(!$Force)
+    if($WebsiteURL)
     {
        $statusCakeItem = Get-StatusCakeHelperSSLTest -APICredential $APICredential -WebsiteURL $WebsiteURL
-       if($statusCakeItem)
+       if(!$statusCakeItem)
        {
-            Write-Error "Existing SSL test(s) found with name [$Name]. Please use a different name for the check or use the -Force argument"
+            Write-Error "No SSL test(s) found with name [$Name]"
             Return $null
        }
+       elseif($statusCakeItem.GetType().Name -eq 'Object[]')
+       {
+           Write-Error "Multiple SSL Tests found with name [$Name]. Please update the SSL test by ID"
+           Return $null
+       }
+       $ID = $statusCakeItem.id
     }
 
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude @("Force","PassThru") | ConvertTo-StatusCakeHelperAPIValue
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude @("Force","Name")  | ConvertTo-StatusCakeHelperAPIValue
 
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake SSL Check") )
+    if( $pscmdlet.ShouldProcess("$ID", "Update StatusCake SSL Test") )
     {
-        Return (New-StatusCakeHelperItem -APICredential $APICredential -Type SSL -Parameter $statusCakeAPIParams -PassThru:$PassThru)
+        Return (Update-StatusCakeHelperItem -APICredential $APICredential -Type SSL -ID $ID -Parameter $statusCakeAPIParams)
     }
 
 }

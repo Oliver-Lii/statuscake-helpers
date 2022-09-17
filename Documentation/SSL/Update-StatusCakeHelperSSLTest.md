@@ -1,36 +1,45 @@
-# New-StatusCakeHelperSSLTest
+# Update-StatusCakeHelperSSLTest
 
 ## SYNOPSIS
-Create a StatusCake SSL Test
+Update a StatusCake SSL Test
 
 ## SYNTAX
 
+### ID
 ```
-New-StatusCakeHelperSSLTest [-APICredential <PSCredential>] -WebsiteURL <String> [-Checkrate <Int32>]
+Update-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-ID <Int32>] [-Checkrate <Int32>]
  [-AlertAt <Int32[]>] [-AlertBroken <Boolean>] [-AlertExpiry <Boolean>] [-AlertMixed <Boolean>]
- [-AlertReminder <Boolean>] [-ContactID <Int32[]>] [-FollowRedirects <Boolean>] [-Hostname <String>]
- [-Paused <Boolean>] [-UserAgent <String>] [-Force] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-AlertReminder <Boolean>] [-ContactID <Int32[]>] [-FollowRedirect <Boolean>] [-Hostname <String>]
+ [-Paused <Boolean>] [-UserAgent <String>] [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### WebsiteURL
+```
+Update-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-WebsiteURL <String>] [-Checkrate <Int32>]
+ [-AlertAt <Int32[]>] [-AlertBroken <Boolean>] [-AlertExpiry <Boolean>] [-AlertMixed <Boolean>]
+ [-AlertReminder <Boolean>] [-ContactID <Int32[]>] [-FollowRedirect <Boolean>] [-Hostname <String>]
+ [-Paused <Boolean>] [-UserAgent <String>] [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Creates a new StatusCake SSL Test using the supplied parameters.
+Updates a new StatusCake SSL Test using the supplied parameters.
 Default settings for a SSL test will check a URL every day with alerts sent at 7, 14 and 30 days.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-New-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com"
+Update-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com"
 ```
 
-Create a new SSL Test to check https://www.example.com every day
+Update a new SSL Test to check https://www.example.com every day
 
 ### EXAMPLE 2
 ```
-New-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com" -AlertAt ("14","30","60")
+Update-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com" -AlertAt ("14","30","60")
 ```
 
-Create a new SSL Test to check https://www.example.com every day with alerts sent at 14, 30 and 60 days.
+Update a new SSL Test to check https://www.example.com every day with alerts sent at 14, 30 and 60 days.
 
 ## PARAMETERS
 
@@ -49,15 +58,30 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ID
+Test ID to update
+
+```yaml
+Type: Int32
+Parameter Sets: ID
+Aliases:
+
+Required: False
+Position: Named
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -WebsiteURL
 URL to check
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: WebsiteURL
 Aliases: website_url, Domain
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -177,7 +201,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -FollowRedirects
+### -FollowRedirect
 Whether to follow redirects when testing.
 
 ```yaml
@@ -238,22 +262,7 @@ Accept wildcard characters: False
 ```
 
 ### -Force
-Create an SSL test even if one with the same website URL already exists
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PassThru
-Return the SSL test details instead of the SSL test id
+Update an SSL test even if one with the same website URL already exists
 
 ```yaml
 Type: SwitchParameter
@@ -309,7 +318,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## RELATED LINKS
 
-[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/New-StatusCakeHelperSSLTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/New-StatusCakeHelperSSLTest.md)
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Update-StatusCakeHelperSSLTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Update-StatusCakeHelperSSLTest.md)
 
-[https://www.statuscake.com/api/v1/#tag/ssl/operation/create-ssl-test](https://www.statuscake.com/api/v1/#tag/ssl/operation/create-ssl-test)
+[https://www.statuscake.com/api/v1/#tag/ssl/operation/update-ssl-test](https://www.statuscake.com/api/v1/#tag/ssl/operation/update-ssl-test)
 

@@ -12,7 +12,7 @@ Get-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [<CommonParameters>]
 
 ### Domain
 ```
-Get-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-Domain <String>] [<CommonParameters>]
+Get-StatusCakeHelperSSLTest [-APICredential <PSCredential>] [-WebsiteURL <String>] [<CommonParameters>]
 ```
 
 ### ID
@@ -57,13 +57,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Domain
+### -WebsiteURL
 Name of the test to retrieve
 
 ```yaml
 Type: String
 Parameter Sets: Domain
-Aliases:
+Aliases: website_url, Domain
 
 Required: False
 Position: Named
@@ -98,3 +98,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Get-StatusCakeHelperSSLTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Get-StatusCakeHelperSSLTest.md)
+
+[https://www.statuscake.com/api/v1/#tag/ssl/operation/list-ssl-tests](https://www.statuscake.com/api/v1/#tag/ssl/operation/list-ssl-tests)
+
+[https://www.statuscake.com/api/v1/#tag/ssl/operation/get-ssl-test](https://www.statuscake.com/api/v1/#tag/ssl/operation/get-ssl-test)
+
