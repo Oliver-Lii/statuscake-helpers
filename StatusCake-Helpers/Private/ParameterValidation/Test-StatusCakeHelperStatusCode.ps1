@@ -7,12 +7,12 @@
 .PARAMETER StatusCode
     StatusCode to test is valid
 .EXAMPLE
-    C:\PS>"404" | Test-StatusCakeHelperStatusCode
+    C:\PS>"404" | Test-StatusCakeHelperHTTPStatusCode
     Test if the value 404 is a valid status code
 .OUTPUTS
     Returns true if HTTP Status Code code is valid
 #>
-function Test-StatusCakeHelperStatusCode
+function Test-StatusCakeHelperHTTPStatusCode
 {
     [CmdletBinding(PositionalBinding=$false)]
     [OutputType([System.Boolean])]
@@ -21,10 +21,7 @@ function Test-StatusCakeHelperStatusCode
         ValueFromPipeline=$True)]
         [string] $StatusCode
     )
-
-    if($StatusCode -match '^[1-5]{1}[0-9]{1}[0-9]{1}$')
-    {
-        Return $true
+    Process{
+        Return $StatusCode -as [System.Net.HttpStatusCode] -as [Bool]
     }
-    Return $false
 }

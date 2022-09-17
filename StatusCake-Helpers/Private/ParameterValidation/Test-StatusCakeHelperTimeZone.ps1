@@ -24,11 +24,14 @@ function Test-StatusCakeHelperTimeZone
         [string] $TimeZone,
         [string] $TimeZoneFile="$PSScriptRoot\Files\TimeZones.json"
     )
-    $timeZoneList = Get-Content $TimeZoneFile | ConvertFrom-Json
-
-    if($timeZoneList -contains $TimeZone)
+    Process
     {
-        Return $true
+        $timeZoneList = Get-Content $TimeZoneFile | ConvertFrom-Json
+
+        if($timeZoneList -contains $TimeZone)
+        {
+            Return $true
+        }
+        Return $false
     }
-    Return $false
 }

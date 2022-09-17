@@ -21,10 +21,12 @@ function Test-StatusCakeHelperEmailAddress
         ValueFromPipeline=$True)]
         [string] $EmailAddress
     )
-
-    if($EmailAddress -match '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
+    Process
     {
-        Return $true
+        if($EmailAddress -match '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
+        {
+            Return $true
+        }
+        Return $false
     }
-    Return $false
 }
