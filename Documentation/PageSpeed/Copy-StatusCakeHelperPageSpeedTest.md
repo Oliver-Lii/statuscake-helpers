@@ -8,18 +8,19 @@ Copies the settings of a StatusCake Page Speed Test
 ### CopyById
 ```
 Copy-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] -ID <Int32> -NewName <String>
- [-WebsiteURL <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-WebsiteURL <String>] -Region <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### CopyByName
 ```
 Copy-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] -Name <String> -NewName <String>
- [-WebsiteURL <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-WebsiteURL <String>] -Region <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Creates a copy of a Page Speed Test.
 Supply a value for the WebsiteURL parameter to override the source URL.
+A region is required as StatusCake API does not return the region the tests are carried out from.
 
 ## EXAMPLES
 
@@ -114,6 +115,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Region
+StatusCake region the test should carried out from.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -WhatIf
 Shows what would happen if the cmdlet runs.
 The cmdlet is not run.
@@ -155,3 +171,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Copy-StatusCakeHelperPageSpeedTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Copy-StatusCakeHelperPageSpeedTest.md)
+

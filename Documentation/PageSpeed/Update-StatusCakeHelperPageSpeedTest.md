@@ -1,32 +1,39 @@
-# New-StatusCakeHelperPageSpeedTest
+# Update-StatusCakeHelperPageSpeedTest
 
 ## SYNOPSIS
-Create a StatusCake PageSpeed Test
+Updates a StatusCake PageSpeed Test
 
 ## SYNTAX
 
+### ID
 ```
-New-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] -Name <String> -WebsiteURL <String>
- -Checkrate <Int32> [-AlertBigger <Int32>] [-AlertSlower <Int32>] [-AlertSmaller <Int32>]
- [-ContactID <Int32[]>] -Region <String> [-Paused <Boolean>] [-Force] [-PassThru] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Update-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-ID <Int32>] [-WebsiteURL <String>]
+ [-Checkrate <Int32>] [-AlertBigger <Int32>] [-AlertSlower <Int32>] [-AlertSmaller <Int32>]
+ [-ContactID <Int32[]>] [-Region <String>] [-Paused <Boolean>] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### Name
+```
+Update-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-Name <String>] [-WebsiteURL <String>]
+ [-Checkrate <Int32>] [-AlertBigger <Int32>] [-AlertSlower <Int32>] [-AlertSmaller <Int32>]
+ [-ContactID <Int32[]>] [-Region <String>] [-Paused <Boolean>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Creates a new StatusCake PageSpeed Test using the supplied parameters.
+Updates a new StatusCake PageSpeed Test by either its name or ID.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 Region UK -AlertSlower 10000
+Update-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -Region UK -AlertSlower 10000
 ```
 
 Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page speed load time is slower than 10000ms
 
 ### EXAMPLE 2
 ```
-New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -Region UK -AlertSmaller 500
+Update-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -Region UK -AlertSmaller 500
 ```
 
 Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page load is less than 500kb
@@ -48,15 +55,30 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ID
+ID of PageSpeed test to update
+
+```yaml
+Type: Int32
+Parameter Sets: ID
+Aliases:
+
+Required: False
+Position: Named
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Name
-Name for PageSpeed test
+Name of PageSpeed test to update
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: Name
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -71,7 +93,7 @@ Type: String
 Parameter Sets: (All)
 Aliases: website_url
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -86,7 +108,7 @@ Type: Int32
 Parameter Sets: (All)
 Aliases: check_rate
 
-Required: True
+Required: False
 Position: Named
 Default value: 0
 Accept pipeline input: False
@@ -110,7 +132,8 @@ Accept wildcard characters: False
 ```
 
 ### -AlertSlower
-Time in ms, will alert to Contact Groups if actual time is slower
+Time in ms, will alert to Contact Groups if actual time is slower.
+A value of 0 prevents alerts being sent.
 
 ```yaml
 Type: Int32
@@ -125,7 +148,8 @@ Accept wildcard characters: False
 ```
 
 ### -AlertSmaller
-Size in kb, will alert to Contact Groups if actual size is smaller
+Size in kb, will alert to Contact Groups if actual size is smaller.
+A value of 0 prevents alerts being sent.
 
 ```yaml
 Type: Int32
@@ -155,7 +179,7 @@ Accept wildcard characters: False
 ```
 
 ### -Region
-2-letter code of the region from which to run the checks.
+Statuscake region from which to run the checks.
 Valid values: AU, CA, DE, FR, IN, JP, NL, SG, UK, US, USW
 
 ```yaml
@@ -163,7 +187,7 @@ Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -175,36 +199,6 @@ Whether the test should be run.
 
 ```yaml
 Type: Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Force
-Force creation of the test even if a test with the same name already exists
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PassThru
-Return the page speed test details instead of the page speed test id
-
-```yaml
-Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
@@ -257,7 +251,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## RELATED LINKS
 
-[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/New-StatusCakeHelperPageSpeedTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/New-StatusCakeHelperPageSpeedTest.md)
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Update-StatusCakeHelperPageSpeedTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Update-StatusCakeHelperPageSpeedTest.md)
 
-[https://www.statuscake.com/api/v1/#tag/pagespeed/operation/create-pagespeed-test](https://www.statuscake.com/api/v1/#tag/pagespeed/operation/create-pagespeed-test)
+[https://www.statuscake.com/api/v1/#tag/pagespeed/operation/update-pagespeed-test](https://www.statuscake.com/api/v1/#tag/pagespeed/operation/update-pagespeed-test)
 

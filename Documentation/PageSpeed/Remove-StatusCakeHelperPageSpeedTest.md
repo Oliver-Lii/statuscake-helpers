@@ -7,14 +7,14 @@ Remove a StatusCake PageSpeed Test
 
 ### ID
 ```
-Remove-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-ID <Int32>] [-PassThru] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Remove-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-ID <Int32>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### Name
 ```
-Remove-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-Name <String>] [-PassThru] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Remove-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-Name <String>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -28,6 +28,13 @@ Remove-StatusCakeHelperPageSpeedTest -ID 123456
 ```
 
 Remove page speed test with id 123456
+
+### EXAMPLE 2
+```
+Remove-StatusCakeHelperPageSpeedTest -Name "Example PageSpeed Test"
+```
+
+Remove page speed test with name "Example PageSpeed Test"
 
 ## PARAMETERS
 
@@ -76,21 +83,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PassThru
-Switch to return the deleted object.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -WhatIf
 Shows what would happen if the cmdlet runs.
 The cmdlet is not run.
@@ -132,3 +124,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Remove-StatusCakeHelperPageSpeedTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Remove-StatusCakeHelperPageSpeedTest.md)
+
+[https://www.statuscake.com/api/v1/#tag/pagespeed/operation/delete-pagespeed-test](https://www.statuscake.com/api/v1/#tag/pagespeed/operation/delete-pagespeed-test)
+

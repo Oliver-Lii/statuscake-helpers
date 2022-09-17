@@ -4,22 +4,24 @@
     Gets a StatusCake PageSpeed Test
 .DESCRIPTION
     Retrieves a StatusCake PageSpeed Test. If no name or id is supplied all tests are returned.
-    By default only standard information about a test is returned and more detailed information can be retrieved by using detailed switch.
 .PARAMETER APICredential
     Credentials to access StatusCake API
-.PARAMETER Name
-    Name of the PageSpeed test
 .PARAMETER ID
     ID of the PageSpeed Test
-.PARAMETER Detailed
-    Retrieve detailed test data
+.PARAMETER Name
+    Name of the PageSpeed test
 .EXAMPLE
     C:\PS>Get-StatusCakeHelperPageSpeedTest
     Retrieve all page speed tests
 .EXAMPLE
-    C:\PS>Get-StatusCakeHelperPageSpeedTest -Name "Example Page Speed Test" -Detailed
-    Retrieve detailed page speed test information for a test called "Example Page Speed Test"
-
+    C:\PS>Get-StatusCakeHelperPageSpeedTest -Name "Example Page Speed Test"
+    Retrieve page speed test information for a test called "Example Page Speed Test"
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Get-StatusCakeHelperPageSpeedTest.md
+.LINK
+    https://www.statuscake.com/api/v1/#tag/pagespeed/operation/get-pagespeed-test
+.LINK
+    https://www.statuscake.com/api/v1/#operation/get-maintenance-window
 #>
 function Get-StatusCakeHelperPageSpeedTest
 {
@@ -28,47 +30,27 @@ function Get-StatusCakeHelperPageSpeedTest
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(ParameterSetName = "Name")]
-        [string]$Name,
-
         [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
         [int]$ID,
 
-        [switch]$Detailed
+        [Parameter(ParameterSetName = "Name")]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name
     )
-
-    $requestParams = @{
-        uri = "https://app.statuscake.com/API/Pagespeed/"
-        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
-        UseBasicParsing = $true
-    }
-
-    $response = Invoke-RestMethod @requestParams
-    $requestParams=@{}
-    $matchingTests = $response.data
 
     if($Name)
     {
-        $matchingTests = $response.data | Where-Object {$_.Title -eq $Name}
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "PageSpeed" | Where-Object{$_.name -eq $Name}
     }
     elseif($ID)
     {
-        $matchingTests = $response.data | Where-Object {$_.ID -eq $ID}
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "PageSpeed" -ID $ID
     }
-
-    $result = $matchingTests
-    if($Detailed)
+    else
     {
-        $detailList = [System.Collections.Generic.List[PSObject]]::new()
-        foreach($test in $matchingTests)
-        {
-            $item = Get-StatusCakeHelperPageSpeedTestDetail -APICredential $APICredential -Id $test.Id
-            $detailList.Add($item)
-        }
-        $result = $detailList
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "PageSpeed"
     }
-    $requestParams = @{}
-    Return $result
+    Return $statusCakeItem
 }
 
