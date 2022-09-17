@@ -16,5 +16,5 @@
     PlatyPS          = '0.14.2'
     psake            = '4.7.4'
     PSDeploy         = '1.0.1'
-    PSScriptAnalyzer = '1.18.3'
+    PSScriptAnalyzer = '1.20.0'
 }
