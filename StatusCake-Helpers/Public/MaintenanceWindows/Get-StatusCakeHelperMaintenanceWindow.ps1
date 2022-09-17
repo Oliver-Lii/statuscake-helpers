@@ -11,28 +11,31 @@
 .PARAMETER ID
     ID of the maintenance window to retrieve
 .PARAMETER State
-    Filter results based on state. PND - Pending, ACT - Active, END - Ended, CNC - Cancelled
+    Filter results based on state. Valid options are pending, active, and paused
 .EXAMPLE
     C:\PS>Get-StatusCakeHelperMaintenanceWindow
     Get all maintenance windows
 .EXAMPLE
-    C:\PS>Get-StatusCakeHelperMaintenanceWindow -State PND
+    C:\PS>Get-StatusCakeHelperMaintenanceWindow -State pending
     Get all maintenance windows in a pending state
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/MaintenanceWindows/Get-StatusCakeHelperMaintenanceWindow.md
+.LINK
+    https://www.statuscake.com/api/v1/#operation/list-maintenance-windows
+.LINK
+    https://www.statuscake.com/api/v1/#operation/get-maintenance-window
 .OUTPUTS
     Returns StatusCake Maintenance Windows as an object
 #>
 function Get-StatusCakeHelperMaintenanceWindow
 {
-    [CmdletBinding(PositionalBinding=$false,SupportsShouldProcess=$true,DefaultParameterSetName='all')]
+    [CmdletBinding(PositionalBinding=$false,DefaultParameterSetName='all')]
     Param(
-        [Parameter(ParameterSetName = "Name")]
-        [Parameter(ParameterSetName = "ID")]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
-        [Parameter(ParameterSetName = "Name")]
-        [Parameter(ParameterSetName = "ID")]
-        [ValidateSet("ALL","PND","ACT","END","CNC")]
+        [Parameter(ParameterSetName = "all")]
+        [ValidateSet("active","paused","pending")]
         [string]$State,
 
         [Parameter(ParameterSetName = "Name")]
@@ -44,50 +47,25 @@ function Get-StatusCakeHelperMaintenanceWindow
         [int]$ID
     )
 
-    $lower=@("State")
-    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -ToLowerName $lower
-    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
-
-    $requestParams = @{
-        uri = "https://app.statuscake.com/API/Maintenance/"
-        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
-        UseBasicParsing = $true
-        method = "Get"
-        ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams
-    }
-
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Window") )
+    if($State)
     {
-        $response = Invoke-RestMethod @requestParams
-        $requestParams=@{}
-        if($response.Success -ne "True")
-        {
-            Write-Error "$($response.Message) [$($response.Issues)]"
-            Return $null
-        }
-
-        if($PSCmdlet.ParameterSetName -eq "all")
-        {
-            $matchingMW = $response.data
-        }
-        elseif($Name)
-        {
-            $matchingMW = $response.data | Where-Object {$_.name -eq $Name}
-        }
-        elseif($ID)
-        {
-            $matchingMW = $response.data | Where-Object {$_.id -eq $ID}
-        }
-
-        if($matchingMW)
-        {
-            Return $matchingMW
-        }
-
-        Return $null
+        $parameter = $State | ConvertTo-StatusCakeHelperAPIValue
+        $itemParameters["Parameter"] = $parameter
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "Maintenance-Windows" -Parameter $parameter
     }
+    elseif($Name)
+    {
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "Maintenance-Windows" | Where-Object{$_.name -eq $Name}
+    }
+    elseif($ID)
+    {
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "Maintenance-Windows" -ID $ID
+    }
+    else
+    {
+        $statusCakeItem = Get-StatusCakeHelperItem -APICredential $APICredential -Type "Maintenance-Windows"
+    }
+
+    Return $statusCakeItem
 
 }
-

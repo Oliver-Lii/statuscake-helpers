@@ -10,9 +10,9 @@
     Name of the maintenance window to clear the tests from
 .PARAMETER ID
     The maintenance window ID
-.PARAMETER TestIDs
+.PARAMETER UptimeID
     Flag to clear all tests included in a maintenance window
-.PARAMETER TestTags
+.PARAMETER UptimeTag
     Flag to clear all tags of the tests to be included in a maintenance window
 .EXAMPLE
     C:\PS>Clear-StatusCakeHelperMaintenanceWindow -ID 123456 -TestIDs
@@ -43,58 +43,46 @@ function Clear-StatusCakeHelperMaintenanceWindow
         [Parameter(ParameterSetName='TestIDs',Mandatory=$true)]
         [Parameter(ParameterSetName='ByID')]
         [Parameter(ParameterSetName='ByName')]
-        [Alias('raw_tests')]
-        [switch]$TestIDs,
+        [Alias('tests','raw_tests','TestIDs')]
+        [switch]$UptimeID,
 
         [Parameter(ParameterSetName='TestTags',Mandatory=$true)]
         [Parameter(ParameterSetName='ByID')]
         [Parameter(ParameterSetName='ByName')]
-        [Alias('raw_tags')]
-        [switch]$TestTags
+        [Alias('tags','raw_tags','TestTags')]
+        [switch]$UptimeTag
     )
 
     if($Name)
-    {   #If setting test by name verify if a test or tests with that name exists
-        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
-        {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -name $Name -state "PND"
-            if(!$maintenanceWindow)
-            {
-                Write-Error "No pending Maintenance Window with specified name exists [$Name]"
-                Return $null
-            }
-            elseif($maintenanceWindow.GetType().Name -eq 'Object[]')
-            {
-                Write-Error "Multiple Pending Maintenance Windows with the same name [$Name] [$($maintenanceWindow.id)]"
-                Return $null
-            }
-            $ID = $maintenanceWindow.id
-        }
-    }
-    elseif($ID)
-    {   #If setting by id verify that id already exists
-        if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Maintenance Windows"))
-        {
-            $maintenanceWindow = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -ID $ID -state "PND"
-            if(!$maintenanceWindow)
-            {
-                Write-Error "No pending Maintenance Window with specified ID exists [$ID]"
-                Return $null
-            }
-            $ID = $maintenanceWindow.id
-        }
+    {
+       $statusCakeItem = Get-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -Name $Name
+       if(!$statusCakeItem)
+       {
+            Write-Error "No maintenance window(s) found with name [$Name]"
+            Return $null
+       }
+       elseif($statusCakeItem.GetType().Name -eq 'Object[]')
+       {
+           Write-Error "Multiple maintenance windows found with name [$Name]. Please update the maintenance window by ID"
+           Return $null
+       }
+       $ID = $statusCakeItem.id
     }
 
-    $clearItems = @{}
-    if($TestIDs){$clearItems["raw_tests"]=@()}
-    if($TestTags){$clearItems["raw_tags"]=""}
-
+    if($UptimeID)
+    {
+        $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+        $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude @("Name","ID") -Clear "UptimeID"
+    }
+    elseif($UptimeTag)
+    {
+        $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+        $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude @("Name","ID") -Clear "UptimeTag"
+    }
+    Write-Verbose "[$($allParameterValues.keys)] [$($allParameterValues.values)]"
+    Write-Verbose "[$($statusCakeAPIParams.keys)] [$($statusCakeAPIParams.values)]"
     if( $pscmdlet.ShouldProcess("StatusCake API", "Clear Value From StatusCake Test"))
     {
-        $result = Update-StatusCakeHelperMaintenanceWindow -APICredential $APICredential -ID $ID @clearItems
-        if($PassThru)
-        {
-            Return $result
-        }
+        Return (Update-StatusCakeHelperItem -APICredential $APICredential -Type Maintenance-Windows -ID $ID -Parameter $statusCakeAPIParams)
     }
 }

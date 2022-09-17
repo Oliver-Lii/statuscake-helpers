@@ -5,23 +5,15 @@ Create a StatusCake Maintenance Window
 
 ## SYNTAX
 
-### SetByTestIDs
 ```
 New-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] -Name <String> -StartDate <DateTime>
- -EndDate <DateTime> -Timezone <String> [-TestIDs <Int32[]>] [-RecurEvery <Int32>] [-FollowDST <Boolean>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
-```
-
-### SetByTestTags
-```
-New-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] -Name <String> -StartDate <DateTime>
- -EndDate <DateTime> -Timezone <String> [-TestTags <String[]>] [-RecurEvery <Int32>] [-FollowDST <Boolean>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+ -EndDate <DateTime> -Timezone <String> [-UptimeID <Int32[]>] [-UptimeTag <String[]>]
+ [-RepeatInterval <String>] [-Force] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Creates a new StatusCake Maintenance Window using the supplied parameters.
-Tests can be included in the maintenance window by either supplying the test IDs or test tags.
+Tests can be included in the maintenance window by either supplying the uptime test IDs or uptime test tags.
 
 ## EXAMPLES
 
@@ -44,7 +36,7 @@ Create a maintenance window called "Example Maintenance Window" starting today a
 New-StatusCakeHelperMaintenanceWindow -Name "Example Maintenance Window" -StartDate $(Get-Date) -EndDate $((Get-Date).AddHours(1)) -Timezone "Europe/London" -TestIDs @("123456") -RecurEvery 7
 ```
 
-Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone for test ID 123456 recurring every 7 days
+Create a maintenance window called "Example Maintenance Window" starting today and ending in one hour in the Europe/London timezone for test ID 123456 recurring every 7 day
 
 ## PARAMETERS
 
@@ -79,13 +71,12 @@ Accept wildcard characters: False
 ```
 
 ### -StartDate
-Start date of your window.
-Can be slightly in the past
+Start date of the maintenance window.
 
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: start_unix, start_date
+Aliases: start_at, start_date, start_unix
 
 Required: True
 Position: Named
@@ -101,7 +92,7 @@ Must be in the future
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: end_unix, end_date
+Aliases: end_at, end_date, end_unix
 
 Required: True
 Position: Named
@@ -125,13 +116,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -TestIDs
-Individual tests that should be included
+### -UptimeID
+Array of uptime test IDs that should be included
 
 ```yaml
 Type: Int32[]
-Parameter Sets: SetByTestIDs
-Aliases: raw_tests
+Parameter Sets: (All)
+Aliases: tests, raw_tests, TestIDs
 
 Required: False
 Position: Named
@@ -140,13 +131,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -TestTags
-Tests with these tags will be included
+### -UptimeTag
+Array of uptime test tags with these tags will be included
 
 ```yaml
 Type: String[]
-Parameter Sets: SetByTestTags
-Aliases: raw_tags
+Parameter Sets: (All)
+Aliases: tags, raw_tags, TestTags
 
 Required: False
 Position: Named
@@ -155,29 +146,43 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -RecurEvery
-How often in days this window should recur.
-0 disables this
+### -RepeatInterval
+How often this window should occur
 
 ```yaml
-Type: Int32
+Type: String
 Parameter Sets: (All)
-Aliases: recur_every
+Aliases: repeat_interval
 
 Required: False
 Position: Named
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -FollowDST
-Whether DST should be followed or not
+### -Force
+Force creation of the maintenance window even if a window with the same name already exists
 
 ```yaml
-Type: Boolean
+Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: follow_dst
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PassThru
+Return the maintenance window details instead of the maintenance window id
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
 
 Required: False
 Position: Named
@@ -227,3 +232,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/MaintenanceWindows/New-StatusCakeHelperMaintenanceWindow.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/MaintenanceWindows/New-StatusCakeHelperMaintenanceWindow.md)
+
+[https://www.statuscake.com/api/v1/#tag/maintenance-windows/operation/create-maintenance-window](https://www.statuscake.com/api/v1/#tag/maintenance-windows/operation/create-maintenance-window)
+
