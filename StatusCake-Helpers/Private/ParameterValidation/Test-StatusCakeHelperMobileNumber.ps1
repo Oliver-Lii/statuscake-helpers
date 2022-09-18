@@ -21,10 +21,12 @@ function Test-StatusCakeHelperMobileNumber
         ValueFromPipeline=$True)]
         [string] $MobileNumber
     )
-
-    if($MobileNumber -match '^\+[1-9]{1}[0-9]{9,14}$')
+    Process
     {
-        Return $true
+        if($MobileNumber -match '^\+[1-9]{1}[0-9]{9,14}$')
+        {
+            Return $true
+        }
+        Return $false
     }
-    Return $false
 }

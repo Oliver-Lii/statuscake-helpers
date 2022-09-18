@@ -1,5 +1,57 @@
 # Release Notes
 
+## Release 5.0
+
+*  Public Reporting functions have removed as this is no longer supported by the API
+*  Functions for retrieving StatusCake `probes` have been replaced by `location` functions to reflect change in StatusCake terminology
+*  Test functions have been renamed to include the `Uptime` prefix to clarify they are for uptime tests
+*  `Set` functions have been replaced by `Update` functions
+*  Detail functions for PageSpeed and Uptime test removed. Test details are returned by default when a test is fetched by name or ID
+*  Contact group and Uptime test name parameters have been renamed as `Name` instead of `GroupName` or `TestName`
+
+### Documentation
+*  Remove Public Reporting documentation as this is no longer supported by the API
+*  Removed Alerts, PerformanceData and PeriodData folders and cmdlets as these commands have been superceded
+
+## Summary of function changes
+
+| Function name                             	| Status                                                                    	|
+|-------------------------------------------	|---------------------------------------------------------------------------	|
+| Get-StatusCakeHelperSentAlerts            	| Deprecated - functionality moved to Get-StatusCakeHelperUptimeAlert           |
+| Get-StatusCakeHelperPerformanceData           | Deprecated - functionality moved to Get-StatusCakeHelperUptimeHistory         |
+| Get-StatusCakeHelperProbe                 	| Deprecated - functionality moved to Get-StatusCakeHelperLocation             	|
+| Get-StatusCakeHelperPeriodOfData              | Deprecated - functionality moved to Get-StatusCakeHelperUptimePeriod          |
+| Get-StatusCakeHelperTestDetail                | Deprecated - functionality moved to Get-StatusCakeHelperUptimeTest            |
+|                                               |                                                                               |
+| Set-StatusCakeHelperContactGroup              | Deprecated - replaced by Update-StatusCakeHelperContactGroup                  |
+| Set-StatusCakeHelperPageSpeedTest             | Deprecated - replaced by Update-StatusCakeHelperPageSpeedTest                 |
+| Set-StatusCakeHelperSSLTest                   | Deprecated - replaced by Update-StatusCakeHelperSSLTest                       |
+| Set-StatusCakeHelperUptimeTest                | Deprecated - replaced by Update-StatusCakeHelperUptimeTest                    |
+|                                           	|                                                                           	|
+| Copy-StatusCakeHelperPublicReportingPage     	| Removed no longer supported by API                                            |
+| Get-StatusCakeHelperPublicReportingPage      	| Removed no longer supported by API                                            |
+| Get-StatusCakeHelperPublicReportingPageDetail	| Removed no longer supported by API                                            |
+| New-StatusCakeHelperPublicReportingPage      	| Removed no longer supported by API                                            |
+| Remove-StatusCakeHelperPublicReportingPage   	| Removed no longer supported by API                                           	|
+| Set-StatusCakeHelperPublicReportingPage     	| Removed no longer supported by API                                        	|
+|                                               |                                                                               |
+| Add-StatusCakeHelperTestNodeLocation        	| Removed                                                                    	|
+| Add-StatusCakeHelperTestStatusCode        	| Removed                                                                      	|
+| Add-StatusCakeHelperTestTag                 	| Removed                                                                     	|
+| Remove-StatusCakeHelperTestNodeLocation     	| Removed                                                                    	|
+| Remove-StatusCakeHelperTestStatusCode     	| Removed                                                                      	|
+| Remove-StatusCakeHelperTestTag               	| Removed                                                                     	|
+|                                               |                                                                               |
+| Copy-StatusCakeHelperTest                     | Renamed to Copy-StatusCakeHelperUptimeTest                                    |
+| Get-StatusCakeHelperPausedTest                | Renamed to Get-StatusCakeHelperUptimePausedTest                               |
+| Get-StatusCakeHelperTest                      | Renamed to Get-StatusCakeHelperUptimeTest                                     |
+| New-StatusCakeHelperTest                      | Renamed to New-StatusCakeHelperUptimeTest                                     |
+| Remove-StatusCakeHelperTest                   | Renamed to Remove-StatusCakeHelperUptimeTest                                  |
+| Resume-StatusCakeHelperTest                   | Renamed to Resume-StatusCakeHelperUptimeTest                                  |
+| Resume-StatusCakeHelperTest                   | Renamed to Resume-StatusCakeHelperUptimeTest                                  |
+| Suspend-StatusCakeHelperTest                  | Renamed to Suspend-StatusCakeHelperUptimeTest                                 |
+|                                               |                                                                               |
+
 ## Release 4.0
 
 This release makes changes to the authentication parameters used by the functions, standardizes the outputs, brings more of the code in-line with Powershell conventions and implements a number of PSScript Analyzer recommendations.

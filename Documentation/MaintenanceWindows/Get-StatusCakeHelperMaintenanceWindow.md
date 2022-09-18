@@ -7,19 +7,17 @@ Gets a StatusCake Maintenance Window
 
 ### all (Default)
 ```
-Get-StatusCakeHelperMaintenanceWindow [-WhatIf] [-Confirm] [<CommonParameters>]
-```
-
-### ID
-```
-Get-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] [-State <String>] [-ID <Int32>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Get-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] [-State <String>] [<CommonParameters>]
 ```
 
 ### Name
 ```
-Get-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] [-State <String>] [-Name <String>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Get-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] [-Name <String>] [<CommonParameters>]
+```
+
+### ID
+```
+Get-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] [-ID <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -50,7 +48,7 @@ Credentials to access StatusCake API
 
 ```yaml
 Type: PSCredential
-Parameter Sets: ID, Name
+Parameter Sets: (All)
 Aliases:
 
 Required: False
@@ -62,11 +60,11 @@ Accept wildcard characters: False
 
 ### -State
 Filter results based on state.
-PND - Pending, ACT - Active, END - Ended, CNC - Cancelled
+Valid options are pending, active, and paused
 
 ```yaml
 Type: String
-Parameter Sets: ID, Name
+Parameter Sets: all
 Aliases:
 
 Required: False
@@ -106,37 +104,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
@@ -148,3 +115,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/MaintenanceWindows/Get-StatusCakeHelperMaintenanceWindow.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/MaintenanceWindows/Get-StatusCakeHelperMaintenanceWindow.md)
+
+[https://www.statuscake.com/api/v1/#operation/list-maintenance-windows](https://www.statuscake.com/api/v1/#operation/list-maintenance-windows)
+
+[https://www.statuscake.com/api/v1/#operation/get-maintenance-window](https://www.statuscake.com/api/v1/#operation/get-maintenance-window)
+

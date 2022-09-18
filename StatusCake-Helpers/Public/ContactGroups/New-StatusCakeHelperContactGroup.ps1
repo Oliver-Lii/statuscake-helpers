@@ -6,27 +6,27 @@
     Creates a new StatusCake ContactGroup using the supplied parameters. The name of the contact group must be unique for the contact group to be created.
 .PARAMETER APICredential
     Credentials to access StatusCake API
-.PARAMETER GroupName
+.PARAMETER Name
     Name of the Contact Group to be created
-.PARAMETER DesktopAlert
-    Set to 1 To Enable Desktop Alerts
 .PARAMETER Email
     Array of email addresses to sent alerts to.
-.PARAMETER Boxcar
-    Boxcar API Key
-.PARAMETER Pushover
-    Pushover Account Key
+.PARAMETER IntegrationID
+    List of integration IDs to link with this contact group
 .PARAMETER PingURL
-    URL To Send a POST alert
+    URL or IP address of an endpoint to push uptime events. Currently this only supports HTTP GET endpoints
 .PARAMETER Mobile
     Array of mobile numbers in International Format E.164 notation
+.PARAMETER Force
+    Force creation of the contact group even if a window with the same name already exists
+.PARAMETER Passthru
+    Return the contact group details instead of the contact id
 .EXAMPLE
-    C:\PS>New-StatusCakeHelperContactGroup -GroupName "Example" -email @(test@example.com)
+    C:\PS>New-StatusCakeHelperContactGroup -Name "Example" -email @(test@example.com)
     Create contact group called "Example" using email address "test@example.com"
 .LINK
-    https://www.statuscake.com/api/Contact%20Groups/Add%20or%20Update%20Contact%20Group.md
-.LINK
     https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md
+.LINK
+    https://www.statuscake.com/api/v1/#tag/contact-groups/operation/create-contact-group
 #>
 function New-StatusCakeHelperContactGroup
 {
@@ -37,10 +37,7 @@ function New-StatusCakeHelperContactGroup
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$GroupName,
-
-        #Optional parameters
-        [boolean]$DesktopAlert,
+        [string]$Name,
 
         [ValidateScript({
             if(!($_ | Test-StatusCakeHelperEmailAddress)){
@@ -48,16 +45,15 @@ function New-StatusCakeHelperContactGroup
             }
             else{$true}
         })]
+        [Alias("email_addresses")]
         [string[]]$Email,
 
+        [Alias("integrations")]
+        [int[]]$IntegrationID,
+
         [ValidatePattern('^((http|https):\/\/)([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)')]
+        [Alias("ping_url")]
         [string]$PingURL,
-
-        [ValidateNotNullOrEmpty()]
-        [string]$Boxcar,
-
-        [ValidateNotNullOrEmpty()]
-        [string]$Pushover,
 
         [ValidateScript({
             if(!($_ | Test-StatusCakeHelperMobileNumber)){
@@ -65,46 +61,31 @@ function New-StatusCakeHelperContactGroup
             }
             else{$true}
         })]
-        [string[]]$Mobile
+        [Alias("mobile_numbers")]
+        [string[]]$Mobile,
+
+        [switch]$Force,
+
+        [switch]$PassThru
     )
 
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake ContactGroups") )
+    #If force flag not set then check if an existing test with the same name already exists
+    if(!$Force)
     {
-        $ContactGroupCheck = Get-StatusCakeHelperContactGroup -APICredential $APICredential -GroupName $GroupName
-        if($ContactGroupCheck)
-        {
-            Write-Error "ContactGroup with specified name already exists [$ContactGroupCheck]"
+       $statusCakeItem = Get-StatusCakeHelperContactGroup -APICredential $APICredential -Name $Name
+       if($statusCakeItem)
+       {
+            Write-Error "Existing contact group(s) found with name [$Name]. Please use a different name or use the -Force argument"
             Return $null
-        }
+       }
     }
 
     $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
-    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude $exclude
-    $statusCakeAPIParams = $statusCakeAPIParams | ConvertTo-StatusCakeHelperAPIParameter
+    $statusCakeAPIParams = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude @("Force","PassThru") | ConvertTo-StatusCakeHelperAPIValue
 
-    $requestParams = @{
-        uri = "https://app.statuscake.com/API/ContactGroups/Update"
-        Headers = @{"Username"=$APICredential.Username;"API"=$APICredential.GetNetworkCredential().password}
-        UseBasicParsing = $true
-        method = "Put"
-        ContentType = "application/x-www-form-urlencoded"
-        body = $statusCakeAPIParams
-    }
-
-    if( $pscmdlet.ShouldProcess("StatusCake API", "Add StatusCake ContactGroup") )
+    if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake contact group") )
     {
-        $response = Invoke-RestMethod @requestParams
-        $requestParams=@{}
-        if($response.Success -ne "True")
-        {
-            Write-Error "$($response.Message) [$($response.Issues)]"
-            Return $null
-        }
-        else
-        {
-            $data = Get-StatusCakeHelperContactGroup -APICredential $APICredential -ContactID $response.InsertID
-        }
-        Return $data
+        Return (New-StatusCakeHelperItem -APICredential $APICredential -Type Contact-Groups -Parameter $statusCakeAPIParams -PassThru:$PassThru)
     }
 
 }

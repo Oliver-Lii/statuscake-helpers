@@ -23,16 +23,19 @@ function ConvertTo-StatusCakeHelperHashtableFromPSCustomObject
         [switch] $IncludeNull
     )
 
-    $hashtable = @{}
-    $properties = $PSCustomObject | Get-Member -MemberType *Property
-
-    foreach($property in $properties)
+    Process
     {
-        $value = $PSCustomObject | Select-Object -ExpandProperty ($property.name)
-        if($null -ne $value -and !([string]::IsNullOrEmpty($value)) -or $IncludeNull)
+        $hashtable = @{}
+        $properties = $PSCustomObject | Get-Member -MemberType *Property
+
+        foreach($property in $properties)
         {
-            $hashtable[$property.name] = $value
+            $value = $PSCustomObject | Select-Object -ExpandProperty ($property.name)
+            if($null -ne $value -and !([string]::IsNullOrEmpty($value)) -or $IncludeNull)
+            {
+                $hashtable[$property.name] = $value
+            }
         }
+        return  $hashtable
     }
-    return  $hashtable
 }

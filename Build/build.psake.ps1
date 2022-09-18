@@ -74,6 +74,7 @@ Task 'CombineFunctionsAndStage' -Depends 'Clean' {
 
     # Get public and private function files
     $publicFunctions = @( Get-ChildItem -Path "$env:BHModulePath\Public\*.ps1" -Recurse -ErrorAction 'SilentlyContinue' )
+    $privateFunctions = @( Get-ChildItem -Path "$env:BHModulePath\Private\*.ps1" -Recurse -ErrorAction 'SilentlyContinue' )
 
     If (-Not $env:PSMVERSION) {
         $manifest = Test-ModuleManifest -Path $env:BHPSModuleManifest
@@ -90,12 +91,10 @@ Task 'CombineFunctionsAndStage' -Depends 'Clean' {
     Update-ModuleManifest -Path $env:BHPSModuleManifest -FunctionsToExport $functionList -ModuleVersion $newVersion
 
     # Combine functions into a single .psm1 module
-    $pathsToCopyIntoModule = @(
-        "$env:BHPSModulePath\$($env:BHProjectName).psm1"
-        "$env:BHModulePath\Public",
-        "$env:BHModulePath\Private"
-    )
-    Copy-Item -Path $pathsToCopyIntoModule -Destination $StagingModulePath -Recurse
+    $combinedModulePath = Join-Path -Path $StagingModulePath -ChildPath "$($env:BHProjectName).psm1"
+    @($publicFunctions + $privateFunctions) | Get-Content | Add-Content -Path $combinedModulePath
+
+    Copy-Item -Path "$env:BHModulePath\Files" -Destination $StagingModulePath -Recurse
 
     # Copy other required folders and files
     $pathsToCopy = @(

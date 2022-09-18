@@ -6,9 +6,9 @@ Create a StatusCake ContactGroup
 ## SYNTAX
 
 ```
-New-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -GroupName <String> [-DesktopAlert <Boolean>]
- [-Email <String[]>] [-PingURL <String>] [-Boxcar <String>] [-Pushover <String>] [-Mobile <String[]>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+New-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -Name <String> [-Email <String[]>]
+ [-IntegrationID <Int32[]>] [-PingURL <String>] [-Mobile <String[]>] [-Force] [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -41,7 +41,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -GroupName
+### -Name
 Name of the Contact Group to be created
 
 ```yaml
@@ -56,28 +56,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DesktopAlert
-Set to 1 To Enable Desktop Alerts
-
-```yaml
-Type: Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Email
 Array of email addresses to sent alerts to.
 
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases:
+Aliases: email_addresses
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -IntegrationID
+List of integration IDs to link with this contact group
+
+```yaml
+Type: Int32[]
+Parameter Sets: (All)
+Aliases: integrations
 
 Required: False
 Position: Named
@@ -87,42 +87,13 @@ Accept wildcard characters: False
 ```
 
 ### -PingURL
-URL To Send a POST alert
+URL or IP address of an endpoint to push uptime events.
+Currently this only supports HTTP GET endpoints
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Boxcar
-Boxcar API Key
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Pushover
-Pushover Account Key
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
+Aliases: ping_url
 
 Required: False
 Position: Named
@@ -137,11 +108,41 @@ Array of mobile numbers in International Format E.164 notation
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases:
+Aliases: mobile_numbers
 
 Required: False
 Position: Named
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Force
+Force creation of the contact group even if a window with the same name already exists
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PassThru
+Return the contact group details instead of the contact id
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -188,7 +189,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## RELATED LINKS
 
-[https://www.statuscake.com/api/Contact%20Groups/Add%20or%20Update%20Contact%20Group.md](https://www.statuscake.com/api/Contact%20Groups/Add%20or%20Update%20Contact%20Group.md)
-
 [https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md)
+
+[https://www.statuscake.com/api/v1/#tag/contact-groups/operation/create-contact-group](https://www.statuscake.com/api/v1/#tag/contact-groups/operation/create-contact-group)
 

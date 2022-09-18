@@ -5,18 +5,18 @@ Updates a StatusCake Maintenance Window
 
 ## SYNTAX
 
-### SetByID
+### ID
 ```
-Update-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] -ID <Int32> [-StartDate <DateTime>]
- [-EndDate <DateTime>] [-Timezone <String>] [-TestIDs <Int32[]>] [-TestTags <String[]>] [-RecurEvery <Int32>]
- [-FollowDST <Boolean>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Update-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] [-ID <String>] [-StartDate <DateTime>]
+ [-EndDate <DateTime>] [-Timezone <String>] [-UptimeID <Int32[]>] [-UptimeTag <String[]>]
+ [-RepeatInterval <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
-### SetByName
+### Name
 ```
-Update-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] -Name <String> [-StartDate <DateTime>]
- [-EndDate <DateTime>] [-Timezone <String>] [-TestIDs <Int32[]>] [-TestTags <String[]>] [-RecurEvery <Int32>]
- [-FollowDST <Boolean>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Update-StatusCakeHelperMaintenanceWindow [-APICredential <PSCredential>] [-Name <String>]
+ [-StartDate <DateTime>] [-EndDate <DateTime>] [-Timezone <String>] [-UptimeID <Int32[]>]
+ [-UptimeTag <String[]>] [-RepeatInterval <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -27,10 +27,10 @@ You can only update a window which is in a pending state.
 
 ### EXAMPLE 1
 ```
-Update-StatusCakeHelperMaintenanceWindow -ID 123456 -RecurEvery 30
+Update-StatusCakeHelperMaintenanceWindow -ID 123456 -RepeatInterval 1m
 ```
 
-Modify the maintenance window with ID 123456 to recur every 30 days
+Modify the maintenance window with ID 123456 to recur every month
 
 ## PARAMETERS
 
@@ -53,13 +53,13 @@ Accept wildcard characters: False
 The maintenance window ID
 
 ```yaml
-Type: Int32
-Parameter Sets: SetByID
+Type: String
+Parameter Sets: ID
 Aliases:
 
-Required: True
+Required: False
 Position: Named
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -69,10 +69,10 @@ A descriptive name for the maintenance window
 
 ```yaml
 Type: String
-Parameter Sets: SetByName
+Parameter Sets: Name
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -86,7 +86,7 @@ Can be slightly in the past
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: start_unix, start_date
+Aliases: start_at, start_date, start_unix
 
 Required: False
 Position: Named
@@ -102,7 +102,7 @@ Must be in the future
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: end_unix, end_date
+Aliases: end_at, end_date, end_unix
 
 Required: False
 Position: Named
@@ -126,13 +126,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -TestIDs
-Individual tests that should be included
+### -UptimeID
+Array of uptime test IDs that should be included
 
 ```yaml
 Type: Int32[]
 Parameter Sets: (All)
-Aliases: raw_tests
+Aliases: tests, raw_tests, TestIDs
 
 Required: False
 Position: Named
@@ -141,13 +141,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -TestTags
-Tests with these tags will be included
+### -UptimeTag
+Array of uptime test tags with these tags will be included
 
 ```yaml
 Type: String[]
 Parameter Sets: (All)
-Aliases: raw_tags
+Aliases: tags, raw_tags, TestTags
 
 Required: False
 Position: Named
@@ -156,33 +156,17 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -RecurEvery
-How often in days this window should recur.
-0 disables this
+### -RepeatInterval
+How often in days this window should occur
 
 ```yaml
-Type: Int32
+Type: String
 Parameter Sets: (All)
-Aliases: recur_every
+Aliases: repeat_interval
 
 Required: False
 Position: Named
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -FollowDST
-Whether DST should be followed or not
-
-```yaml
-Type: Boolean
-Parameter Sets: (All)
-Aliases: follow_dst
-
-Required: False
-Position: Named
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -228,3 +212,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/MaintenanceWindows/Update-StatusCakeHelperMaintenanceWindow.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/MaintenanceWindows/Update-StatusCakeHelperMaintenanceWindow.md)
+
+[https://www.statuscake.com/api/v1/#tag/maintenance-windows/operation/update-maintenance-window](https://www.statuscake.com/api/v1/#tag/maintenance-windows/operation/update-maintenance-window)
+

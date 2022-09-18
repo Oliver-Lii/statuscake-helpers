@@ -7,25 +7,22 @@ Gets a StatusCake PageSpeed Test
 
 ### All (Default)
 ```
-Get-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-Detailed] [<CommonParameters>]
-```
-
-### Name
-```
-Get-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-Name <String>] [-Detailed]
- [<CommonParameters>]
+Get-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [<CommonParameters>]
 ```
 
 ### ID
 ```
-Get-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-ID <Int32>] [-Detailed]
- [<CommonParameters>]
+Get-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-ID <Int32>] [<CommonParameters>]
+```
+
+### Name
+```
+Get-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] [-Name <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Retrieves a StatusCake PageSpeed Test.
 If no name or id is supplied all tests are returned.
-By default only standard information about a test is returned and more detailed information can be retrieved by using detailed switch.
 
 ## EXAMPLES
 
@@ -38,10 +35,10 @@ Retrieve all page speed tests
 
 ### EXAMPLE 2
 ```
-Get-StatusCakeHelperPageSpeedTest -Name "Example Page Speed Test" -Detailed
+Get-StatusCakeHelperPageSpeedTest -Name "Example Page Speed Test"
 ```
 
-Retrieve detailed page speed test information for a test called "Example Page Speed Test"
+Retrieve page speed test information for a test called "Example Page Speed Test"
 
 ## PARAMETERS
 
@@ -56,21 +53,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: (Get-StatusCakeHelperAPIAuth)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Name
-Name of the PageSpeed test
-
-```yaml
-Type: String
-Parameter Sets: Name
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -90,17 +72,17 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Detailed
-Retrieve detailed test data
+### -Name
+Name of the PageSpeed test
 
 ```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
+Type: String
+Parameter Sets: Name
 Aliases:
 
 Required: False
 Position: Named
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -115,3 +97,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Get-StatusCakeHelperPageSpeedTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/Get-StatusCakeHelperPageSpeedTest.md)
+
+[https://www.statuscake.com/api/v1/#tag/pagespeed/operation/get-pagespeed-test](https://www.statuscake.com/api/v1/#tag/pagespeed/operation/get-pagespeed-test)
+
+[https://www.statuscake.com/api/v1/#operation/get-maintenance-window](https://www.statuscake.com/api/v1/#operation/get-maintenance-window)
+

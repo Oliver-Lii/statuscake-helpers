@@ -5,6 +5,12 @@ Sets the StatusCake API Username and API Key
 
 ## SYNTAX
 
+### APIKey
+```
+Set-StatusCakeHelperAPIAuth -APIKey <SecureString> [-Session] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### Credential
 ```
 Set-StatusCakeHelperAPIAuth -Credential <PSCredential> [-Session] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
@@ -33,12 +39,27 @@ Set the StatusCake Authentication credential for the session
 
 ## PARAMETERS
 
+### -APIKey
+Statuscake API Key
+
+```yaml
+Type: SecureString
+Parameter Sets: APIKey
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Credential
 Credential object containing the username and API Key
 
 ```yaml
 Type: PSCredential
-Parameter Sets: (All)
+Parameter Sets: Credential
 Aliases: Credentials
 
 Required: True

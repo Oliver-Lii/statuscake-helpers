@@ -8,92 +8,54 @@ This cmdlet returns all contact groups unless a group name or contact ID is spec
 ```powershell
 Get-StatusCakeHelperContactGroup -ContactID "123456"
 
-GroupName    : Contact Group
-Emails       : {}
-Mobiles      :
-Boxcar       :
-Pushover     :
-ContactID    : 123456
-DesktopAlert :
-PingURL      :
+id              : 123456
+name            : Test Contact Group
+email_addresses : {test@example.com}
+mobile_numbers  : {}
+integrations    : {}
 ```
 
 ### New-StatusCakeHelperContactGroup
-This cmdlet creates a new contact group. If a mobile number is supplied this is validated to confirm that it meets E.164 number formatting.
+This cmdlet creates a new contact group. If a mobile number is supplied this is validated to confirm that it meets E.164 number formatting. Only the ID of the contact group is returned and to return the contact group specify the PassThru switch.
 
 ```powershell
-New-StatusCakeHelperContactGroup -GroupName "Example" -email @("test@example.com") -mobile "+14155552671"
+New-StatusCakeHelperContactGroup -GroupName "Example" -email @("test@example.com") -mobile "+14155552671" -PassThru
 
-GroupName    : Example
-Emails       : {test@example.com}
-Mobiles      : {+14155552671}
-Boxcar       :
-Pushover     :
-ContactID    : 123456
-DesktopAlert :
-PingURL      :
+id              : 123456
+name            : Test Contact Group
+email_addresses : {test@example.com}
+mobile_numbers  : {}
+integrations    : {}
 ```
 
-
 ### Copy-StatusCakeHelperContactGroup
-The cmdlet copies a Status Cake ContactGroup. The cmdlet checks to see if a test with the same name already exists before a copy is created.
+The cmdlet copies a Status Cake ContactGroup. The cmdlet checks to see if a test with the same name already exists before a copy is created and returns the ID of the copy.
 
 ```powershell
-Copy-StatusCakeHelperContactGroup -GroupName "Example" -NewGroupName "Example - Copy"
-GroupName    : Example - Copy
-Emails       : {test@example.com}
-Mobiles      : {+14155552671}
-Boxcar       :
-Pushover     :
-ContactID    : 123456
-DesktopAlert :
-PingURL      :
+Copy-StatusCakeHelperContactGroup -Name "Example" -NewName "Example - Copy"
+234567
 ```
 
 ### Remove-StatusCakeHelperContactGroup
-This cmdlet removes a contact group. If the contact group is in use by any tests then the -force switch must be supplied to remove the contact group.
+This cmdlet removes a contact group.
 
 ```powershell
-Remove-StatusCakeHelperContactGroup -ContactID "123456"
+Remove-StatusCakeHelperContactGroup -ID "123456"
 ```
-A Contact Group can be removed by group name using the GroupName parameter. Specify the -PassThru flag if you want the details of the removed object returned.
+A Contact Group can be removed by group name using the GroupName parameter.
 ```powershell
-Remove-StatusCakeHelperContactGroup -GroupName "Example" -PassThru
-GroupName    : Example
-Emails       : {test@example.com}
-Mobiles      : {+14155552671}
-Boxcar       :
-Pushover     :
-ContactID    : 123456
-DesktopAlert :
-PingURL      :
+Remove-StatusCakeHelperContactGroup -Name "Example"
 ```
 
-### Set-StatusCakeHelperContactGroup
-This cmdlet sets the configuration of a contact group to the specified values. If a contactID is not supplied then a new contact will be created
+### Update-StatusCakeHelperContactGroup
+This cmdlet sets the configuration of a contact group to the specified values.
 
 ```powershell
 Set-StatusCakeHelperContactGroup -ContactID "123456" -Email @("test8@example.com")
-GroupName    : Example
-Emails       : {test8@example.com}
-Mobiles      : {+14155552671}
-Boxcar       :
-Pushover     :
-ContactID    : 123456
-DesktopAlert :
-PingURL      :
 ```
 A Contact Group can be updated by group name if there are no duplicates as follows:
 ```powershell
 Set-StatusCakeHelperContactGroup -GroupName "Example" -Email @("test4@example.com") -SetByGroupName
-GroupName    : Example
-Emails       : {test4@example.com}
-Mobiles      : {+14155552671}
-Boxcar       :
-Pushover     :
-ContactID    : 123456
-DesktopAlert :
-PingURL      :
 ```
 
 # Authors

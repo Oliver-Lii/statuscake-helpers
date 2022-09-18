@@ -7,25 +7,25 @@ Copies the settings of a StatusCake ContactGroup
 
 ### CopyById
 ```
-Copy-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -ContactID <Int32> -NewGroupName <String>
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Copy-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -ID <Int32> -NewName <String> [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ### CopyByName
 ```
-Copy-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -GroupName <String> -NewGroupName <String>
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Copy-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -Name <String> -NewName <String> [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Creates a copy of a contact group which can be specified by name or id.
-The new name of the contact group must not already exist for the command to be successful
+The new name of the contact group must not already exist for the command to be successful.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Copy-StatusCakeHelperContactGroup -GroupName "Example" -NewGroupName "Example - Copy"
+Copy-StatusCakeHelperContactGroup -Name "Example" -NewName "Example - Copy"
 ```
 
 Create a copy of a contact group called "Example" with name "Example - Copy"
@@ -47,7 +47,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ContactID
+### -ID
 ID of the Contact Group to be copied
 
 ```yaml
@@ -62,7 +62,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -GroupName
+### -Name
 Name of the Contact Group to be copied
 
 ```yaml
@@ -77,8 +77,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -NewGroupName
-Name of the Contact Group copy
+### -NewName
+Name of the copy of the Contact Group
 
 ```yaml
 Type: String

@@ -1,6 +1,6 @@
 # Build Pipeline
 variables:
-  psmversion: 4.0.$(Build.Buildid)
+  psmversion: 5.0.$(Build.Buildid)
   psmodulename: "statuscake-helpers"
 
 trigger:
@@ -16,11 +16,11 @@ stages:
 - stage: Build
   pool:
     # What environment will the build agent run on? (Windows / Linux / macOS)
-    vmImage: "vs2017-win2016"
+    vmImage: "windows-2019"
 
   jobs:
-    - job: Build_PS_Win2016
-      displayName: "Build - Windows Server 2016"
+    - job: Build_PS_Win2019
+      displayName: "Build - Windows Server 2019"
 
       steps:
         # Build Tasks
@@ -57,7 +57,7 @@ stages:
           inputs:
             testRunner: "NUnit"
             searchFolder: "Artifacts"
-            testRunTitle: "PesterTests-Win2016"
+            testRunTitle: "PesterTests-Win2019"
           condition: always()
 
         - task: PublishBuildArtifacts@1
@@ -78,10 +78,10 @@ stages:
   condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
   pool:
     # What environment will the build agent run on? (Windows / Linux / macOS)
-    vmImage: "vs2017-win2016"
+    vmImage: "windows-2019"
   jobs:
-  - job: "Publish_PS_Win2016"
-    displayName: "Publish - Windows Server 2016"
+  - job: "Publish_PS_Win2019"
+    displayName: "Publish - Windows Server 2019"
     steps:
       - checkout: self
         persistCredentials: true

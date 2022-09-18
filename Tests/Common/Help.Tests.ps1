@@ -17,22 +17,22 @@ foreach ($command in $commands) {
 
         # If help is not found, synopsis in auto-generated help is the syntax diagram
         It 'Should not be auto-generated' {
-            $help.Synopsis | Should Not BeLike '*`[`<CommonParameters`>`]*'
+            $help.Synopsis | Should -Not -BeLike '*`[`<CommonParameters`>`]*'
         }
 
         # Should be a description for every function
         It "Gets description for $commandName" {
-            $help.Description | Should Not BeNullOrEmpty
+            $help.Description | Should -Not -BeNullOrEmpty
         }
 
         # Should be at least one example
         It "Gets example code from $commandName" {
-            ($help.Examples.Example | Select-Object -First 1).Code | Should Not BeNullOrEmpty
+            ($help.Examples.Example | Select-Object -First 1).Code | Should -Not -BeNullOrEmpty
         }
 
         # Should be at least one example description
         It "Gets example help from $commandName" {
-            ($help.Examples.Example.Remarks | Select-Object -First 1).Text | Should Not BeNullOrEmpty
+            ($help.Examples.Example.Remarks | Select-Object -First 1).Text | Should -Not -BeNullOrEmpty
         }
 
         Context "Test parameter help for $commandName" {
@@ -57,7 +57,7 @@ foreach ($command in $commands) {
 
                 # Should be a description for every parameter
                 It "Gets help for parameter: $parameterName : in $commandName" {
-                    $parameterHelp.Description.Text | Should Not BeNullOrEmpty
+                    $parameterHelp.Description.Text | Should -Not -BeNullOrEmpty
                 }
 
                 # Required value in Help should match IsMandatory property of parameter
@@ -78,7 +78,7 @@ foreach ($command in $commands) {
             foreach ($helpParm in $HelpParameterNames) {
                 # Shouldn't find extra parameters in help.
                 It "Finds help parameter in code: $helpParm" {
-                    $helpParm -in $parameterNames | Should Be $true
+                    $helpParm -in $parameterNames | Should -Be $true
                 }
             }
         }
@@ -91,7 +91,7 @@ foreach ($command in $commands) {
                     # Should have a valid uri if one is provided.
                     It "[$link] should have 200 Status Code for $commandName" {
                         $Results = Invoke-WebRequest -Uri $link -UseBasicParsing
-                        $Results.StatusCode | Should Be '200'
+                        $Results.StatusCode | Should -Be '200'
                     }
                 }
             }

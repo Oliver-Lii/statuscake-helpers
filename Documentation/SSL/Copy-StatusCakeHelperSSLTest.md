@@ -7,14 +7,14 @@ Copies the settings of a StatusCake SSL Test
 
 ### CopyById
 ```
-Copy-StatusCakeHelperSSLTest [-APICredential <PSCredential>] -ID <Int32> -NewDomain <String>
- [-Checkrate <Int32>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Copy-StatusCakeHelperSSLTest [-APICredential <PSCredential>] -ID <Int32> -NewWebsiteURL <String> [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ### CopyByName
 ```
-Copy-StatusCakeHelperSSLTest [-APICredential <PSCredential>] -Domain <String> -NewDomain <String>
- [-Checkrate <Int32>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Copy-StatusCakeHelperSSLTest [-APICredential <PSCredential>] -WebsiteURL <String> -NewWebsiteURL <String>
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,10 +24,10 @@ Creates a copy of a SSL Test.
 
 ### EXAMPLE 1
 ```
-Copy-StatusCakeHelperSSLTest -Domain "https://www.example.com" -NewDomain "https://www.example.org"
+Copy-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com" -NewWebsiteURL "https://www.example.org"
 ```
 
-Create a copy of the SSL test with domain "https://www.example.com" for domain "https://www.example.org"
+Create a copy of the SSL test with URL "https://www.example.com" for URL "https://www.example.org"
 
 ## PARAMETERS
 
@@ -61,8 +61,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Domain
-Domain of the SSL Test to be copied
+### -WebsiteURL
+Website URL of the SSL Test to be copied
 
 ```yaml
 Type: String
@@ -76,8 +76,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -NewDomain
-Domain of the new SSL Test
+### -NewWebsiteURL
+Website URL of the new SSL Test
 
 ```yaml
 Type: String
@@ -87,22 +87,6 @@ Aliases:
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Checkrate
-Checkrate in seconds.
-Default is one day.
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: 86400
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -148,3 +132,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Copy-StatusCakeHelperSSLTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Copy-StatusCakeHelperSSLTest.md)
+

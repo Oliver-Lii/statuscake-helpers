@@ -7,8 +7,9 @@ Create a StatusCake PageSpeed Test
 
 ```
 New-StatusCakeHelperPageSpeedTest [-APICredential <PSCredential>] -Name <String> -WebsiteURL <String>
- -LocationISO <String> -Checkrate <Int32> [-AlertBigger <Int32>] [-AlertSlower <Int32>] [-AlertSmaller <Int32>]
- [-ContactIDs <Int32[]>] [-PrivateName <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ -Checkrate <Int32> [-AlertBigger <Int32>] [-AlertSlower <Int32>] [-AlertSmaller <Int32>]
+ [-ContactID <Int32[]>] -Region <String> [-Paused <Boolean>] [-Force] [-PassThru] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -18,14 +19,14 @@ Creates a new StatusCake PageSpeed Test using the supplied parameters.
 
 ### EXAMPLE 1
 ```
-New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -LocationISO UK -AlertSlower 10000
+New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 Region UK -AlertSlower 10000
 ```
 
 Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page speed load time is slower than 10000ms
 
 ### EXAMPLE 2
 ```
-New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -LocationISO UK -AlertSmaller 500
+New-StatusCakeHelperPageSpeedTest -WebsiteURL "https://www.example.com" -Checkrate 60 -Region UK -AlertSmaller 500
 ```
 
 Create a page speed test to check site "https://www.example.com" every 60 minutes from a UK test server and alert when page load is less than 500kb
@@ -77,29 +78,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LocationISO
-2-letter ISO code of the location.
-Valid values: AU, CA, DE, IN, NL, SG, UK, US, PRIVATE
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: location_iso
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Checkrate
-Frequency in minutes with which the page speed test should be run
+Number of seconds between checks
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases:
+Aliases: check_rate
 
 Required: True
 Position: Named
@@ -109,7 +94,8 @@ Accept wildcard characters: False
 ```
 
 ### -AlertBigger
-Size in kb, will alert to Contact Groups if actual size is bigger
+An alert will be sent if the size of the page is larger than this value (kb).
+A value of 0 prevents alerts being sent.
 
 ```yaml
 Type: Int32
@@ -153,7 +139,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ContactIDs
+### -ContactID
 IDs of selected Contact Groups to alert
 
 ```yaml
@@ -168,18 +154,63 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PrivateName
-Must select PRIVATE in location_iso.
-Name of private server \[NOT YET IMPLEMENTED\]
+### -Region
+2-letter code of the region from which to run the checks.
+Valid values: AU, CA, DE, FR, IN, JP, NL, SG, UK, US, USW
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: private_name
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Paused
+Whether the test should be run.
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Force
+Force creation of the test even if a test with the same name already exists
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PassThru
+Return the page speed test details instead of the page speed test id
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -225,3 +256,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/New-StatusCakeHelperPageSpeedTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/PageSpeed/New-StatusCakeHelperPageSpeedTest.md)
+
+[https://www.statuscake.com/api/v1/#tag/pagespeed/operation/create-pagespeed-test](https://www.statuscake.com/api/v1/#tag/pagespeed/operation/create-pagespeed-test)
+

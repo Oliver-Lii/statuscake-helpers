@@ -6,9 +6,10 @@ Create a StatusCake SSL Test
 ## SYNTAX
 
 ```
-New-StatusCakeHelperSSLTest [-APICredential <PSCredential>] -Domain <String> [-ContactIDs <Int32[]>]
- [-Checkrate <Int32>] [-AlertAt <Int32[]>] [-AlertExpiry <Boolean>] [-AlertReminder <Boolean>]
- [-AlertBroken <Boolean>] [-AlertMixed <Boolean>] [-WhatIf] [-Confirm] [<CommonParameters>]
+New-StatusCakeHelperSSLTest [-APICredential <PSCredential>] -WebsiteURL <String> [-Checkrate <Int32>]
+ [-AlertAt <Int32[]>] [-AlertBroken <Boolean>] [-AlertExpiry <Boolean>] [-AlertMixed <Boolean>]
+ [-AlertReminder <Boolean>] [-ContactID <Int32[]>] [-FollowRedirects <Boolean>] [-Hostname <String>]
+ [-Paused <Boolean>] [-UserAgent <String>] [-Force] [-PassThru] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -19,14 +20,14 @@ Default settings for a SSL test will check a URL every day with alerts sent at 7
 
 ### EXAMPLE 1
 ```
-New-StatusCakeHelperSSLTest -Domain "https://www.example.com"
+New-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com"
 ```
 
 Create a new SSL Test to check https://www.example.com every day
 
 ### EXAMPLE 2
 ```
-New-StatusCakeHelperSSLTest -Domain "https://www.example.com" -AlertAt ("14","30","60")
+New-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com" -AlertAt ("14","30","60")
 ```
 
 Create a new SSL Test to check https://www.example.com every day with alerts sent at 14, 30 and 60 days.
@@ -48,30 +49,15 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Domain
+### -WebsiteURL
 URL to check
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: website_url, Domain
 
 Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ContactIDs
-Array containing contact IDs to alert.
-
-```yaml
-Type: Int32[]
-Parameter Sets: (All)
-Aliases: contact_groups
-
-Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -86,7 +72,7 @@ Options are 300 (5 minutes), 600 (10 minutes), 1800 (30 minutes), 3600 (1 hour),
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases:
+Aliases: check_rate
 
 Required: False
 Position: Named
@@ -112,6 +98,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -AlertBroken
+Set to true to enable broken alerts.
+False to disable
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases: alert_broken
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -AlertExpiry
 Set to true to enable expiration alerts.
 False to disable
@@ -124,6 +126,22 @@ Aliases: alert_expiry
 Required: False
 Position: Named
 Default value: True
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AlertMixed
+Set to true to enable mixed content alerts.
+False to disable
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases: alert_mixed
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -144,34 +162,107 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AlertBroken
-Set to true to enable broken alerts.
-False to disable
+### -ContactID
+Array containing contact IDs to alert.
 
 ```yaml
-Type: Boolean
+Type: Int32[]
 Parameter Sets: (All)
-Aliases: alert_broken
+Aliases: contact_groups
 
 Required: False
 Position: Named
-Default value: True
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AlertMixed
-Set to true to enable mixed content alerts.
-False to disable
+### -FollowRedirects
+Whether to follow redirects when testing.
 
 ```yaml
 Type: Boolean
 Parameter Sets: (All)
-Aliases: alert_mixed
+Aliases: follow_redirects
 
 Required: False
 Position: Named
-Default value: True
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Hostname
+Hostname of the server under test
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Paused
+Whether the test should be run.
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -UserAgent
+Custom user agent string set when testing
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: user_agent
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Force
+Create an SSL test even if one with the same website URL already exists
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PassThru
+Return the SSL test details instead of the SSL test id
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -217,3 +308,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/New-StatusCakeHelperSSLTest.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/New-StatusCakeHelperSSLTest.md)
+
+[https://www.statuscake.com/api/v1/#tag/ssl/operation/create-ssl-test](https://www.statuscake.com/api/v1/#tag/ssl/operation/create-ssl-test)
+

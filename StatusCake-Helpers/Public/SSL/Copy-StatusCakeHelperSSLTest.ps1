@@ -8,15 +8,15 @@
     Credentials to access StatusCake API
 .PARAMETER Id
     ID of the SSL Test to be copied
-.PARAMETER Domain
-    Domain of the SSL Test to be copied
-.PARAMETER NewDomain
-    Domain of the new SSL Test
-.PARAMETER Checkrate
-    Checkrate in seconds. Default is one day.
+.PARAMETER WebsiteURL
+    Website URL of the SSL Test to be copied
+.PARAMETER NewWebsiteURL
+    Website URL of the new SSL Test
 .EXAMPLE
-    C:\PS>Copy-StatusCakeHelperSSLTest -Domain "https://www.example.com" -NewDomain "https://www.example.org"
-    Create a copy of the SSL test with domain "https://www.example.com" for domain "https://www.example.org"
+    C:\PS>Copy-StatusCakeHelperSSLTest -WebsiteURL "https://www.example.com" -NewWebsiteURL "https://www.example.org"
+    Create a copy of the SSL test with URL "https://www.example.com" for URL "https://www.example.org"
+.LINK
+    https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/SSL/Copy-StatusCakeHelperSSLTest.md
 #>
 function Copy-StatusCakeHelperSSLTest
 {
@@ -32,24 +32,19 @@ function Copy-StatusCakeHelperSSLTest
 
         [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]
         [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]
-        [string]$Domain,
+        [string]$WebsiteURL,
 
         [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
         [ValidatePattern('^((http|https):\/\/)?([a-zA-Z0-9\-]+(\.[a-zA-Z]+)+.*)$|^(?!^.*,$)((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))*$')]
-        [string]$NewDomain,
-
-        [Parameter(ParameterSetName='CopyByName')]
-        [Parameter(ParameterSetName='CopyById')]
-        [ValidateSet("300","600","1800","3600","86400","2073600")]
-        [int]$Checkrate="86400"
+        [string]$NewWebsiteURL
     )
 
-    if($Name)
-    {   #If copying by name check if resource with that name exists
+    if($WebsiteURL)
+    {   #If copying by URL check if resource with that URL exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake SSL Tests"))
         {
-            $statusCakeItem = Get-StatusCakeHelperSSLTest -APICredential $APICredential -Name $Name
+            $statusCakeItem = Get-StatusCakeHelperSSLTest -APICredential $APICredential -WebsiteURL $WebsiteURL
             if(!$statusCakeItem)
             {
                 Write-Error "No SSL Test with Specified Name Exists [$Name]"
@@ -78,9 +73,7 @@ function Copy-StatusCakeHelperSSLTest
     $psParams = @{}
     $psParams = $statusCakeItem | Get-StatusCakeHelperCopyParameter -FunctionName "New-StatusCakeHelperSSLTest"
 
-    # Convert the string back to array expected by cmdlet
-    $psParams.alert_at = @($psParams.alert_at -split ",")
-    $psParams.Domain = $NewDomain
+    $psParams["website_url"] = $NewWebsiteURL
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake SSL Test"))
     {

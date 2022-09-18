@@ -12,19 +12,17 @@ Get-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [<CommonParamet
 
 ### Group Name
 ```
-Get-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-GroupName <String>] [<CommonParameters>]
+Get-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-Name <String>] [<CommonParameters>]
 ```
 
 ### Contact ID
 ```
-Get-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-ContactID <Int32>] [<CommonParameters>]
+Get-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-ID <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Retrieves StatusCake Test via the test name of the test or Test ID.
-If no group name or id supplied all contact groups will be returned.
-Retrieval of mobile numbers
-via the API for Contact Groups is not currently possible due to security reasons.
+Retrieves a StatusCake contact group via the name or ID.
+If no name or id supplied all contact groups will be returned.
 
 ## EXAMPLES
 
@@ -59,7 +57,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -GroupName
+### -Name
 Name of the Contact Group
 
 ```yaml
@@ -74,13 +72,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ContactID
-ID of the Contact Group to be copied
+### -ID
+ID of the Contact Group to be retrieved
 
 ```yaml
 Type: Int32
 Parameter Sets: Contact ID
-Aliases:
+Aliases: GroupID, ContactID
 
 Required: False
 Position: Named
@@ -96,12 +94,19 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### Returns the contact group(s) returning $null if no matching contact groups
+### Returns the contact group(s)
+###     id              : 123456
+###     name            : Test Contact Group
+###     email_addresses : {test@example.com}
+###     mobile_numbers  : {}
+###     integrations    : {}
 ## NOTES
 
 ## RELATED LINKS
 
-[https://www.statuscake.com/api/Contact%20Groups/List%20Contact%20Groups.md](https://www.statuscake.com/api/Contact%20Groups/List%20Contact%20Groups.md)
-
 [https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Get-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Get-StatusCakeHelperContactGroup.md)
+
+[https://www.statuscake.com/api/v1/#tag/contact-groups/operation/list-contact-groups](https://www.statuscake.com/api/v1/#tag/contact-groups/operation/list-contact-groups)
+
+[https://www.statuscake.com/api/v1/#tag/contact-groups/operation/get-contact-group](https://www.statuscake.com/api/v1/#tag/contact-groups/operation/get-contact-group)
 

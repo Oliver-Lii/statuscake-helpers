@@ -3,17 +3,17 @@
 .SYNOPSIS
     Copies the settings of a StatusCake ContactGroup
 .DESCRIPTION
-    Creates a copy of a contact group which can be specified by name or id. The new name of the contact group must not already exist for the command to be successful
+    Creates a copy of a contact group which can be specified by name or id. The new name of the contact group must not already exist for the command to be successful.
 .PARAMETER APICredential
     Credentials to access StatusCake API
-.PARAMETER GroupName
+.PARAMETER Name
     Name of the Contact Group to be copied
-.PARAMETER ContactID
+.PARAMETER ID
     ID of the Contact Group to be copied
-.PARAMETER NewGroupName
-    Name of the Contact Group copy
+.PARAMETER NewName
+    Name of the copy of the Contact Group
 .EXAMPLE
-    C:\PS> Copy-StatusCakeHelperContactGroup -GroupName "Example" -NewGroupName "Example - Copy"
+    C:\PS> Copy-StatusCakeHelperContactGroup -Name "Example" -NewName "Example - Copy"
     Create a copy of a contact group called "Example" with name "Example - Copy"
 .LINK
     https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Copy-StatusCakeHelperContactGroup.md
@@ -28,74 +28,54 @@ function Copy-StatusCakeHelperContactGroup
         [System.Management.Automation.PSCredential] $APICredential = (Get-StatusCakeHelperAPIAuth),
 
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
-        [int]$ContactID,
+        [int]$ID,
 
         [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$GroupName,
+        [string]$Name,
 
         [Parameter(ParameterSetName='CopyByName',Mandatory=$true)]
         [Parameter(ParameterSetName='CopyById',Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$NewGroupName
+        [string]$NewName
     )
 
-    if($GroupName)
+    if($Name)
     {   #If copying by name check if resource with that name exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Contact Groups"))
         {
-            $statusCakeItem = Get-StatusCakeHelperContactGroup -APICredential $APICredential -GroupName $GroupName
+            $statusCakeItem = Get-StatusCakeHelperContactGroup -APICredential $APICredential -Name $Name
             if(!$statusCakeItem)
             {
-                Write-Error "No Contact with Specified Name Exists [$GroupName]"
+                Write-Error "No Contact with Specified Name Exists [$Name]"
                 Return $null
             }
             elseif($statusCakeItem.GetType().Name -eq 'Object[]')
             {
-                Write-Error "Multiple Contacts with the same name [$GroupName] [$($statusCakeItem.InsertID)]"
+                Write-Error "Multiple Contacts with the same name [$Name] [$($statusCakeItem.ID)]"
                 Return $null
             }
         }
     }
-    elseif($ContactID)
+    elseif($ID)
     {   #If copying by ID verify that a resource with the Id already exists
         if( $pscmdlet.ShouldProcess("StatusCake API", "Retrieve StatusCake Contacts"))
         {
-            $statusCakeItem = Get-StatusCakeHelperContactGroup -APICredential $APICredential -ContactID $ContactID
+            $statusCakeItem = Get-StatusCakeHelperContactGroup -APICredential $APICredential -ID $ID
             if(!$statusCakeItem)
             {
-                Write-Error "No Contact with Specified ID Exists [$ContactID]"
+                Write-Error "No Contact with Specified ID Exists [$ID]"
                 Return $null
             }
         }
     }
 
     $psParams = @{}
-    $ParameterList = (Get-Command -Name New-StatusCakeHelperContactGroup).Parameters
+    $psParams = $statusCakeItem | Get-StatusCakeHelperCopyParameter -FunctionName "New-StatusCakeHelperContactGroup"
 
-    $paramsToUse = $statusCakeItem | Get-Member | Select-Object Name
-    $paramsToUse = Compare-Object $paramsToUse.Name @($ParameterList.keys) -IncludeEqual -ExcludeDifferent
-    $paramsToUse = $paramsToUse | Select-Object -ExpandProperty InputObject
-    $paramsToUse += @("Emails","Mobiles") # Values from response is different from parameters
+    Write-Verbose "$($psParams.Keys -join ",")"
 
-    foreach ($key in $paramsToUse)
-    {
-        $value = $statusCakeItem | Select-Object -ExpandProperty $key
-        if($key -eq "Emails" -and $value)
-        {
-            $psParams.Add("Email",$value)
-        }
-        elseif($key -eq "Mobiles" -and $value)
-        {
-            $psParams.Add("Mobile",$value)
-        }
-        elseif($value -or $value -eq 0)
-        {
-            $psParams.Add($key,$value)
-        }
-    }
-
-    $psParams["GroupName"] = $NewGroupName
+    $psParams.Name = $NewName
 
     if( $pscmdlet.ShouldProcess("StatusCake API", "Create StatusCake Contact Group"))
     {
