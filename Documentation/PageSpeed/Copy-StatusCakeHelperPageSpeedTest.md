@@ -26,14 +26,14 @@ A region is required as StatusCake API does not return the region the tests are 
 
 ### EXAMPLE 1
 ```
-Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy"
+Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy" -Region UK
 ```
 
 Creates a copy of a page speed test called "Example" with name "Example - Copy"
 
 ### EXAMPLE 2
 ```
-Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy" -WebsiteURL "https://www.example.org"
+Copy-StatusCakeHelperPageSpeedTest -Name "Example" -NewName "Example - Copy" -WebsiteURL "https://www.example.org" -Region UK
 ```
 
 Creates a copy of a page speed test called "Example" with name "Example - Copy" using the URL "https://www.example.org"

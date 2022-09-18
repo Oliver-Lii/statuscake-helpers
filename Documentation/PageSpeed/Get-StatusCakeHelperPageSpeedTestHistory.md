@@ -37,6 +37,13 @@ Get-StatusCakeHelperPageSpeedTestHistory -ID 123456 -Before 2022-01-01
 
 Retrieve all page speed test history before the 1st January 2022
 
+### EXAMPLE 3
+```
+Get-StatusCakeHelperPageSpeedTestHistory -ID 123456 -Limit 1
+```
+
+Retrieve the history of the most recent page speed test
+
 ## PARAMETERS
 
 ### -APICredential

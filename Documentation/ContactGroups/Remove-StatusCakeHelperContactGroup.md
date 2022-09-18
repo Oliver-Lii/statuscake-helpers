@@ -24,7 +24,7 @@ Removes the StatusCake contact group via its ID or Name.
 
 ### EXAMPLE 1
 ```
-Remove-StatusCakeHelperContactGroup -ContactID 123456
+Remove-StatusCakeHelperContactGroup -ID 123456
 ```
 
 Remove contact group with ID 123456

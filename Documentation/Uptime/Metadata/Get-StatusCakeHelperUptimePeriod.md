@@ -31,10 +31,10 @@ Return all the alerts sent for test ID 123456 since the 19th August 2017 13:29:4
 
 ### EXAMPLE 2
 ```
-Get-StatusCakeHelperUptimeAlert -ID 123456 -Limit 100
+Get-StatusCakeHelperUptimePeriod -ID 123456 -Limit 100
 ```
 
-Return the last 100 alerts sent for test ID 123456
+Return the last 100 uptime check periods sent for test ID 123456
 
 ## PARAMETERS
 
@@ -125,7 +125,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## RELATED LINKS
 
-[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Uptime/Base/Get-StatusCakeHelperUptimePeriod.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Uptime/Base/Get-StatusCakeHelperUptimePeriod.md)
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Uptime/Property/Get-StatusCakeHelperUptimePeriod.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/Uptime/Property/Get-StatusCakeHelperUptimePeriod.md)
 
 [https://www.statuscake.com/api/v1/#tag/uptime/operation/list-uptime-test-periods](https://www.statuscake.com/api/v1/#tag/uptime/operation/list-uptime-test-periods)
 

@@ -18,10 +18,11 @@ Get-StatusCakeHelperUptimeAlert [-APICredential <PSCredential>] [-ID <Int32>] [-
 ```
 
 ## DESCRIPTION
-Returns alerts that have been sent for a test by its name or id.
+Returns all alerts that have been sent for a test by its name or id.
 The return order is newest alerts are shown first.
 Alerts to be returned can be filtered by date using the Before parameter.
-The number of
+The number of alerts returned can be controlled
+using the Limit argument.
 
 ## EXAMPLES
 

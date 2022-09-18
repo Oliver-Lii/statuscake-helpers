@@ -25,14 +25,14 @@ To avoid persisting credentials to disk the session switch can be used.
 
 ### EXAMPLE 1
 ```
-Set-StatusCakeHelperAPIAuth -Credential $StatusCakeAPICredential
+Set-StatusCakeHelperAPIAuth -APIKey (Read-Host -AsSecureString -Prompt "Please enter the API key")
 ```
 
 Set the StatusCake Authentication credential file
 
 ### EXAMPLE 2
 ```
-Set-StatusCakeHelperAPIAuth -Credential $StatusCakeAPICredential -Session
+Set-StatusCakeHelperAPIAuth -APIKey (Read-Host -AsSecureString -Prompt "Please enter the API key") -Session
 ```
 
 Set the StatusCake Authentication credential for the session

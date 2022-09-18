@@ -35,7 +35,7 @@ Retrieve all contact groups
 
 ### EXAMPLE 2
 ```
-Get-StatusCakeHelperContactGroup -ContactID 123456
+Get-StatusCakeHelperContactGroup -ID 123456
 ```
 
 Retrieve contact group with ID 123456

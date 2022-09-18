@@ -36,7 +36,7 @@ Get all maintenance windows
 
 ### EXAMPLE 2
 ```
-Get-StatusCakeHelperMaintenanceWindow -State PND
+Get-StatusCakeHelperMaintenanceWindow -State pending
 ```
 
 Get all maintenance windows in a pending state

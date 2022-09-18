@@ -1,28 +1,33 @@
-# New-StatusCakeHelperContactGroup
+# Clear-StatusCakeHelperContactGroup
 
 ## SYNOPSIS
-Create a StatusCake ContactGroup
+Clears a property of a StatusCake contact group
 
 ## SYNTAX
 
+### ByID
 ```
-New-StatusCakeHelperContactGroup [-APICredential <PSCredential>] -Name <String> [-Email <String[]>]
- [-IntegrationID <Int32[]>] [-PingURL <String>] [-Mobile <String[]>] [-Force] [-PassThru] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Clear-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-ID <Int32>] [-Email] [-PingURL] [-Mobile]
+ [-Integration] [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### ByName
+```
+Clear-StatusCakeHelperContactGroup [-APICredential <PSCredential>] [-Name <String>] [-Email] [-PingURL]
+ [-Mobile] [-Integration] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Creates a new StatusCake ContactGroup using the supplied parameters.
-The name of the contact group must be unique for the contact group to be created.
+Clears the property of a StatusCake contact group using the supplied parameters.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-New-StatusCakeHelperContactGroup -Name "Example" -email @(test@example.com)
+Clear-StatusCakeHelperContactGroup -Name "Example" -email
 ```
 
-Create contact group called "Example" using email address "test@example.com"
+Set the contact group name "Example" with email address "test@example.com"
 
 ## PARAMETERS
 
@@ -41,15 +46,30 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ID
+ID of the contact group to clear the property on
+
+```yaml
+Type: Int32
+Parameter Sets: ByID
+Aliases:
+
+Required: False
+Position: Named
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Name
-Name of the Contact Group to be created
+Name of the Contact Group on which to clear the property
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: ByName
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -57,68 +77,22 @@ Accept wildcard characters: False
 ```
 
 ### -Email
-Array of email addresses to sent alerts to.
+Flag to clear all email addresses from contact group
 
 ```yaml
-Type: String[]
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases: email_addresses
 
 Required: False
 Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -IntegrationID
-List of integration IDs to link with this contact group
-
-```yaml
-Type: Int32[]
-Parameter Sets: (All)
-Aliases: integrations
-
-Required: False
-Position: Named
-Default value: None
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -PingURL
-URL or IP address of an endpoint to push uptime events.
-Currently this only supports HTTP GET endpoints
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: ping_url
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Mobile
-Array of mobile numbers in International Format E.164 notation
-
-```yaml
-Type: String[]
-Parameter Sets: (All)
-Aliases: mobile_numbers
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Force
-Force creation of the contact group even if a window with the same name already exists
+Flag to clear ping URL from contact group
 
 ```yaml
 Type: SwitchParameter
@@ -132,13 +106,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PassThru
-Return the contact group details instead of the contact id
+### -Mobile
+Flag to clear all mobile numbers from contact group
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases:
+Aliases: mobile_numbers
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Integration
+Flag to clear all integration IDs from contact group
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: integrations
 
 Required: False
 Position: Named
@@ -189,7 +178,5 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## RELATED LINKS
 
-[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/New-StatusCakeHelperContactGroup.md)
-
-[https://www.statuscake.com/api/v1/#tag/contact-groups/operation/create-contact-group](https://www.statuscake.com/api/v1/#tag/contact-groups/operation/create-contact-group)
+[https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Clear-StatusCakeHelperContactGroup.md](https://github.com/Oliver-Lii/statuscake-helpers/blob/master/Documentation/ContactGroups/Clear-StatusCakeHelperContactGroup.md)
 
