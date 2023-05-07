@@ -48,7 +48,7 @@ function ConvertTo-StatusCakeHelperAPIValue
                 'DateTime'{ #Dates needs to be in RFC3339 unless Unix timestamp has been specified for the parameter
                     if($name -in $DateUnix)
                     {
-                        $value = [int64]($var.value).ToUniversalTime() | Get-Date -UFormat %s
+                        [int64]$value = ($var.value).ToUniversalTime() | Get-Date -UFormat %s
                     }
                     else
                     {
