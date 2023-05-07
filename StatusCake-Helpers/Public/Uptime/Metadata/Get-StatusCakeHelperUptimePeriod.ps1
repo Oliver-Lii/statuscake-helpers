@@ -12,6 +12,8 @@
     Name of the Test to retrieve the sent alerts for
 .PARAMETER Before
     Return only results from before this date
+.PARAMETER After
+    Return only results after this date
 .PARAMETER Limit
     The maximum of number of results to return
 .OUTPUTS
@@ -45,6 +47,9 @@ function Get-StatusCakeHelperUptimePeriod
         [ValidateNotNullOrEmpty()]
         [datetime]$Before,
 
+        [ValidateNotNullOrEmpty()]
+        [datetime]$After,
+
         [int]$Limit
     )
 
@@ -62,11 +67,8 @@ function Get-StatusCakeHelperUptimePeriod
         ID = $ID
     }
 
-    if($Before)
-    {
-        $parameter = $Before | ConvertTo-StatusCakeHelperAPIValue -DateUnix @("Before")
-        $metaDataParameters["Parameter"] = $parameter
-    }
+    $allParameterValues = $MyInvocation | Get-StatusCakeHelperParameterValue -BoundParameters $PSBoundParameters
+    $metaDataParameters["Parameter"] = $allParameterValues | Get-StatusCakeHelperAPIParameter -InvocationInfo $MyInvocation -Exclude @("Limit") | ConvertTo-StatusCakeHelperAPIValue -DateUnix @("Before","After")
 
     if($Limit)
     {
