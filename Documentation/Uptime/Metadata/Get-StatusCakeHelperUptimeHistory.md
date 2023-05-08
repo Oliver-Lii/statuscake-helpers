@@ -8,19 +8,19 @@ Returns uptime check history results for tests
 ### name
 ```
 Get-StatusCakeHelperUptimeHistory [-APICredential <PSCredential>] [-Name <String>] [-Before <DateTime>]
- [-Limit <Int32>] [<CommonParameters>]
+ [-After <DateTime>] [-Limit <Int32>] [<CommonParameters>]
 ```
 
 ### ID
 ```
 Get-StatusCakeHelperUptimeHistory [-APICredential <PSCredential>] [-ID <Int32>] [-Before <DateTime>]
- [-Limit <Int32>] [<CommonParameters>]
+ [-After <DateTime>] [-Limit <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Returns uptime check history results for tests detailing the runs performed on the StatusCake testing infrastructure.
-The return order is newest alerts are shown first.
-Alerts to be returned can be filtered by date using the Before parameter.
+The most recent history results are shown first.
+Alerts to be returned can be filtered by date using the After/Before parameters.
 
 ## EXAMPLES
 
@@ -36,7 +36,14 @@ Return all the uptime history for test ID 123456 since the 19th August 2017 13:2
 Get-StatusCakeHelperUptimeHistory -ID 123456 -Limit 100
 ```
 
-Return the last 100 historical results sent for test ID 123456
+Return the last 100 historical results for test ID 123456
+
+### EXAMPLE 3
+```
+Get-StatusCakeHelperUptimeHistory -ID 123456 -Limit 1
+```
+
+Return the most recent historical result for test ID 123456
 
 ## PARAMETERS
 
@@ -56,7 +63,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-Name of the Test to retrieve the sent alerts for
+Name of the Test to retrieve the history results for
 
 ```yaml
 Type: String
@@ -71,7 +78,7 @@ Accept wildcard characters: False
 ```
 
 ### -ID
-ID of the Test to retrieve the sent alerts for
+ID of the Test to retrieve the history results for
 
 ```yaml
 Type: Int32
@@ -86,7 +93,22 @@ Accept wildcard characters: False
 ```
 
 ### -Before
-Return only results from before this date
+Return only history results created before this date
+
+```yaml
+Type: DateTime
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -After
+Return only history results created after this date
 
 ```yaml
 Type: DateTime
@@ -122,7 +144,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### Returns an object with the details on the Alerts Sent
+### Returns an object with the details from a StatusCake test run
 ## NOTES
 
 ## RELATED LINKS

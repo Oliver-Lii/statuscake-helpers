@@ -8,13 +8,13 @@ Returns a list of uptime check periods for a uptime test
 ### ID
 ```
 Get-StatusCakeHelperUptimePeriod [-APICredential <PSCredential>] [-ID <Int32>] [-Before <DateTime>]
- [-Limit <Int32>] [<CommonParameters>]
+ [-After <DateTime>] [-Limit <Int32>] [<CommonParameters>]
 ```
 
 ### name
 ```
 Get-StatusCakeHelperUptimePeriod [-APICredential <PSCredential>] [-Name <String>] [-Before <DateTime>]
- [-Limit <Int32>] [<CommonParameters>]
+ [-After <DateTime>] [-Limit <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,10 +31,24 @@ Return all the alerts sent for test ID 123456 since the 19th August 2017 13:29:4
 
 ### EXAMPLE 2
 ```
+Get-StatusCakeHelperUptimePeriod -ID 123456 -After "2018-01-01 00:00:00" -Before "2019-01-01 00:00:00"
+```
+
+Return all the uptime check periods for test ID 123456 created after the 1st January 2018 but before 1st January 2019
+
+### EXAMPLE 3
+```
 Get-StatusCakeHelperUptimePeriod -ID 123456 -Limit 100
 ```
 
 Return the last 100 uptime check periods sent for test ID 123456
+
+### EXAMPLE 4
+```
+Get-StatusCakeHelperUptimePeriod -ID 123456 -Limit 1
+```
+
+Return the most recent uptime check period sent for test ID 123456
 
 ## PARAMETERS
 
@@ -54,7 +68,7 @@ Accept wildcard characters: False
 ```
 
 ### -ID
-ID of the Test to retrieve the sent alerts for
+ID of the Test to retrieve the uptime check periods for
 
 ```yaml
 Type: Int32
@@ -69,7 +83,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-Name of the Test to retrieve the sent alerts for
+Name of the Test to retrieve the uptime check periods for
 
 ```yaml
 Type: String
@@ -84,7 +98,22 @@ Accept wildcard characters: False
 ```
 
 ### -Before
-Return only results from before this date
+Return only check periods created before this date
+
+```yaml
+Type: DateTime
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -After
+Return only check periods created after this date
 
 ```yaml
 Type: DateTime
@@ -120,7 +149,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### Returns an object with the details on the Alerts Sent
+### Returns an object with the details of the uptime check periods
 ## NOTES
 
 ## RELATED LINKS

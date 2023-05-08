@@ -8,19 +8,19 @@ Returns a list of uptime check alerts for a test
 ### name
 ```
 Get-StatusCakeHelperUptimeAlert [-APICredential <PSCredential>] [-Name <String>] [-Before <DateTime>]
- [-Limit <Int32>] [<CommonParameters>]
+ [-After <DateTime>] [-Limit <Int32>] [<CommonParameters>]
 ```
 
 ### ID
 ```
 Get-StatusCakeHelperUptimeAlert [-APICredential <PSCredential>] [-ID <Int32>] [-Before <DateTime>]
- [-Limit <Int32>] [<CommonParameters>]
+ [-After <DateTime>] [-Limit <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Returns all alerts that have been sent for a test by its name or id.
+Returns all alerts that have been triggered for a test by its name or id.
 The return order is newest alerts are shown first.
-Alerts to be returned can be filtered by date using the Before parameter.
+Alerts to be returned can be filtered by date using the After/Before parameters.
 The number of alerts returned can be controlled
 using the Limit argument.
 
@@ -31,14 +31,28 @@ using the Limit argument.
 Get-StatusCakeHelperUptimeAlert -ID 123456 -Before "2017-08-19 13:29:49"
 ```
 
-Return all the alerts sent for test ID 123456 since the 19th August 2017 13:29:49
+Return all the alerts triggered for test ID 123456 since the 19th August 2017 13:29:49
 
 ### EXAMPLE 2
+```
+Get-StatusCakeHelperUptimeAlert -ID 123456 -After "2018-01-01 00:00:00" -Before "2019-01-01 00:00:00"
+```
+
+Return all the alerts triggered for test ID 123456 after the 1st January 2018 but before 1st January 2019
+
+### EXAMPLE 3
 ```
 Get-StatusCakeHelperUptimeAlert -ID 123456 -Limit 100
 ```
 
-Return the last 100 alerts sent for test ID 123456
+Return the last 100 alerts triggered for test ID 123456
+
+### EXAMPLE 4
+```
+Get-StatusCakeHelperUptimeAlert -ID 123456 -Limit 1
+```
+
+Return the most recent alert triggered for test ID 123456
 
 ## PARAMETERS
 
@@ -58,7 +72,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-Name of the Test to retrieve the sent alerts for
+Name of the Test to retrieve the triggered alerts for
 
 ```yaml
 Type: String
@@ -73,7 +87,7 @@ Accept wildcard characters: False
 ```
 
 ### -ID
-ID of the Test to retrieve the sent alerts for
+ID of the Test to retrieve the triggered alerts for
 
 ```yaml
 Type: Int32
@@ -88,7 +102,22 @@ Accept wildcard characters: False
 ```
 
 ### -Before
-Return only results from before this date
+Return only alerts triggered before this date
+
+```yaml
+Type: DateTime
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -After
+Return only alerts triggered after this date
 
 ```yaml
 Type: DateTime
@@ -124,7 +153,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### Returns an object with the details on the Alerts Sent
+### Returns an object with the details on the alerts triggered
 ## NOTES
 
 ## RELATED LINKS
