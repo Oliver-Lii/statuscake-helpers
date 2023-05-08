@@ -77,16 +77,37 @@ Describe "StatusCake Uptime Tests" {
         $result.count | Should -BeLessOrEqual 150
     }
 
+    It "Get-StatusCakeHelperUptimeAlert retrieves alerts triggered only in 2022"{
+        $result = Get-StatusCakeHelperUptimeAlert -ID 5084968 -After "2022-01-01T00:00:00+00:00" -Before "2023-01-01T00:00:00+00:00"
+        $year = $result.triggered_at | Get-Date -Format yyyy | Sort-Object -Unique
+        $year | Should -Be 2022
+        $year.count | Should -Be 1
+    }
+
     It "Get-StatusCakeHelperUptimeHistory no more than 150 items of uptime test history"{
         $result = Get-StatusCakeHelperUptimeHistory -ID 3022884 -Limit 150
         $result.count | Should -BeGreaterOrEqual 2
         $result.count | Should -BeLessOrEqual 150
     }
 
+    It "Get-StatusCakeHelperUptimeHistory retrieves history only from 2022" -skip{
+        $result = Get-StatusCakeHelperUptimeHistory -ID 3022884 -After "2022-01-01T00:00:00+00:00" -Before "2023-01-01T00:00:00+00:00"
+        $year = $result.created_at | Get-Date -Format yyyy | Sort-Object -Unique
+        $year | Should -Be 2022
+        $year.count | Should -Be 1
+    }
+
     It "Get-StatusCakeHelperUptimePeriod retrieves no more than 150 uptime check periods"{
         $result = Get-StatusCakeHelperUptimePeriod -ID 3022884 -Limit 150
         $result.count | Should -BeGreaterOrEqual 2
         $result.count | Should -BeLessOrEqual 150
+    }
+
+    It "Get-StatusCakeHelperUptimePeriod retrieves check periods only from 2022"{
+        $result = Get-StatusCakeHelperUptimePeriod -ID 5084968 -After "2022-01-01T00:00:00+00:00" -Before "2023-01-01T00:00:00+00:00"
+        $year = $result.created_at | Get-Date -Format yyyy | Sort-Object -Unique
+        $year | Should -Be 2022
+        $year.count | Should -Be 1
     }
 
     It "Remove-StatusCakeHelperUptimeTest removes a test by ID"{
