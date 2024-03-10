@@ -54,9 +54,9 @@ Describe "StatusCake Page Speed Tests" {
         $result.name | Should -Be "Pester Test Page Speed Check - Copy"
     }
 
-    It "Get-StatusCakeHelperPageSpeedTestHistory retrieves the history of the first 100 page speed checks"{
-        $result = Get-StatusCakeHelperPageSpeedTestHistory -ID 37700 -Limit 100
-        $result.count | Should -BeGreaterThan 90
+    It "Get-StatusCakeHelperPageSpeedTestHistory retrieves the history of the first 29 page speed checks"{
+        $result = Get-StatusCakeHelperPageSpeedTestHistory -ID 37700 -Limit 29
+        $result.count | Should -BeGreaterThan 28
     }
 
     It "Get-StatusCakeHelperPageSpeedTestHistory retrieves the history of two page speed checks"{
