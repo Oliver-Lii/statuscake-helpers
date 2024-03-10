@@ -25,7 +25,9 @@ Describe "StatusCake Uptime Tests" {
     }
 
     It "New-StatusCakeHelperUptimeTest creates a DNS uptime test"{
-        $Script:SCDNSUptimeTest = New-StatusCakeHelperUptimeTest -Name "Pester Test DNS Check" -WebsiteURL "dns.google" -CheckRate 86400 -Type DNS -Confirmation 1 -Tag "Pester Test" -DNSIPs @("8.8.8.8","8.8.4.4") -DNSServer "1.1.1.1" -PassThru
+        $SCDNSUptimeTestID = New-StatusCakeHelperUptimeTest -Name "Pester Test DNS Check" -WebsiteURL "dns.google" -CheckRate 86400 -Type DNS -Confirmation 1 -Tag "Pester Test" -DNSIPs @("8.8.8.8","8.8.4.4") -DNSServer "1.1.1.1"
+        $SCDNSUptimeTestID | Should -Not -BeNullOrEmpty
+        $Script:SCDNSUptimeTest  = Get-StatusCakeHelperUptimeTest -ID $SCDNSUptimeTestID
         $SCDNSUptimeTest.name | Should -Be "Pester Test DNS Check"
         $SCDNSUptimeTest.website_url | Should -Be "dns.google"
         $SCDNSUptimeTest.check_rate | Should -Be 86400

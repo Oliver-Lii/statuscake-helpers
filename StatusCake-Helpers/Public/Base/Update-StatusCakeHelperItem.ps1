@@ -40,7 +40,7 @@ function Update-StatusCakeHelperItem
         [int]$ID,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("PageSpeed","SSL","Uptime","Contact-Groups","Maintenance-Windows")]
+        [ValidateSet("Contact-Groups","Heartbeat","Maintenance-Windows","PageSpeed","SSL","Uptime")]
         [string]$Type,
 
         [hashtable]$Parameter
